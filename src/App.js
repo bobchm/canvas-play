@@ -46,6 +46,7 @@ const App = () => {
 
     function handleSelectionCreated(obj) {
         describeSelection(obj.selected);
+        obj.selected[0].set("fill", "yellow");
     }
 
     function handleSelectionUpdated(obj) {
