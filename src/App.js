@@ -1,79 +1,26 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import AppBar from "@mui/material/AppBar";
-import CssBaseline from "@mui/material/CssBaseline";
 import Toolbar from "@mui/material/Toolbar";
 import List from "@mui/material/List";
 import Typography from "@mui/material/Typography";
 import ListItem from "@mui/material/ListItem";
-import Paper from "@mui/material/Paper";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
 import CropSquareIcon from "@mui/icons-material/CropSquare";
 import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
 import ChangeHistoryIcon from "@mui/icons-material/ChangeHistory";
 import { fabric } from "fabric";
 
+import PlayCanvas from "./components/play-canvas/play-canvas.component";
+
 const drawerWidth = 100;
 const appBarHeight = 64;
 
 const App = () => {
-    const canvas = useRef(null);
     const [title, setTitle] = useState("No selection");
-
-    useEffect(() => {
-        canvas.current = initCanvas();
-
-        // destroy fabric on unmount
-        return () => {
-            canvas.current.dispose();
-            canvas.current = null;
-        };
-    }, []);
-
-    function describeSelection(objs) {
-        var str = "";
-        for (var i = 0; i < objs.length; i++) {
-            if (i > 0) {
-                str += " and ";
-            }
-            str += objs[i].type;
-        }
-        setTitle(str);
-    }
-
-    function handleSelectionCreated(obj) {
-        describeSelection(obj.selected);
-        obj.selected[0].set("fill", "yellow");
-    }
-
-    function handleSelectionUpdated(obj) {
-        var objs = canvas.current.getActiveObjects();
-        describeSelection(objs);
-    }
-
-    function handleSelectionClear(obj) {
-        setTitle("No selection");
-    }
-
-    function initCanvas() {
-        var cnv = new fabric.Canvas("canvas", {
-            top: appBarHeight,
-            height: window.innerHeight - appBarHeight,
-            width: window.innerWidth - drawerWidth,
-            backgroundColor: "azure",
-            selection: true,
-            renderOnAddRemove: true,
-        });
-        cnv.on({
-            "selection:updated": handleSelectionUpdated,
-            "selection:created": handleSelectionCreated,
-            "selection:cleared": handleSelectionClear,
-        });
-        return cnv;
-    }
+    const [canvas, setCanvas] = useState(null);
 
     const onSelectSquare = (cnv) => {
         const rect = new fabric.Rect({
@@ -107,6 +54,21 @@ const App = () => {
         cnv.add(triangle);
     };
 
+    function describeSelection(objs) {
+        if (objs === null || objs.length === 0) {
+            setTitle("No selection");
+        } else {
+            var str = "";
+            for (var i = 0; i < objs.length; i++) {
+                if (i > 0) {
+                    str += " and ";
+                }
+                str += objs[i].type;
+            }
+            setTitle(str);
+        }
+    }
+
     return (
         <div>
             <AppBar
@@ -137,7 +99,7 @@ const App = () => {
                             <ListItem
                                 key={1}
                                 disablePadding
-                                onClick={() => onSelectSquare(canvas.current)}
+                                onClick={() => onSelectSquare(canvas)}
                             >
                                 <ListItemButton>
                                     <ListItemIcon>
@@ -148,7 +110,7 @@ const App = () => {
                             <ListItem
                                 key={2}
                                 disablePadding
-                                onClick={() => onSelectCircle(canvas.current)}
+                                onClick={() => onSelectCircle(canvas)}
                             >
                                 <ListItemButton>
                                     <ListItemIcon>
@@ -159,7 +121,7 @@ const App = () => {
                             <ListItem
                                 key={3}
                                 disablePadding
-                                onClick={() => onSelectTriangle(canvas.current)}
+                                onClick={() => onSelectTriangle(canvas)}
                             >
                                 <ListItemButton>
                                     <ListItemIcon>
@@ -171,7 +133,17 @@ const App = () => {
                     </Box>
                 </Drawer>
                 <div style={{ marginTop: appBarHeight }}>
-                    <canvas id="canvas" />
+                    <PlayCanvas
+                        id="canvas"
+                        top={appBarHeight}
+                        left={0}
+                        width={window.innerWidth - drawerWidth}
+                        height={window.innerHeight - appBarHeight}
+                        backgroundColor={"azure"}
+                        doSelection={true}
+                        onSelection={describeSelection}
+                        getCanvas={(cnv) => setCanvas(cnv)}
+                    />
                 </div>
             </Box>
         </div>
