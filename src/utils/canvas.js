@@ -1,5 +1,7 @@
 import { fabric } from "fabric";
 
+var objIdCtr = 0;
+
 function initCanvas(
     _id,
     _left,
@@ -32,19 +34,26 @@ function initCanvas(
     return cnv;
 }
 
+function getObjectId() {
+    return `#object-${objIdCtr++}`;
+}
+
 const addSquare = (cnv, spec) => {
     const rect = new fabric.Rect(spec);
+    rect.id = getObjectId();
     cnv.add(rect);
 };
 
 const addCircle = (cnv, spec) => {
     const circle = new fabric.Circle(spec);
+    circle.id = getObjectId();
     cnv.add(circle);
 };
 
 const addTriangle = (cnv, spec) => {
     const triangle = new fabric.Triangle(spec);
     cnv.add(triangle);
+    triangle.id = getObjectId();
 };
 
 export { initCanvas, addSquare, addCircle, addTriangle };
