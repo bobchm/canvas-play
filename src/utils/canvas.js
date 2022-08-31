@@ -21,11 +21,6 @@ function initCanvas(
         selection: _doSelection,
         renderOnAddRemove: true,
     });
-    cnv.on({
-        "selection:updated": () => _onSelection(cnv.getActiveObjects()),
-        "selection:created": () => _onSelection(cnv.getActiveObjects()),
-        "selection:cleared": () => _onSelection(cnv.getActiveObjects()),
-    });
 
     return cnv;
 }
@@ -38,17 +33,17 @@ function doSelectionCallback(cnv) {
 
 function setSelectionCallback(cnv, callbk) {
     cnv.on({
-        "selection:updated": () => doSelectionCallback(cnv)),
-        "selection:created": doSelectionCallback(cnv)),
-        "selection:cleared": doSelectionCallback(cnv)),
+        "selection:updated": () => doSelectionCallback(cnv),
+        "selection:created": () => doSelectionCallback(cnv),
+        "selection:cleared": () => doSelectionCallback(cnv),
     });
 }
 
 function clearSelectionCallback(cnv, callbk) {
     cnv.off({
-        "selection:updated"),
-        "selection:created": null),
-        "selection:cleared": null),
+        "selection:updated": () => doSelectionCallback(cnv),
+        "selection:created": () => doSelectionCallback(cnv),
+        "selection:cleared": () => doSelectionCallback(cnv),
     });
 }
 
@@ -74,4 +69,11 @@ const addTriangle = (cnv, spec) => {
     triangle.id = getObjectId();
 };
 
-export { initCanvas, addRect, addCircle, addTriangle, setSelectionCallback };
+export {
+    initCanvas,
+    addRect,
+    addCircle,
+    addTriangle,
+    clearSelectionCallback,
+    setSelectionCallback,
+};

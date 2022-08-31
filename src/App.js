@@ -25,6 +25,7 @@ const App = () => {
             backgroundColor: "azure",
             doSelection: true,
         });
+        setAppManager(appMgr);
     }, []);
 
     function describeSelection(objs) {
