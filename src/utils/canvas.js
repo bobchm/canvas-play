@@ -1,6 +1,7 @@
 import { fabric } from "fabric";
 
 var objIdCtr = 0;
+var selectionCallback = null;
 
 function initCanvas(
     _id,
@@ -9,9 +10,7 @@ function initCanvas(
     _width,
     _height,
     _bkgColor,
-    _doSelection,
-    _onSelection,
-    _getCanvas
+    _doSelection
 ) {
     var cnv = new fabric.Canvas(_id, {
         left: _left,
@@ -28,10 +27,29 @@ function initCanvas(
         "selection:cleared": () => _onSelection(cnv.getActiveObjects()),
     });
 
-    if (_getCanvas) {
-        _getCanvas(cnv);
-    }
     return cnv;
+}
+
+function doSelectionCallback(cnv) {
+    if (selectionCallback) {
+        selectionCallback(cnv.getActiveObjects());
+    }
+}
+
+function setSelectionCallback(cnv, callbk) {
+    cnv.on({
+        "selection:updated": () => doSelectionCallback(cnv)),
+        "selection:created": doSelectionCallback(cnv)),
+        "selection:cleared": doSelectionCallback(cnv)),
+    });
+}
+
+function clearSelectionCallback(cnv, callbk) {
+    cnv.off({
+        "selection:updated"),
+        "selection:created": null),
+        "selection:cleared": null),
+    });
 }
 
 function getObjectId() {
@@ -56,4 +74,4 @@ const addTriangle = (cnv, spec) => {
     triangle.id = getObjectId();
 };
 
-export { initCanvas, addRect, addCircle, addTriangle };
+export { initCanvas, addRect, addCircle, addTriangle, setSelectionCallback };

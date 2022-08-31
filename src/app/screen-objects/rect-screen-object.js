@@ -1,5 +1,5 @@
 import ScreenObject from "./screen-object";
-import { addRect } from "../utils/canvas";
+import { addRect } from "../../utils/canvas";
 
 class RectScreenObject extends ScreenObject {
     constructor(_id, _left, _top, _width, _height, _color) {
