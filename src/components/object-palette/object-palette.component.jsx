@@ -10,11 +10,11 @@ import CropSquareIcon from "@mui/icons-material/CropSquare";
 import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
 import ChangeHistoryIcon from "@mui/icons-material/ChangeHistory";
 
-import { addSquare, addCircle, addTriangle } from "../../utils/canvas";
+import { addRect, addCircle, addTriangle } from "../../utils/canvas";
 
 const ObjectPalette = ({ width, canvas }) => {
     const onSelectSquare = (cnv) =>
-        addSquare(cnv, {
+        addRect(cnv, {
             left: 10,
             top: 10,
             width: 100,

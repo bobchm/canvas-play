@@ -38,7 +38,7 @@ function getObjectId() {
     return `#object-${objIdCtr++}`;
 }
 
-const addSquare = (cnv, spec) => {
+const addRect = (cnv, spec) => {
     const rect = new fabric.Rect(spec);
     rect.id = getObjectId();
     cnv.add(rect);
@@ -56,4 +56,4 @@ const addTriangle = (cnv, spec) => {
     triangle.id = getObjectId();
 };
 
-export { initCanvas, addSquare, addCircle, addTriangle };
+export { initCanvas, addRect, addCircle, addTriangle };
