@@ -12,14 +12,6 @@ class PageScreenObject extends ContainerScreenObject {
         _screenMgr.setBackgroundColor(_bkgColor);
         this.#children = this.createChildren(_children);
     }
-
-    addChild(_child) {
-        this.#children.push(_child);
-    }
-
-    removeChild(_child) {
-        this.#children = this.#children.filter((child) => child === _child);
-    }
 }
 
 export default PageScreenObject;
