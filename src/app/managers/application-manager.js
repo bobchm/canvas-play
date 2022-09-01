@@ -6,16 +6,16 @@ class ApplicationManager {
     #screenManager;
 
     constructor(userName, screenSpec) {
-        this.pageManager = new PageManager(userName);
-        this.screenManager = new ScreenManager(screenSpec);
+        this.#pageManager = new PageManager(userName);
+        this.#screenManager = new ScreenManager(screenSpec);
     }
 
     getPageManager() {
-        return this.pageManager;
+        return this.#pageManager;
     }
 
     getScreenManager() {
-        return this.screenManager;
+        return this.#screenManager;
     }
 }
 

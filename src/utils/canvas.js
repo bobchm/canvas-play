@@ -1,7 +1,6 @@
 import { fabric } from "fabric";
 
 var objIdCtr = 0;
-var selectionCallback = null;
 
 function initCanvas(
     _id,
@@ -25,30 +24,29 @@ function initCanvas(
     return cnv;
 }
 
-function doSelectionCallback(cnv) {
-    if (selectionCallback) {
-        selectionCallback(cnv.getActiveObjects());
-    }
-}
-
 function setSelectionCallback(cnv, callbk) {
     cnv.on({
-        "selection:updated": () => doSelectionCallback(cnv),
-        "selection:created": () => doSelectionCallback(cnv),
-        "selection:cleared": () => doSelectionCallback(cnv),
+        "selection:updated": () => callbk(cnv),
+        "selection:created": () => callbk(cnv),
+        "selection:cleared": () => callbk(cnv),
     });
 }
 
 function clearSelectionCallback(cnv, callbk) {
     cnv.off({
-        "selection:updated": () => doSelectionCallback(cnv),
-        "selection:created": () => doSelectionCallback(cnv),
-        "selection:cleared": () => doSelectionCallback(cnv),
+        "selection:updated": () => callbk(cnv),
+        "selection:created": () => callbk(cnv),
+        "selection:cleared": () => callbk(cnv),
     });
 }
 
 function getObjectId() {
     return `#object-${objIdCtr++}`;
+}
+
+function setBackgroundColor(cnv, _bkgColor) {
+    cnv.backgroundColor = _bkgColor;
+    cnv.renderAll();
 }
 
 const addRect = (cnv, spec) => {
@@ -76,4 +74,5 @@ export {
     addTriangle,
     clearSelectionCallback,
     setSelectionCallback,
+    setBackgroundColor,
 };
