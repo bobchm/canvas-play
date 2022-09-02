@@ -7,7 +7,7 @@ class PageManager {
         this.#pageHash = new Map();
         this.#pageHash.set("Home", {
             id: "#HomePage",
-            backgroundColor: "alabaster",
+            backgroundColor: "red",
             children: [],
             name: "Home",
         });
@@ -18,7 +18,7 @@ class PageManager {
     }
 
     getPage(name) {
-        return this.#pageHash(name);
+        return this.#pageHash.get(name);
     }
 
     addPage(name, spec) {

@@ -11,10 +11,6 @@ class ScreenManager {
     #currentPage = null;
     #selectionCallback = null;
 
-    constructor(screenSpec) {
-        this.#createCanvas(screenSpec);
-    }
-
     getCanvas() {
         return this.#canvas;
     }
@@ -74,7 +70,7 @@ class ScreenManager {
         setBackgroundColor(this.#canvas, _bkgColor);
     }
 
-    #createCanvas(screenSpec) {
+    createCanvas(screenSpec) {
         const { id, top, left, width, height, backgroundColor, doSelection } =
             screenSpec;
 
@@ -87,6 +83,7 @@ class ScreenManager {
             backgroundColor,
             doSelection
         );
+        return this.#canvas;
     }
 }
 

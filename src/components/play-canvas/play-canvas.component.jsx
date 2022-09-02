@@ -1,15 +1,15 @@
 import React, { useRef, useEffect } from "react";
 
-const PlayCanvas = ({ id, appManager }) => {
+const PlayCanvas = ({ spec, appManager }) => {
     const canvas = useRef(null);
 
     useEffect(() => {
         if (appManager && appManager.getScreenManager()) {
-            canvas.current = appManager.getScreenManager().getCanvas();
+            console.log("createCanvas");
+            canvas.current = appManager.getScreenManager().createCanvas(spec);
         }
-    }, []);
-
-    return <canvas id={id} />;
+    });
+    return <canvas id={spec.id} />;
 };
 
 export default PlayCanvas;

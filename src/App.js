@@ -12,23 +12,27 @@ import ApplicationManager from "./app/managers/application-manager";
 const drawerWidth = 100;
 const appBarHeight = 64;
 
+const canvasSpec = {
+    id: "canvas",
+    left: 0,
+    top: appBarHeight,
+    width: window.innerWidth - drawerWidth,
+    height: window.innerHeight - appBarHeight,
+    backgroundColor: "azure",
+    doSelection: true,
+};
+
 const App = () => {
     const [title, setTitle] = useState("No selection");
-    const [appManager, setAppManager] = useState(null);
+    const [appManager, setAppManager] = useState(
+        new ApplicationManager("fakeusername")
+    );
 
     useEffect(() => {
-        var appMgr = new ApplicationManager("fakeusername", {
-            left: 0,
-            top: appBarHeight,
-            width: window.innerWidth - drawerWidth,
-            height: window.innerHeight - appBarHeight,
-            backgroundColor: "azure",
-            doSelection: true,
-        });
-        setAppManager(appMgr);
-        var scrMgr = appMgr.getScreenManager();
-        scrMgr.setSelectionCallback(describeSelection);
-        appMgr.openPage("Home");
+        var scrMgr = appManager.getScreenManager();
+        console.log("app.js useEffect");
+        //scrMgr.setSelectionCallback(describeSelection);
+        appManager.openPage("Home");
     }, []);
 
     function describeSelection(objs) {
@@ -67,7 +71,7 @@ const App = () => {
                     width={drawerWidth}
                 />
                 <div style={{ marginTop: appBarHeight }}>
-                    <PlayCanvas id="canvas" appManager={appManager} />
+                    <PlayCanvas spec={canvasSpec} appManager={appManager} />
                 </div>
             </Box>
         </div>
