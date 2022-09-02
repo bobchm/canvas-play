@@ -24,19 +24,19 @@ function initCanvas(
     return cnv;
 }
 
-function setSelectionCallback(cnv, callbk) {
+function setSelectionCallback(cnv, callbk, data) {
     cnv.on({
-        "selection:updated": () => callbk(cnv),
-        "selection:created": () => callbk(cnv),
-        "selection:cleared": () => callbk(cnv),
+        "selection:updated": () => callbk(cnv.getActiveObjects(), data),
+        "selection:created": () => callbk(cnv.getActiveObjects(), data),
+        "selection:cleared": () => callbk(cnv.getActiveObjects(), data),
     });
 }
 
 function clearSelectionCallback(cnv, callbk) {
     cnv.off({
-        "selection:updated": () => callbk(cnv),
-        "selection:created": () => callbk(cnv),
-        "selection:cleared": () => callbk(cnv),
+        "selection:updated": () => callbk(cnv, null),
+        "selection:created": () => callbk(cnv, null),
+        "selection:cleared": () => callbk(cnv, null),
     });
 }
 
@@ -53,18 +53,21 @@ const addRect = (cnv, spec) => {
     const rect = new fabric.Rect(spec);
     rect.id = getObjectId();
     cnv.add(rect);
+    return rect;
 };
 
 const addCircle = (cnv, spec) => {
     const circle = new fabric.Circle(spec);
     circle.id = getObjectId();
     cnv.add(circle);
+    return circle;
 };
 
 const addTriangle = (cnv, spec) => {
     const triangle = new fabric.Triangle(spec);
     cnv.add(triangle);
     triangle.id = getObjectId();
+    return triangle;
 };
 
 export {

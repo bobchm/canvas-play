@@ -7,7 +7,7 @@ class PageManager {
         this.#pageHash = new Map();
         this.#pageHash.set("Home", {
             id: "#HomePage",
-            backgroundColor: "red",
+            backgroundColor: "antiquewhite",
             children: [],
             name: "Home",
         });

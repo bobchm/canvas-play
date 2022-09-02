@@ -12,6 +12,8 @@ import ApplicationManager from "./app/managers/application-manager";
 const drawerWidth = 100;
 const appBarHeight = 64;
 
+const initAppManager = new ApplicationManager("fakeusername");
+
 const canvasSpec = {
     id: "canvas",
     left: 0,
@@ -24,14 +26,12 @@ const canvasSpec = {
 
 const App = () => {
     const [title, setTitle] = useState("No selection");
-    const [appManager, setAppManager] = useState(
-        new ApplicationManager("fakeusername")
-    );
+    const [appManager, setAppManager] = useState(initAppManager);
 
     useEffect(() => {
         var scrMgr = appManager.getScreenManager();
         console.log("app.js useEffect");
-        //scrMgr.setSelectionCallback(describeSelection);
+        scrMgr.setSelectionCallback(describeSelection);
         appManager.openPage("Home");
     }, []);
 

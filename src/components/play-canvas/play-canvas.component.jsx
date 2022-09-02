@@ -8,7 +8,7 @@ const PlayCanvas = ({ spec, appManager }) => {
             console.log("createCanvas");
             canvas.current = appManager.getScreenManager().createCanvas(spec);
         }
-    });
+    }, []);
     return <canvas id={spec.id} />;
 };
 

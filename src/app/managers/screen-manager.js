@@ -6,6 +6,10 @@ import {
     setBackgroundColor,
 } from "../../utils/canvas";
 
+function selectionCallbackHelper(cnvObjs, scrMgr) {
+    scrMgr.scrMgrSelectionCallback(cnvObjs);
+}
+
 class ScreenManager {
     #canvas = null;
     #currentPage = null;
@@ -20,7 +24,7 @@ class ScreenManager {
     }
 
     openPage(pageSpec) {
-        this.#currentPage = new PageScreenObject(this, null, pageSpec.id);
+        this.#currentPage = new PageScreenObject(this, null, pageSpec);
     }
 
     #canvasObjToScreen(scrObj, cnvObj) {
@@ -40,7 +44,7 @@ class ScreenManager {
 
     #canvasObjsToScreen(page, cnvObjs) {
         var screenObjs = [];
-        for (let i = 0; i < cnvObjs; i++) {
+        for (let i = 0; i < cnvObjs.length; i++) {
             var scrObj = this.#canvasObjToScreen(page, cnvObjs[i]);
             if (scrObj) {
                 screenObjs.push(scrObj);
@@ -49,7 +53,7 @@ class ScreenManager {
         return screenObjs;
     }
 
-    #scrMgrSelectionCallback(cnvObjs) {
+    scrMgrSelectionCallback(cnvObjs) {
         if (this.#selectionCallback && this.#currentPage) {
             var scrObjs = this.#canvasObjsToScreen(this.#currentPage, cnvObjs);
             this.#selectionCallback(scrObjs);
@@ -57,12 +61,12 @@ class ScreenManager {
     }
 
     clearSelectionCallback() {
-        clearSelectionCallback(this.#canvas, this.#scrMgrSelectionCallback);
+        clearSelectionCallback(this.#canvas);
         this.#selectionCallback = null;
     }
 
     setSelectionCallback(callbk) {
-        setSelectionCallback(this.#canvas, this.#scrMgrSelectionCallback);
+        setSelectionCallback(this.#canvas, selectionCallbackHelper, this);
         this.#selectionCallback = callbk;
     }
 
