@@ -3,10 +3,6 @@ import ScreenObject from "./screen-object";
 class ContainerScreenObject extends ScreenObject {
     #children = [];
 
-    constructor(_parent, _id) {
-        super(_id, _parent);
-    }
-
     addChild(_child) {
         this.#children.push(_child);
     }
@@ -17,6 +13,15 @@ class ContainerScreenObject extends ScreenObject {
 
     createChildren(_specArray) {
         // not implemented yet
+        return [];
+    }
+
+    getChildren() {
+        return this.#children;
+    }
+
+    hasChildren() {
+        return this.#children.length > 0;
     }
 }
 

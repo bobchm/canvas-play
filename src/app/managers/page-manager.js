@@ -6,13 +6,15 @@ class PageManager {
         // right now, just initialize to having one blank page
         this.#pageHash = new Map();
         this.#pageHash.set("Home", {
+            id: "#HomePage",
             backgroundColor: "alabaster",
             children: [],
+            name: "Home",
         });
     }
 
     hasPage(name) {
-        return this.getPage(name) != undefined;
+        return this.getPage(name) !== undefined;
     }
 
     getPage(name) {

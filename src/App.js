@@ -26,6 +26,9 @@ const App = () => {
             doSelection: true,
         });
         setAppManager(appMgr);
+        var scrMgr = appMgr.getScreenManager();
+        scrMgr.setSelectionCallback(describeSelection);
+        appMgr.openPage("Home");
     }, []);
 
     function describeSelection(objs) {
@@ -34,10 +37,13 @@ const App = () => {
         } else {
             var str = "";
             for (var i = 0; i < objs.length; i++) {
+                var cnvObj = objs[i].getCanvasObj();
                 if (i > 0) {
                     str += " and ";
                 }
-                str += objs[i].type;
+                if (cnvObj) {
+                    str += cnvObj.type;
+                }
             }
             setTitle(str);
         }
@@ -56,7 +62,10 @@ const App = () => {
                 </Toolbar>
             </AppBar>
             <Box sx={{ display: "flex" }}>
-                <ObjectPalette canvas={canvas} width={drawerWidth} />
+                <ObjectPalette
+                    screenMgr={appManager?.getScreenManager()}
+                    width={drawerWidth}
+                />
                 <div style={{ marginTop: appBarHeight }}>
                     <PlayCanvas id="canvas" appManager={appManager} />
                 </div>

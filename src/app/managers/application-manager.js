@@ -17,6 +17,13 @@ class ApplicationManager {
     getScreenManager() {
         return this.#screenManager;
     }
+
+    openPage(pageName) {
+        var pageSpec = this.#pageManager.getPage(pageName);
+        if (pageSpec) {
+            this.#screenManager.openPage(pageSpec);
+        }
+    }
 }
 
 export default ApplicationManager;

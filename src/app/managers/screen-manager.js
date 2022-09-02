@@ -1,3 +1,4 @@
+import PageScreenObject from "../screen-objects/page-screen-object";
 import {
     initCanvas,
     clearSelectionCallback,
@@ -22,17 +23,50 @@ class ScreenManager {
         return this.#currentPage;
     }
 
-    setCurrentPage(page) {
-        this.#currentPage = page;
+    openPage(pageSpec) {
+        this.#currentPage = new PageScreenObject(this, null, pageSpec.id);
+    }
+
+    #canvasObjToScreen(scrObj, cnvObj) {
+        if (scrObj.getCanvasObj(scrObj) === cnvObj) {
+            return scrObj;
+        }
+
+        var children = scrObj.getChildren();
+        for (let i = 0; i < children.length; i++) {
+            var child = this.#canvasObjToScreen(children[i], cnvObj);
+            if (child) {
+                return child;
+            }
+        }
+        return null;
+    }
+
+    #canvasObjsToScreen(page, cnvObjs) {
+        var screenObjs = [];
+        for (let i = 0; i < cnvObjs; i++) {
+            var scrObj = this.#canvasObjToScreen(page, cnvObjs[i]);
+            if (scrObj) {
+                screenObjs.push(scrObj);
+            }
+        }
+        return screenObjs;
+    }
+
+    #scrMgrSelectionCallback(cnvObjs) {
+        if (this.#selectionCallback && this.#currentPage) {
+            var scrObjs = this.#canvasObjsToScreen(this.#currentPage, cnvObjs);
+            this.#selectionCallback(scrObjs);
+        }
     }
 
     clearSelectionCallback() {
-        clearSelectionCallback(this.#canvas, this.#selectionCallback);
+        clearSelectionCallback(this.#canvas, this.#scrMgrSelectionCallback);
         this.#selectionCallback = null;
     }
 
     setSelectionCallback(callbk) {
-        setSelectionCallback(this.#canvas, callbk);
+        setSelectionCallback(this.#canvas, this.#scrMgrSelectionCallback);
         this.#selectionCallback = callbk;
     }
 

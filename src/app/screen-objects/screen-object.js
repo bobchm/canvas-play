@@ -3,7 +3,11 @@ class ScreenObject {
     #parent = null;
     #canvasObj = null;
 
-    constructor(_id, _parent) {
+    constructor(_parent, _id) {
+        if (!_id || _id.length === 0) {
+            // we'll fix this at some point
+            _id = `${Date.now()}`;
+        }
         this.#id = _id;
         this.#parent = _parent;
         _parent?.addChild(this);
@@ -27,6 +31,14 @@ class ScreenObject {
 
     setParent(_parent) {
         this.#parent = _parent;
+    }
+
+    hasChildren() {
+        return false;
+    }
+
+    getChildren() {
+        return [];
     }
 }
 

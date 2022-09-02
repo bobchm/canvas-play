@@ -4,13 +4,19 @@ class PageScreenObject extends ContainerScreenObject {
     #children = [];
     #name;
 
-    constructor(_screenMgr, _parent, _id, _name, _spec) {
-        super(_id, _parent);
-        this.#name = _name;
+    constructor(_screenMgr, _parent, _spec) {
+        const {
+            id = "",
+            backgroundColor = "white",
+            children = [],
+            name = "",
+        } = _spec;
 
-        const { _bkgColor = "white", _children = [] } = _spec;
-        _screenMgr.setBackgroundColor(_bkgColor);
-        this.#children = this.createChildren(_children);
+        super(_parent, id);
+
+        this.#name = name;
+        _screenMgr.setBackgroundColor(backgroundColor);
+        this.#children = this.createChildren(children);
     }
 }
 

@@ -8,36 +8,35 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import CropSquareIcon from "@mui/icons-material/CropSquare";
 import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
-import ChangeHistoryIcon from "@mui/icons-material/ChangeHistory";
 
-import { addRect, addCircle, addTriangle } from "../../utils/canvas";
+import RectScreenObject from "../../app/screen-objects/rect-screen-object";
+import CircleScreenObject from "../../app/screen-objects/circle-screen-object";
 
-const ObjectPalette = ({ width, canvas }) => {
-    const onSelectSquare = (cnv) =>
-        addRect(cnv, {
-            left: 10,
-            top: 10,
-            width: 100,
-            height: 100,
-            fill: "red",
-        });
+const ObjectPalette = ({ width, screenMgr }) => {
+    const onSelectSquare = (scrMgr) => {
+        var page = scrMgr.getCurrentPage();
+        if (page) {
+            new RectScreenObject(scrMgr, page, {
+                left: 10,
+                top: 10,
+                width: 100,
+                height: 100,
+                fillColor: "red",
+            });
+        }
+    };
 
-    const onSelectCircle = (cnv) =>
-        addCircle(cnv, {
-            left: 50,
-            top: 50,
-            radius: 50,
-            fill: "green",
-        });
-
-    const onSelectTriangle = (cnv) =>
-        addTriangle(cnv, {
-            left: 100,
-            top: 100,
-            width: 50,
-            height: 80,
-            fill: "blue",
-        });
+    const onSelectCircle = (scrMgr) => {
+        var page = scrMgr.getCurrentPage();
+        if (page) {
+            new CircleScreenObject(scrMgr, page, {
+                left: 50,
+                top: 50,
+                radius: 50,
+                fillColor: "green",
+            });
+        }
+    };
 
     return (
         <Drawer
@@ -57,7 +56,7 @@ const ObjectPalette = ({ width, canvas }) => {
                     <ListItem
                         key={1}
                         disablePadding
-                        onClick={() => onSelectSquare(canvas)}
+                        onClick={() => onSelectSquare(screenMgr)}
                     >
                         <ListItemButton>
                             <ListItemIcon>
@@ -68,22 +67,11 @@ const ObjectPalette = ({ width, canvas }) => {
                     <ListItem
                         key={2}
                         disablePadding
-                        onClick={() => onSelectCircle(canvas)}
+                        onClick={() => onSelectCircle(screenMgr)}
                     >
                         <ListItemButton>
                             <ListItemIcon>
                                 <PanoramaFishEyeIcon />
-                            </ListItemIcon>
-                        </ListItemButton>
-                    </ListItem>
-                    <ListItem
-                        key={3}
-                        disablePadding
-                        onClick={() => onSelectTriangle(canvas)}
-                    >
-                        <ListItemButton>
-                            <ListItemIcon>
-                                <ChangeHistoryIcon />
                             </ListItemIcon>
                         </ListItemButton>
                     </ListItem>
