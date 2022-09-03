@@ -9,6 +9,9 @@ import ObjectPalette from "./components/object-palette/object-palette.component"
 
 import ApplicationManager from "./app/managers/application-manager";
 
+import RectScreenObject from "./app/screen-objects/rect-screen-object";
+import CircleScreenObject from "./app/screen-objects/circle-screen-object";
+
 const drawerWidth = 100;
 const appBarHeight = 64;
 
@@ -53,6 +56,10 @@ const App = () => {
         }
     }
 
+    function modeCallback(mode) {
+        appManager.getScreenManager().setAppMode(mode);
+    }
+
     return (
         <div>
             <AppBar
@@ -67,8 +74,9 @@ const App = () => {
             </AppBar>
             <Box sx={{ display: "flex" }}>
                 <ObjectPalette
-                    screenMgr={appManager?.getScreenManager()}
+                    top={appBarHeight}
                     width={drawerWidth}
+                    modeCallback={modeCallback}
                 />
                 <div style={{ marginTop: appBarHeight }}>
                     <PlayCanvas spec={canvasSpec} appManager={appManager} />

@@ -1,83 +1,56 @@
-import React from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
-import Drawer from "@mui/material/Drawer";
-import Toolbar from "@mui/material/Toolbar";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+
+import NorthWestRoundedIcon from "@mui/icons-material/NorthWestRounded";
 import CropSquareIcon from "@mui/icons-material/CropSquare";
 import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
 
-import RectScreenObject from "../../app/screen-objects/rect-screen-object";
-import CircleScreenObject from "../../app/screen-objects/circle-screen-object";
+import { AppMode } from "../../app/constants/app-modes";
 
-const ObjectPalette = ({ width, screenMgr }) => {
-    const onSelectSquare = (scrMgr) => {
-        var page = scrMgr.getCurrentPage();
-        if (page) {
-            new RectScreenObject(scrMgr, page, {
-                left: 10,
-                top: 10,
-                width: 100,
-                height: 100,
-                fillColor: "red",
-            });
-        }
-    };
+const options = [
+    {
+        icon: <NorthWestRoundedIcon />,
+        label: "",
+        mode: AppMode.Select,
+    },
+    {
+        icon: <CropSquareIcon />,
+        label: "",
+        mode: AppMode.AddRectangle,
+    },
+    {
+        icon: <PanoramaFishEyeIcon />,
+        label: "",
+        mode: AppMode.AddCircle,
+    },
+];
 
-    const onSelectCircle = (scrMgr) => {
-        var page = scrMgr.getCurrentPage();
-        if (page) {
-            new CircleScreenObject(scrMgr, page, {
-                left: 50,
-                top: 50,
-                radius: 50,
-                fillColor: "green",
-            });
-        }
-    };
+const ObjectPalette = ({ top, width, modeCallback }) => {
+    const [value, setValue] = useState(0);
 
     return (
-        <Drawer
-            variant="permanent"
+        <Box
             sx={{
+                mt: `${top}px`,
                 width: width,
-                flexShrink: 0,
-                [`& .MuiDrawer-paper`]: {
-                    width: width,
-                    boxSizing: "border-box",
-                },
+                bgcolor: "background.paper",
             }}
         >
-            <Toolbar />
-            <Box sx={{ overflow: "auto" }}>
-                <List>
-                    <ListItem
-                        key={1}
-                        disablePadding
-                        onClick={() => onSelectSquare(screenMgr)}
-                    >
-                        <ListItemButton>
-                            <ListItemIcon>
-                                <CropSquareIcon />
-                            </ListItemIcon>
-                        </ListItemButton>
-                    </ListItem>
-                    <ListItem
-                        key={2}
-                        disablePadding
-                        onClick={() => onSelectCircle(screenMgr)}
-                    >
-                        <ListItemButton>
-                            <ListItemIcon>
-                                <PanoramaFishEyeIcon />
-                            </ListItemIcon>
-                        </ListItemButton>
-                    </ListItem>
-                </List>
-            </Box>
-        </Drawer>
+            <Tabs
+                value={value}
+                onChange={(e, newValue) => {
+                    setValue(newValue);
+                    modeCallback(options[newValue].mode);
+                }}
+                orientation="vertical"
+            >
+                {options.map((option, idx) => (
+                    <Tab key={idx} icon={option.icon} label={option.label} />
+                ))}
+            </Tabs>
+        </Box>
     );
 };
 

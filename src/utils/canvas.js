@@ -24,11 +24,11 @@ function initCanvas(
     return cnv;
 }
 
-function setSelectionCallback(cnv, callbk, data) {
+function setSelectionCallback(cnv, callbk) {
     cnv.on({
-        "selection:updated": () => callbk(cnv.getActiveObjects(), data),
-        "selection:created": () => callbk(cnv.getActiveObjects(), data),
-        "selection:cleared": () => callbk(cnv.getActiveObjects(), data),
+        "selection:updated": () => callbk(cnv.getActiveObjects()),
+        "selection:created": () => callbk(cnv.getActiveObjects()),
+        "selection:cleared": () => callbk(cnv.getActiveObjects()),
     });
 }
 
@@ -38,6 +38,24 @@ function clearSelectionCallback(cnv, callbk) {
         "selection:created": () => callbk(cnv, null),
         "selection:cleared": () => callbk(cnv, null),
     });
+}
+
+function clearMousedownCallback(cnv, callbk) {
+    cnv.off("mouse:down", callbk);
+}
+
+function setMousedownCallback(cnv, callbk) {
+    cnv.on("mouse:down", callbk);
+}
+
+function disableSelection(cnv) {
+    cnv.selection = false;
+    cnv.interactive = false;
+}
+
+function enableSelection(cnv) {
+    cnv.selection = true;
+    cnv.interactive = true;
 }
 
 function getObjectId() {
@@ -77,5 +95,9 @@ export {
     addTriangle,
     clearSelectionCallback,
     setSelectionCallback,
+    clearMousedownCallback,
+    setMousedownCallback,
+    disableSelection,
+    enableSelection,
     setBackgroundColor,
 };

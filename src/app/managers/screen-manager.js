@@ -1,19 +1,29 @@
 import PageScreenObject from "../screen-objects/page-screen-object";
+import RectScreenObject from "../screen-objects/rect-screen-object";
+import CircleScreenObject from "../screen-objects/circle-screen-object";
+
 import {
     initCanvas,
     clearSelectionCallback,
     setSelectionCallback,
     setBackgroundColor,
+    clearMousedownCallback,
+    setMousedownCallback,
+    disableSelection,
+    enableSelection,
 } from "../../utils/canvas";
-
-function selectionCallbackHelper(cnvObjs, scrMgr) {
-    scrMgr.scrMgrSelectionCallback(cnvObjs);
-}
+import { AppMode } from "../constants/app-modes";
 
 class ScreenManager {
     #canvas = null;
     #currentPage = null;
     #selectionCallback = null;
+    #appMode = AppMode.Select;
+
+    constructor() {
+        this.addObjectOnMousedown = this.addObjectOnMousedown.bind(this);
+        this.scrMgrSelectionCallback = this.scrMgrSelectionCallback.bind(this);
+    }
 
     getCanvas() {
         return this.#canvas;
@@ -66,7 +76,7 @@ class ScreenManager {
     }
 
     setSelectionCallback(callbk) {
-        setSelectionCallback(this.#canvas, selectionCallbackHelper, this);
+        setSelectionCallback(this.#canvas, this.scrMgrSelectionCallback);
         this.#selectionCallback = callbk;
     }
 
@@ -88,6 +98,64 @@ class ScreenManager {
             doSelection
         );
         return this.#canvas;
+    }
+
+    getAppMode() {
+        return this.#appMode;
+    }
+
+    addObjectOnMousedown(options) {
+        console.log("in aoomd");
+        switch (this.#appMode.submode) {
+            case "Rectangle":
+                if (this.#currentPage) {
+                    new RectScreenObject(this, this.#currentPage, {
+                        left: options.pointer.x,
+                        top: options.pointer.y,
+                        width: 100,
+                        height: 100,
+                        fillColor: "red",
+                    });
+                }
+                break;
+            case "Circle":
+                if (this.#currentPage) {
+                    new CircleScreenObject(this, this.#currentPage, {
+                        left: options.pointer.x,
+                        top: options.pointer.y,
+                        radius: 50,
+                        fillColor: "green",
+                    });
+                }
+                break;
+            default:
+        }
+    }
+
+    setAppMode(mode) {
+        if (this.#appMode === mode) return;
+        if (this.#appMode === AppMode.Select) {
+            // need to turn off the selection callback at the canvas level but don't
+            // clear here
+            clearSelectionCallback(this.#canvas);
+        } else {
+            clearMousedownCallback(this.#canvas, this.addObjectOnMousedown);
+        }
+        if (mode === AppMode.Select) {
+            // restore any selection callback
+            if (this.#selectionCallback) {
+                setSelectionCallback(
+                    this.#canvas,
+                    this.scrMgrSelectionCallback
+                );
+            }
+            enableSelection(this.#canvas);
+            this.#appMode = mode;
+        } else {
+            disableSelection(this.#canvas);
+            this.#appMode = mode;
+            setMousedownCallback(this.#canvas, this.addObjectOnMousedown);
+        }
     }
 }
 

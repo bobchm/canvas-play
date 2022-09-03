@@ -21,6 +21,12 @@ class RectScreenObject extends ScreenObject {
                 height: height,
                 fill: fillColor,
                 stroke: lineColor,
+                selectable: false,
+                hoverCursor: "default",
+                // lockMovementX: true,
+                // lockMovementY: true,
+                // hasControls: false,
+                // hasRotatingPoing: false,
             })
         );
     }
