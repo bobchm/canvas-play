@@ -49,13 +49,32 @@ function setMousedownCallback(cnv, callbk) {
 }
 
 function disableSelection(cnv) {
+    cnv.discardActiveObject();
+    cnv.renderAll();
     cnv.selection = false;
     cnv.interactive = false;
+    var objects = cnv.getObjects();
+    for (let i = 0; i < objects.length; i++) {
+        var obj = objects[i];
+        obj.selectable = false;
+        obj.hoverCursor = "default";
+    }
 }
 
 function enableSelection(cnv) {
     cnv.selection = true;
     cnv.interactive = true;
+    var objects = cnv.getObjects();
+    for (let i = 0; i < objects.length; i++) {
+        var obj = objects[i];
+        obj.selectable = true;
+        obj.hoverCursor = "move";
+    }
+}
+
+function setSelectedObject(cnv, obj) {
+    cnv.setActiveObject(obj);
+    cnv.renderAll();
 }
 
 function getObjectId() {
@@ -67,17 +86,22 @@ function setBackgroundColor(cnv, _bkgColor) {
     cnv.renderAll();
 }
 
+function finishObjectAdd(cnv, obj) {
+    obj.id = getObjectId();
+    obj.selectable = cnv.selection;
+    obj.hoverCursor = cnv.selection ? "move" : "default";
+    cnv.add(obj);
+}
+
 const addRect = (cnv, spec) => {
     const rect = new fabric.Rect(spec);
-    rect.id = getObjectId();
-    cnv.add(rect);
+    finishObjectAdd(cnv, rect);
     return rect;
 };
 
 const addCircle = (cnv, spec) => {
     const circle = new fabric.Circle(spec);
-    circle.id = getObjectId();
-    cnv.add(circle);
+    finishObjectAdd(cnv, circle);
     return circle;
 };
 
@@ -100,4 +124,5 @@ export {
     disableSelection,
     enableSelection,
     setBackgroundColor,
+    setSelectedObject,
 };

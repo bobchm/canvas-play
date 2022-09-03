@@ -8,9 +8,7 @@ import PlayCanvas from "./components/play-canvas/play-canvas.component";
 import ObjectPalette from "./components/object-palette/object-palette.component";
 
 import ApplicationManager from "./app/managers/application-manager";
-
-import RectScreenObject from "./app/screen-objects/rect-screen-object";
-import CircleScreenObject from "./app/screen-objects/circle-screen-object";
+import { AppMode } from "./app/constants/app-modes";
 
 const drawerWidth = 100;
 const appBarHeight = 64;
@@ -29,12 +27,14 @@ const canvasSpec = {
 
 const App = () => {
     const [title, setTitle] = useState("No selection");
-    const [appManager, setAppManager] = useState(initAppManager);
+    const [appManager] = useState(initAppManager);
+    const [appMode, setAppMode] = useState(AppMode.Select);
 
     useEffect(() => {
         var scrMgr = appManager.getScreenManager();
         console.log("app.js useEffect");
         scrMgr.setSelectionCallback(describeSelection);
+        scrMgr.setModeChangeCallback(onProgrammaticModeChange);
         appManager.openPage("Home");
     }, []);
 
@@ -57,7 +57,12 @@ const App = () => {
     }
 
     function modeCallback(mode) {
+        setAppMode(mode);
         appManager.getScreenManager().setAppMode(mode);
+    }
+
+    function onProgrammaticModeChange(mode) {
+        setAppMode(mode);
     }
 
     return (
@@ -77,6 +82,7 @@ const App = () => {
                     top={appBarHeight}
                     width={drawerWidth}
                     modeCallback={modeCallback}
+                    mode={appMode}
                 />
                 <div style={{ marginTop: appBarHeight }}>
                     <PlayCanvas spec={canvasSpec} appManager={appManager} />

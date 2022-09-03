@@ -11,6 +11,7 @@ import {
     setMousedownCallback,
     disableSelection,
     enableSelection,
+    setSelectedObject,
 } from "../../utils/canvas";
 import { AppMode } from "../constants/app-modes";
 
@@ -18,6 +19,7 @@ class ScreenManager {
     #canvas = null;
     #currentPage = null;
     #selectionCallback = null;
+    #modeChangeCallback = null;
     #appMode = AppMode.Select;
 
     constructor() {
@@ -80,6 +82,11 @@ class ScreenManager {
         this.#selectionCallback = callbk;
     }
 
+    setModeChangeCallback(callbk) {
+        // this is only called on programmatic mode changes
+        this.#modeChangeCallback = callbk;
+    }
+
     setBackgroundColor(_bkgColor) {
         setBackgroundColor(this.#canvas, _bkgColor);
     }
@@ -105,11 +112,11 @@ class ScreenManager {
     }
 
     addObjectOnMousedown(options) {
-        console.log("in aoomd");
+        var newObj = null;
         switch (this.#appMode.submode) {
             case "Rectangle":
                 if (this.#currentPage) {
-                    new RectScreenObject(this, this.#currentPage, {
+                    newObj = new RectScreenObject(this, this.#currentPage, {
                         left: options.pointer.x,
                         top: options.pointer.y,
                         width: 100,
@@ -120,7 +127,7 @@ class ScreenManager {
                 break;
             case "Circle":
                 if (this.#currentPage) {
-                    new CircleScreenObject(this, this.#currentPage, {
+                    newObj = new CircleScreenObject(this, this.#currentPage, {
                         left: options.pointer.x,
                         top: options.pointer.y,
                         radius: 50,
@@ -129,6 +136,14 @@ class ScreenManager {
                 }
                 break;
             default:
+                return;
+        }
+        if (newObj && newObj.getCanvasObj()) {
+            this.setAppMode(AppMode.Select);
+            if (this.#modeChangeCallback) {
+                this.#modeChangeCallback(AppMode.Select);
+            }
+            setSelectedObject(this.#canvas, newObj.getCanvasObj());
         }
     }
 
