@@ -6,11 +6,13 @@ import Typography from "@mui/material/Typography";
 
 import PlayCanvas from "./components/play-canvas/play-canvas.component";
 import ObjectPalette from "./components/object-palette/object-palette.component";
+import PropertyPalette from "./components/property-palette/property-palette.component";
 
 import ApplicationManager from "./app/managers/application-manager";
 import { AppMode } from "./app/constants/app-modes";
 
 const drawerWidth = 100;
+const propsWidth = 100;
 const appBarHeight = 64;
 
 const initAppManager = new ApplicationManager("fakeusername");
@@ -19,41 +21,56 @@ const canvasSpec = {
     id: "canvas",
     left: 0,
     top: appBarHeight,
-    width: window.innerWidth - drawerWidth,
+    width: window.innerWidth - (drawerWidth + propsWidth),
     height: window.innerHeight - appBarHeight,
     backgroundColor: "azure",
     doSelection: true,
 };
 
 const App = () => {
-    const [title, setTitle] = useState("No selection");
+    const [title, setTitle] = useState("Canvas Play");
     const [appManager] = useState(initAppManager);
     const [appMode, setAppMode] = useState(AppMode.Select);
+    const [editProperties, setEditProperties] = useState([]);
 
     useEffect(() => {
         var scrMgr = appManager.getScreenManager();
         console.log("app.js useEffect");
-        scrMgr.setSelectionCallback(describeSelection);
+        scrMgr.setSelectionCallback(handleSelectionChange);
         scrMgr.setModeChangeCallback(onProgrammaticModeChange);
         appManager.openPage("Home");
+        handleSelectionChange([]);
     }, []);
 
-    function describeSelection(objs) {
-        if (objs === null || objs.length === 0) {
-            setTitle("No selection");
-        } else {
-            var str = "";
-            for (var i = 0; i < objs.length; i++) {
-                var cnvObj = objs[i].getCanvasObj();
-                if (i > 0) {
-                    str += " and ";
+    function addToEditProperties(dest, src) {
+        for (let i = 0; i < dest.length; i++) {
+            if (dest[i].type === src.type) {
+                if (dest[i].current !== src.current) {
+                    dest[i].current = null;
                 }
-                if (cnvObj) {
-                    str += cnvObj.type;
+                return;
+            }
+        }
+        dest.push(src);
+    }
+
+    function handleSelectionChange(objs) {
+        var props = [];
+        if (!objs || objs.length <= 0) {
+            var page = appManager.getScreenManager().getCurrentPage();
+            if (page) {
+                objs = [page];
+            }
+        }
+        if (objs && objs.length > 0) {
+            for (let i = 0; i < objs.length; i++) {
+                var objProps = objs[i].getEditProperties();
+                for (let j = 0; j < objProps.length; j++) {
+                    addToEditProperties(props, objProps[j]);
                 }
             }
-            setTitle(str);
         }
+        setEditProperties(props);
     }
 
     function modeCallback(mode) {
@@ -87,6 +104,12 @@ const App = () => {
                 <div style={{ marginTop: appBarHeight }}>
                     <PlayCanvas spec={canvasSpec} appManager={appManager} />
                 </div>
+                <PropertyPalette
+                    left={drawerWidth + canvasSpec.width}
+                    top={appBarHeight}
+                    width={propsWidth}
+                    options={editProperties}
+                />
             </Box>
         </div>
     );

@@ -1,3 +1,4 @@
+import { PropertyType } from "../constants/property-types";
 import ScreenObject from "./screen-object";
 import { addRect } from "../../utils/canvas";
 
@@ -23,6 +24,34 @@ class RectScreenObject extends ScreenObject {
                 stroke: lineColor,
             })
         );
+    }
+
+    getEditProperties() {
+        var superProps = super.getEditProperties();
+        var thisProps = [
+            {
+                type: PropertyType.FillColor,
+                current: this.getCanvasObj().fill,
+            },
+            {
+                type: PropertyType.LineColor,
+                current: this.getCanvasObj().stroke,
+            },
+        ];
+        return superProps.concat(thisProps);
+    }
+
+    setEditProperty(screenMgr, type, value) {
+        switch (type) {
+            case PropertyType.FillColor:
+                this.getCanvasObj().fill = value;
+                break;
+            case PropertyType.LineColor:
+                this.getCanvasObj().stroke = value;
+                break;
+            default:
+                super.setEditProperty(type, value);
+        }
     }
 }
 

@@ -6,6 +6,7 @@ import {
     initCanvas,
     clearSelectionCallback,
     setSelectionCallback,
+    getBackgroundColor,
     setBackgroundColor,
     clearMousedownCallback,
     setMousedownCallback,
@@ -85,6 +86,10 @@ class ScreenManager {
     setModeChangeCallback(callbk) {
         // this is only called on programmatic mode changes
         this.#modeChangeCallback = callbk;
+    }
+
+    getBackgroundColor() {
+        return getBackgroundColor(this.#canvas);
     }
 
     setBackgroundColor(_bkgColor) {

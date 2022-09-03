@@ -1,3 +1,4 @@
+import { PropertyType } from "../constants/property-types";
 class ScreenObject {
     #id;
     #parent = null;
@@ -39,6 +40,21 @@ class ScreenObject {
 
     getChildren() {
         return [];
+    }
+
+    getEditProperties() {
+        return [
+            {
+                type: PropertyType.Id,
+                current: this.#id,
+            },
+        ];
+    }
+
+    setEditProperty(screenMgr, type, value) {
+        if (type === PropertyType.Id) {
+            this.#id = value;
+        }
     }
 }
 

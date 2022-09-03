@@ -81,6 +81,10 @@ function getObjectId() {
     return `#object-${objIdCtr++}`;
 }
 
+function getBackgroundColor(cnv) {
+    return cnv.backgroundColor;
+}
+
 function setBackgroundColor(cnv, _bkgColor) {
     cnv.backgroundColor = _bkgColor;
     cnv.renderAll();
@@ -123,6 +127,7 @@ export {
     setMousedownCallback,
     disableSelection,
     enableSelection,
+    getBackgroundColor,
     setBackgroundColor,
     setSelectedObject,
 };
