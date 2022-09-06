@@ -5,6 +5,7 @@ export const PropertyValueType = {
 
 export const PropertyType = {
     Id: { name: "ID", valueType: PropertyValueType.Text },
+    Name: { name: "Name", valueType: PropertyValueType.Text },
     FillColor: { name: "Fill Color", valueType: PropertyValueType.Color },
     LineColor: { name: "Line Color", valueType: PropertyValueType.Color },
     BackgroundColor: {

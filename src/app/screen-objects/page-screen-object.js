@@ -29,6 +29,10 @@ class PageScreenObject extends ContainerScreenObject {
                 type: PropertyType.BackgroundColor,
                 current: this.#backgroundColor,
             },
+            {
+                type: PropertyType.Name,
+                current: this.#name,
+            },
         ];
         return superProps.concat(thisProps);
     }
@@ -38,6 +42,9 @@ class PageScreenObject extends ContainerScreenObject {
             case PropertyType.BackgroundColor:
                 this.#backgroundColor = value;
                 screenMgr.setBackgroundColor(value);
+                break;
+            case PropertyType.Name:
+                this.#name = value;
                 break;
             default:
                 super.setEditProperty(type, value);
