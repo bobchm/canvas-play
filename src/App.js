@@ -105,7 +105,6 @@ const App = () => {
                     <PlayCanvas spec={canvasSpec} appManager={appManager} />
                 </div>
                 <PropertyPalette
-                    left={drawerWidth + canvasSpec.width}
                     top={appBarHeight}
                     width={propsWidth}
                     options={editProperties}
