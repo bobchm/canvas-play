@@ -37,7 +37,7 @@ const App = () => {
         var scrMgr = appManager.getScreenManager();
         console.log("app.js useEffect");
         scrMgr.setSelectionCallback(handleSelectionChange);
-        scrMgr.setModeChangeCallback(onProgrammaticModeChange);
+        scrMgr.setModeChangeCallback(handleProgrammaticModeChange);
         appManager.openPage("Home");
         handleSelectionChange([]);
     }, []);
@@ -73,14 +73,16 @@ const App = () => {
         setEditProperties(props);
     }
 
-    function modeCallback(mode) {
+    function handleUserModeChange(mode) {
         setAppMode(mode);
         appManager.getScreenManager().setAppMode(mode);
     }
 
-    function onProgrammaticModeChange(mode) {
+    function handleProgrammaticModeChange(mode) {
         setAppMode(mode);
     }
+
+    function handlePropValueChange(propType, value) {}
 
     return (
         <div>
@@ -98,7 +100,7 @@ const App = () => {
                 <ObjectPalette
                     top={appBarHeight}
                     width={drawerWidth}
-                    modeCallback={modeCallback}
+                    modeCallback={handleUserModeChange}
                     mode={appMode}
                 />
                 <div style={{ marginTop: appBarHeight }}>
@@ -108,6 +110,7 @@ const App = () => {
                     top={appBarHeight}
                     width={propsWidth}
                     options={editProperties}
+                    propUpdateCallback={handlePropValueChange}
                 />
             </Box>
         </div>

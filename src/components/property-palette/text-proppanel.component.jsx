@@ -7,7 +7,7 @@ const TextPropertyPanel = ({ propOption, propUpdateCallback }) => {
             value={propOption.current}
             label={propOption.type.name}
             onChange={(e) => {
-                propUpdateCallback(e.target.value);
+                propUpdateCallback(propOption.type, e.target.value);
             }}
         />
     );
