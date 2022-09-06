@@ -12,7 +12,7 @@ import ApplicationManager from "./app/managers/application-manager";
 import { AppMode } from "./app/constants/app-modes";
 
 const drawerWidth = 100;
-const propsWidth = 100;
+const propsWidth = 200;
 const appBarHeight = 64;
 
 const initAppManager = new ApplicationManager("fakeusername");

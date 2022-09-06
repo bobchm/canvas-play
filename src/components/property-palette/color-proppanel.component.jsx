@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import SquareRoundedIcon from "@mui/icons-material/SquareRounded";
@@ -16,11 +16,14 @@ const ColorPropertyPanel = ({ propOption, propUpdateCallback }) => {
     return (
         <div>
             <Button
+                sx={{ width: "100%" }}
                 aria-describedby={id}
                 onClick={handleClick}
                 variant="outlined"
                 startIcon={
-                    <SquareRoundedIcon sx={{ color: propOption.current }} />
+                    <SquareRoundedIcon
+                        style={{ fontSize: "50px", color: propOption.current }}
+                    />
                 }
             >
                 {propOption.type.name}
