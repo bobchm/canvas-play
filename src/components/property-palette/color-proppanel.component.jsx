@@ -7,6 +7,7 @@ import ClickAwayListener from "@mui/material/ClickAwayListener";
 
 const ColorPropertyPanel = ({ propOption, propUpdateCallback }) => {
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const [color, setColor] = React.useState(propOption.current);
 
     const handleClick = (event) => {
         setAnchorEl(anchorEl ? null : event.currentTarget);
@@ -28,7 +29,7 @@ const ColorPropertyPanel = ({ propOption, propUpdateCallback }) => {
                 variant="outlined"
                 startIcon={
                     <SquareRoundedIcon
-                        style={{ fontSize: "50px", color: propOption.current }}
+                        style={{ fontSize: "50px", color: color }}
                     />
                 }
             >
@@ -41,6 +42,7 @@ const ColorPropertyPanel = ({ propOption, propUpdateCallback }) => {
                             color={propOption.current}
                             onChange={(color, e) => {
                                 propUpdateCallback(propOption.type, color.hex);
+                                setColor(color.hex);
                             }}
                         />
                     </div>
