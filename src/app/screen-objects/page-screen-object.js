@@ -26,12 +26,12 @@ class PageScreenObject extends ContainerScreenObject {
         var superProps = super.getEditProperties();
         var thisProps = [
             {
-                type: PropertyType.BackgroundColor,
-                current: this.#backgroundColor,
-            },
-            {
                 type: PropertyType.Name,
                 current: this.#name,
+            },
+            {
+                type: PropertyType.BackgroundColor,
+                current: this.#backgroundColor,
             },
         ];
         return superProps.concat(thisProps);
