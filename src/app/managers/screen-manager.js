@@ -16,6 +16,7 @@ import {
     refresh,
 } from "../../utils/canvas";
 import { AppMode } from "../constants/app-modes";
+import { ScreenObjectType } from "../constants/screen-object-types";
 
 class ScreenManager {
     #canvas = null;
@@ -196,7 +197,6 @@ class ScreenManager {
             }
         }
         if (objs) {
-            //console.log(objs, typeof objs);
             for (let i = 0; i < objs.length; i++) {
                 var obj = objs[i];
                 anySet = true;
@@ -205,6 +205,21 @@ class ScreenManager {
         }
         if (anySet) {
             refresh(this.#canvas);
+        }
+    }
+
+    createFromSpec(parent, spec) {
+        if (!spec) return null;
+
+        switch (spec.type) {
+            case ScreenObjectType.Page:
+                return new PageScreenObject(this, parent, spec);
+            case ScreenObjectType.Rectangle:
+                return new RectScreenObject(this, parent, spec);
+            case ScreenObjectType.Circle:
+                return new CircleScreenObject(this, parent, spec);
+            default:
+                return null;
         }
     }
 }

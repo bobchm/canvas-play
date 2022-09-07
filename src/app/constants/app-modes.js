@@ -1,7 +1,4 @@
-export const ScreenObjectType = {
-    Rectangle: "Rectangle",
-    Circle: "Circle",
-};
+import { ScreenObjectType } from "./screen-object-types";
 
 export const AppMode = {
     Select: { mode: "Select", submode: "" },

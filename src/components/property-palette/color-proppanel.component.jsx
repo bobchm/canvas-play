@@ -14,7 +14,6 @@ const ColorPropertyPanel = ({ propOption, propUpdateCallback }) => {
     };
 
     const handleClickAway = () => {
-        console.log("click away");
         setAnchorEl(null);
     };
 
@@ -28,7 +27,7 @@ const ColorPropertyPanel = ({ propOption, propUpdateCallback }) => {
                     color: "black",
                     borderColor: "black",
                     textTransform: "none",
-                    backgroundColor: "antiquewhite",
+                    backgroundColor: "azure",
                 }}
                 aria-describedby={id}
                 onClick={handleClick}

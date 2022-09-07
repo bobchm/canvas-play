@@ -34,7 +34,7 @@ const PercentPropertyPanel = ({ propOption, propUpdateCallback }) => {
         <Paper
             variant="outlined"
             sx={{
-                backgroundColor: "antiquewhite",
+                backgroundColor: "azure",
                 border: 1,
                 boderColor: "black",
             }}

@@ -8,7 +8,7 @@ const TextPropertyPanel = ({ propOption, propUpdateCallback }) => {
         <TextField
             sx={{
                 width: "100%",
-                backgroundColor: "antiquewhite",
+                backgroundColor: "azure",
                 color: "black",
             }}
             value={value}

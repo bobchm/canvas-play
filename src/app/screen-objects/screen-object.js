@@ -4,14 +4,19 @@ class ScreenObject {
     #parent = null;
     #canvasObj = null;
 
-    constructor(_parent, _id) {
-        if (!_id || _id.length === 0) {
+    constructor(_screenMgr, _parent, _spec) {
+        var { id = "" } = _spec;
+        if (!id || id.length === 0) {
             // we'll fix this at some point
-            _id = `${Date.now()}`;
+            id = `${Date.now()}`;
         }
-        this.#id = _id;
+        this.#id = id;
         this.#parent = _parent;
         _parent?.addChild(this);
+    }
+
+    toJSON() {
+        return { id: this.#id };
     }
 
     getId() {
@@ -53,7 +58,6 @@ class ScreenObject {
 
     setEditProperty(screenMgr, type, value) {
         if (type === PropertyType.Id) {
-            console.log(value);
             this.#id = value;
         }
     }

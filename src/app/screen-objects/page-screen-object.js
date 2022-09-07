@@ -1,25 +1,29 @@
 import { PropertyType } from "../constants/property-types";
 import ContainerScreenObject from "./container-screen-object";
+import { ScreenObjectType } from "../constants/screen-object-types";
 
 class PageScreenObject extends ContainerScreenObject {
-    #children = [];
     #name;
     #backgroundColor;
 
     constructor(_screenMgr, _parent, _spec) {
-        const {
-            id = "",
-            backgroundColor = "white",
-            children = [],
-            name = "",
-        } = _spec;
+        const { backgroundColor = "white", name = "" } = _spec;
 
-        super(_parent, id);
+        super(_screenMgr, _parent, _spec);
 
         this.#name = name;
         this.#backgroundColor = backgroundColor;
         _screenMgr.setBackgroundColor(backgroundColor);
-        this.#children = this.createChildren(children);
+    }
+
+    toJSON() {
+        var superSpec = super.toJSON();
+        var spec = {
+            type: ScreenObjectType.Page,
+            name: this.#name,
+            backgroundColor: this.#backgroundColor,
+        };
+        return { ...superSpec, ...spec };
     }
 
     getEditProperties() {
@@ -34,7 +38,6 @@ class PageScreenObject extends ContainerScreenObject {
                 current: this.#backgroundColor,
             },
         ];
-        console.log("get: ", this.#name);
         return superProps.concat(thisProps);
     }
 
@@ -45,7 +48,6 @@ class PageScreenObject extends ContainerScreenObject {
                 screenMgr.setBackgroundColor(value);
                 break;
             case PropertyType.Name:
-                console.log("set: ", value);
                 this.#name = value;
                 break;
             default:

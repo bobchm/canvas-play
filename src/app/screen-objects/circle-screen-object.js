@@ -1,18 +1,18 @@
 import { PropertyType } from "../constants/property-types";
 import ScreenObject from "./screen-object";
 import { addCircle } from "../../utils/canvas";
+import { ScreenObjectType } from "../constants/screen-object-types";
 
 class CircleScreenObject extends ScreenObject {
     constructor(_screenMgr, _parent, _spec) {
         const {
-            id = "",
             left = 0,
             top = 0,
             radius = 10,
             fillColor = "white",
             lineColor = "black",
         } = _spec;
-        super(_parent, id);
+        super(_screenMgr, _parent, _spec);
         this.setCanvasObj(
             addCircle(_screenMgr.getCanvas(), {
                 left: left,
@@ -22,6 +22,20 @@ class CircleScreenObject extends ScreenObject {
                 stroke: lineColor,
             })
         );
+    }
+
+    toJSON() {
+        var superSpec = super.toJSON();
+        var cobj = this.getCanvasObj();
+        var spec = {
+            type: ScreenObjectType.Circle,
+            left: cobj.left,
+            top: cobj.top,
+            radius: cobj.radius,
+            fillColor: cobj.fill,
+            lineColor: cobj.stroke,
+        };
+        return { ...superSpec, ...spec };
     }
 
     getEditProperties() {

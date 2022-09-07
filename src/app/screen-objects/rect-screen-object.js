@@ -1,11 +1,11 @@
 import { PropertyType } from "../constants/property-types";
 import ScreenObject from "./screen-object";
 import { addRect } from "../../utils/canvas";
+import { ScreenObjectType } from "../constants/screen-object-types";
 
 class RectScreenObject extends ScreenObject {
     constructor(_screenMgr, _parent, _spec) {
         const {
-            id = "",
             left = 0,
             top = 0,
             width = 10,
@@ -13,7 +13,7 @@ class RectScreenObject extends ScreenObject {
             fillColor = "white",
             lineColor = "black",
         } = _spec;
-        super(_parent, id);
+        super(_screenMgr, _parent, _spec);
         this.setCanvasObj(
             addRect(_screenMgr.getCanvas(), {
                 left: left,
@@ -24,6 +24,21 @@ class RectScreenObject extends ScreenObject {
                 stroke: lineColor,
             })
         );
+    }
+
+    toJSON() {
+        var superSpec = super.toJSON();
+        var cobj = this.getCanvasObj();
+        var spec = {
+            type: ScreenObjectType.Rectangle,
+            left: cobj.left,
+            top: cobj.top,
+            width: cobj.width,
+            height: cobj.height,
+            fillColor: cobj.fill,
+            lineColor: cobj.stroke,
+        };
+        return { ...superSpec, ...spec };
     }
 
     getEditProperties() {
