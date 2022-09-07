@@ -6,7 +6,6 @@ class ApplicationManager {
     #screenManager;
 
     constructor(userName, screenSpec) {
-        console.log("appManager constructor");
         this.#pageManager = new PageManager(userName);
         this.#screenManager = new ScreenManager(screenSpec);
     }

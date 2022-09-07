@@ -35,6 +35,10 @@ class CircleScreenObject extends ScreenObject {
                 type: PropertyType.LineColor,
                 current: this.getCanvasObj().stroke,
             },
+            {
+                type: PropertyType.Opacity,
+                current: this.getCanvasObj().opacity * 100,
+            },
         ];
         return superProps.concat(thisProps);
     }
@@ -47,8 +51,12 @@ class CircleScreenObject extends ScreenObject {
             case PropertyType.LineColor:
                 this.getCanvasObj().set("stroke", value);
                 break;
+            case PropertyType.Opacity:
+                var newValue = value / 100;
+                this.getCanvasObj().set("opacity", newValue);
+                break;
             default:
-                super.setEditProperty(type, value);
+                super.setEditProperty(screenMgr, type, value);
         }
     }
 }

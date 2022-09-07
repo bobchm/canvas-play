@@ -34,6 +34,7 @@ class PageScreenObject extends ContainerScreenObject {
                 current: this.#backgroundColor,
             },
         ];
+        console.log("get: ", this.#name);
         return superProps.concat(thisProps);
     }
 
@@ -44,10 +45,11 @@ class PageScreenObject extends ContainerScreenObject {
                 screenMgr.setBackgroundColor(value);
                 break;
             case PropertyType.Name:
+                console.log("set: ", value);
                 this.#name = value;
                 break;
             default:
-                super.setEditProperty(type, value);
+                super.setEditProperty(screenMgr, type, value);
         }
     }
 }

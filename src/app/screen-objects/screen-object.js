@@ -53,6 +53,7 @@ class ScreenObject {
 
     setEditProperty(screenMgr, type, value) {
         if (type === PropertyType.Id) {
+            console.log(value);
             this.#id = value;
         }
     }

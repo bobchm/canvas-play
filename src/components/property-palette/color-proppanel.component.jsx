@@ -7,7 +7,7 @@ import ClickAwayListener from "@mui/material/ClickAwayListener";
 
 const ColorPropertyPanel = ({ propOption, propUpdateCallback }) => {
     const [anchorEl, setAnchorEl] = React.useState(null);
-    const [color, setColor] = React.useState(propOption.current);
+    const [color, setColor] = React.useState(propOption.current || "#D3D3D3");
 
     const handleClick = (event) => {
         setAnchorEl(anchorEl ? null : event.currentTarget);
@@ -23,7 +23,13 @@ const ColorPropertyPanel = ({ propOption, propUpdateCallback }) => {
     return (
         <div>
             <Button
-                sx={{ width: "100%" }}
+                sx={{
+                    width: "100%",
+                    color: "black",
+                    borderColor: "black",
+                    textTransform: "none",
+                    backgroundColor: "antiquewhite",
+                }}
                 aria-describedby={id}
                 onClick={handleClick}
                 variant="outlined"
@@ -39,7 +45,7 @@ const ColorPropertyPanel = ({ propOption, propUpdateCallback }) => {
                 <ClickAwayListener onClickAway={handleClickAway}>
                     <div>
                         <TwitterPicker
-                            color={propOption.current}
+                            color={color}
                             onChange={(color, e) => {
                                 propUpdateCallback(propOption.type, color.hex);
                                 setColor(color.hex);

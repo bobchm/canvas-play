@@ -3,8 +3,12 @@ import Box from "@mui/material/Box";
 
 import TextPropertyPanel from "./text-proppanel.component";
 import ColorPropertyPanel from "./color-proppanel.component";
+import PercentPropertyPanel from "./percent-proppanel.component";
+
 import "./property-palette.styles.scss";
 import { PropertyValueType } from "../../app/constants/property-types";
+
+var ctr = 0;
 
 const PropertyPalette = ({ top, width, options, propUpdateCallback }) => {
     const selectPanel = (option, propUpdateCallback) => {
@@ -23,6 +27,13 @@ const PropertyPalette = ({ top, width, options, propUpdateCallback }) => {
                         propUpdateCallback={propUpdateCallback}
                     />
                 );
+            case PropertyValueType.Percent:
+                return (
+                    <PercentPropertyPanel
+                        propOption={option}
+                        propUpdateCallback={propUpdateCallback}
+                    />
+                );
             default:
                 return <h1>No Matching Panel Element</h1>;
         }
@@ -33,11 +44,13 @@ const PropertyPalette = ({ top, width, options, propUpdateCallback }) => {
             sx={{
                 mt: `${top}px`,
                 width: width,
-                bgcolor: "background.paper",
+                bgcolor: "lightgray",
+                border: 1,
+                borderColor: "black",
             }}
         >
             {options.map((option, idx) => (
-                <div key={idx} className="prop-panel-item">
+                <div key={ctr++} className="prop-panel-item">
                     {selectPanel(option, propUpdateCallback)}
                 </div>
             ))}

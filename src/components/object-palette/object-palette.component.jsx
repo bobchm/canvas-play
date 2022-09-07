@@ -41,7 +41,9 @@ const ObjectPalette = ({ top, width, modeCallback, mode }) => {
             sx={{
                 mt: `${top}px`,
                 width: width,
-                bgcolor: "background.paper",
+                bgcolor: "lightgray",
+                border: 1,
+                borderColor: "black",
             }}
         >
             <Tabs

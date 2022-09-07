@@ -5,7 +5,6 @@ const PlayCanvas = ({ spec, appManager }) => {
 
     useEffect(() => {
         if (appManager && appManager.getScreenManager()) {
-            console.log("createCanvas");
             canvas.current = appManager.getScreenManager().createCanvas(spec);
         }
     }, []);

@@ -1,6 +1,7 @@
 export const PropertyValueType = {
     Color: "color",
     Text: "text",
+    Percent: "percent",
 };
 
 export const PropertyType = {
@@ -11,5 +12,9 @@ export const PropertyType = {
     BackgroundColor: {
         name: "Background Color",
         valueType: PropertyValueType.Color,
+    },
+    Opacity: {
+        name: "Opacity",
+        valueType: PropertyValueType.Percent,
     },
 };

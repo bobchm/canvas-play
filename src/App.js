@@ -35,7 +35,6 @@ const App = () => {
 
     useEffect(() => {
         var scrMgr = appManager.getScreenManager();
-        console.log("app.js useEffect");
         scrMgr.setSelectionCallback(handleSelectionChange);
         scrMgr.setModeChangeCallback(handleProgrammaticModeChange);
         appManager.openPage("Home");
@@ -82,8 +81,19 @@ const App = () => {
         setAppMode(mode);
     }
 
+    function refreshLocalProperties(propType, value) {
+        if (editProperties) {
+            for (let i = 0; i < editProperties.length; i++) {
+                if (editProperties[i].type === propType) {
+                    editProperties[i].current = value;
+                }
+            }
+        }
+    }
+
     function handlePropValueChange(propType, value) {
         appManager.getScreenManager().setSelectionProperties(propType, value);
+        refreshLocalProperties(propType, value);
     }
 
     return (
