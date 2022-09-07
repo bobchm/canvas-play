@@ -97,6 +97,10 @@ function finishObjectAdd(cnv, obj) {
     cnv.add(obj);
 }
 
+function refresh(cnv) {
+    cnv.renderAll();
+}
+
 const addRect = (cnv, spec) => {
     const rect = new fabric.Rect(spec);
     finishObjectAdd(cnv, rect);
@@ -130,4 +134,5 @@ export {
     getBackgroundColor,
     setBackgroundColor,
     setSelectedObject,
+    refresh,
 };

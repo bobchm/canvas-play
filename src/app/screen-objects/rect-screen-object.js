@@ -44,10 +44,10 @@ class RectScreenObject extends ScreenObject {
     setEditProperty(screenMgr, type, value) {
         switch (type) {
             case PropertyType.FillColor:
-                this.getCanvasObj().fill = value;
+                this.getCanvasObj().set("fill", value);
                 break;
             case PropertyType.LineColor:
-                this.getCanvasObj().stroke = value;
+                this.getCanvasObj().set("stroke", value);
                 break;
             default:
                 super.setEditProperty(type, value);

@@ -13,6 +13,7 @@ import {
     disableSelection,
     enableSelection,
     setSelectedObject,
+    refresh,
 } from "../../utils/canvas";
 import { AppMode } from "../constants/app-modes";
 
@@ -22,6 +23,7 @@ class ScreenManager {
     #selectionCallback = null;
     #modeChangeCallback = null;
     #appMode = AppMode.Select;
+    #selectedObjects = null;
 
     constructor() {
         this.addObjectOnMousedown = this.addObjectOnMousedown.bind(this);
@@ -70,12 +72,18 @@ class ScreenManager {
         if (this.#selectionCallback && this.#currentPage) {
             var scrObjs = this.#canvasObjsToScreen(this.#currentPage, cnvObjs);
             this.#selectionCallback(scrObjs);
+            this.#selectedObjects = scrObjs;
         }
     }
 
     clearSelectionCallback() {
         clearSelectionCallback(this.#canvas);
         this.#selectionCallback = null;
+        this.#selectedObjects = null;
+    }
+
+    getSelectedObjects() {
+        return this.#selectedObjects;
     }
 
     setSelectionCallback(callbk) {
@@ -175,6 +183,28 @@ class ScreenManager {
             disableSelection(this.#canvas);
             this.#appMode = mode;
             setMousedownCallback(this.#canvas, this.addObjectOnMousedown);
+        }
+    }
+
+    setSelectionProperties(propType, value) {
+        var objs = this.#selectedObjects;
+        var anySet = false;
+        if (!objs || objs.length <= 0) {
+            var page = this.#currentPage;
+            if (page) {
+                objs = [page];
+            }
+        }
+        if (objs) {
+            //console.log(objs, typeof objs);
+            for (let i = 0; i < objs.length; i++) {
+                var obj = objs[i];
+                anySet = true;
+                obj.setEditProperty(this, propType, value);
+            }
+        }
+        if (anySet) {
+            refresh(this.#canvas);
         }
     }
 }

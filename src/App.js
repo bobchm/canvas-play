@@ -82,7 +82,9 @@ const App = () => {
         setAppMode(mode);
     }
 
-    function handlePropValueChange(propType, value) {}
+    function handlePropValueChange(propType, value) {
+        appManager.getScreenManager().setSelectionProperties(propType, value);
+    }
 
     return (
         <div>
