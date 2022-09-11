@@ -75,6 +75,8 @@ const App = () => {
     function handleUserModeChange(mode) {
         setAppMode(mode);
         appManager.getScreenManager().setAppMode(mode);
+        var jsonPage = appManager.getScreenManager().getCurrentPage().toJSON();
+        console.log(jsonPage);
     }
 
     function handleProgrammaticModeChange(mode) {

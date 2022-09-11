@@ -1,0 +1,33 @@
+{
+    "_id": {
+        "$oid": "631e0c155add3da073ae0035"
+    },
+    "name": “Home”,
+    "content": {
+        "id": "#HomePage",
+        "children": [
+            {
+              "id": "1662913291824",
+              "type": "Rectangle",
+              "left": 85.96875,
+              "top": 41,
+              "width": 100,
+              "height": 100,
+              "fillColor": "red",
+              "lineColor": "black"
+            },
+            {
+              "id": "1662913302307",
+              "type": "Circle",
+              "left": 147.96875,
+              "top": 183,
+              "radius": 50,
+              "fillColor": "green",
+              "lineColor": "black"
+            }
+        ],
+        "type": "Page",
+        "name": "Home",
+        "backgroundColor": "antiquewhite"
+    }
+}
