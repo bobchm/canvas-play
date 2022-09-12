@@ -1,17 +1,18 @@
-import PageManager from "./page-manager";
+import UserActivityManager from "./user-activity-manager";
 import ScreenManager from "./screen-manager";
 
 class ApplicationManager {
-    #pageManager;
+    #userActivityManager;
     #screenManager;
 
     constructor(userName, screenSpec) {
-        this.#pageManager = new PageManager(userName);
+        this.#userActivityManager = new UserActivityManager();
+        this.#userActivityManager.setUser(userName);
         this.#screenManager = new ScreenManager(screenSpec);
     }
 
-    getPageManager() {
-        return this.#pageManager;
+    getUserActivityManager() {
+        return this.#userActivityManager;
     }
 
     getScreenManager() {
@@ -19,7 +20,7 @@ class ApplicationManager {
     }
 
     openPage(pageName) {
-        var pageSpec = this.#pageManager.getPage(pageName);
+        var pageSpec = this.#userActivityManager.getUserPage(pageName);
         if (pageSpec) {
             this.#screenManager.openPage(pageSpec);
         }

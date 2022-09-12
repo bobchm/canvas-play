@@ -15,7 +15,7 @@ const drawerWidth = 100;
 const propsWidth = 200;
 const appBarHeight = 64;
 
-const initAppManager = new ApplicationManager("fakeusername");
+const initAppManager = initAppForNow();
 
 const canvasSpec = {
     id: "canvas",
@@ -26,6 +26,13 @@ const canvasSpec = {
     backgroundColor: "azure",
     doSelection: true,
 };
+
+function initAppForNow() {
+    var appMgr = new ApplicationManager("bobchm@gmail.com");
+    appMgr.getUserActivityManager.setActivity("First Activity");
+    appMgr.openPage("Home");
+    return appMgr;
+}
 
 const App = () => {
     const [title, setTitle] = useState("Canvas Play");
@@ -75,8 +82,6 @@ const App = () => {
     function handleUserModeChange(mode) {
         setAppMode(mode);
         appManager.getScreenManager().setAppMode(mode);
-        var jsonPage = appManager.getScreenManager().getCurrentPage().toJSON();
-        console.log(jsonPage);
     }
 
     function handleProgrammaticModeChange(mode) {
