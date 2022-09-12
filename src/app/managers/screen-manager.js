@@ -13,6 +13,7 @@ import {
     disableSelection,
     enableSelection,
     setSelectedObject,
+    deleteSelectedObjects,
     refresh,
 } from "../../utils/canvas";
 import { AppMode } from "../constants/app-modes";
@@ -30,6 +31,7 @@ class ScreenManager {
     constructor() {
         this.addObjectOnMousedown = this.addObjectOnMousedown.bind(this);
         this.scrMgrSelectionCallback = this.scrMgrSelectionCallback.bind(this);
+        this.setModified = this.setModified.bind(this);
     }
 
     getCanvas() {
@@ -88,6 +90,19 @@ class ScreenManager {
         return this.#selectedObjects;
     }
 
+    deleteSelectedObjects() {
+        if (this.#currentPage && this.#selectedObjects) {
+            for (let i = 0; i < this.#selectedObjects.length; i++) {
+                var obj = this.#selectedObjects[i];
+                this.#currentPage.removeChild(obj);
+            }
+            deleteSelectedObjects(this.#canvas);
+            refresh(this.#canvas);
+            if (this.#selectionCallback) this.#selectionCallback([]);
+            this.#selectedObjects = [];
+        }
+    }
+
     setSelectionCallback(callbk) {
         setSelectionCallback(this.#canvas, this.scrMgrSelectionCallback);
         this.#selectionCallback = callbk;
@@ -129,7 +144,8 @@ class ScreenManager {
             width,
             height,
             backgroundColor,
-            doSelection
+            doSelection,
+            this.setModified
         );
         return this.#canvas;
     }

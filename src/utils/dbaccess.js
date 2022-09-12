@@ -198,7 +198,7 @@ async function addPage(activityId, page) {
 async function updatePage(page) {
     await fetch(contentURL(`page/update/${page._id}`), {
         method: "POST",
-        body: JSON.stringify([page]),
+        body: JSON.stringify(page),
         headers: {
             "Content-Type": "application/json",
         },

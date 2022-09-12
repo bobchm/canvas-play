@@ -19,7 +19,9 @@ export default function ButtonBar({ top, height, buttons }) {
             }}
         >
             {buttons.map((button, idx) => (
-                <IconButton onClick={button.callback}>{button.icon}</IconButton>
+                <IconButton key={idx} onClick={button.callback}>
+                    {button.icon}
+                </IconButton>
             ))}
         </Box>
     );

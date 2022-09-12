@@ -9,7 +9,8 @@ function initCanvas(
     _width,
     _height,
     _bkgColor,
-    _doSelection
+    _doSelection,
+    _modifiedCallback
 ) {
     var cnv = new fabric.Canvas(_id, {
         left: _left,
@@ -20,6 +21,13 @@ function initCanvas(
         selection: _doSelection,
         renderOnAddRemove: true,
     });
+
+    if (_modifiedCallback) {
+        cnv.on({
+            "object:moved": _modifiedCallback,
+            "object:modified": _modifiedCallback,
+        });
+    }
 
     return cnv;
 }
@@ -120,6 +128,21 @@ const addTriangle = (cnv, spec) => {
     return triangle;
 };
 
+function removeObject(cnv, obj) {
+    cnv.remove(obj);
+}
+
+function deleteSelectedObjects(cnv) {
+    var active = cnv.getActiveObject();
+    if (active) {
+        cnv.remove(active);
+        if (active.type === "activeSelection") {
+            active.getObjects().forEach((x) => cnv.remove(x));
+            cnv.discardActiveObject().renderAll();
+        }
+    }
+}
+
 export {
     initCanvas,
     addRect,
@@ -134,5 +157,7 @@ export {
     getBackgroundColor,
     setBackgroundColor,
     setSelectedObject,
+    removeObject,
+    deleteSelectedObjects,
     refresh,
 };

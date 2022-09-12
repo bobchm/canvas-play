@@ -94,7 +94,7 @@ class UserActivityManager {
     }
 
     async modifyUserPage(spec) {
-        if (this.hasPage(spec.name)) {
+        if (this.hasUserPage(spec.name)) {
             await updatePage(spec);
             this.#pageHash.set(spec.name, spec);
         }

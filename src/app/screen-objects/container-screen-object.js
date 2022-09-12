@@ -29,7 +29,7 @@ class ContainerScreenObject extends ScreenObject {
     }
 
     removeChild(_child) {
-        this.#children = this.#children.filter((child) => child === _child);
+        this.#children = this.#children.filter((child) => child !== _child);
     }
 
     createChildren(_specArray) {

@@ -11,6 +11,7 @@ class CircleScreenObject extends ScreenObject {
             radius = 10,
             fillColor = "white",
             lineColor = "black",
+            opacity = 1.0,
         } = _spec;
         super(_screenMgr, _parent, _spec);
         this.setCanvasObj(
@@ -20,6 +21,7 @@ class CircleScreenObject extends ScreenObject {
                 radius: radius,
                 fill: fillColor,
                 stroke: lineColor,
+                opacity: opacity,
             })
         );
     }
@@ -34,6 +36,7 @@ class CircleScreenObject extends ScreenObject {
             radius: cobj.radius,
             fillColor: cobj.fill,
             lineColor: cobj.stroke,
+            opacity: cobj.opacity,
         };
         return { ...superSpec, ...spec };
     }

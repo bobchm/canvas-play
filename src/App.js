@@ -144,10 +144,22 @@ const App = () => {
     function handleDeleteActivity() {}
 
     function HandleSavePage() {
-        markChanged(false);
+        if (isModified) {
+            var page = appManager.getScreenManager().getCurrentPage();
+            if (page) {
+                var content = page.toJSON();
+                var spec = appManager
+                    .getUserActivityManager()
+                    .getUserPage(page.getName());
+                spec.content = content;
+                appManager.getUserActivityManager().modifyUserPage(spec);
+                markChanged(false);
+            }
+        }
     }
 
     function HandleDeleteSelection() {
+        appManager.getScreenManager().deleteSelectedObjects();
         markChanged(true);
     }
 

@@ -12,6 +12,7 @@ class RectScreenObject extends ScreenObject {
             height = 10,
             fillColor = "white",
             lineColor = "black",
+            opacity = 1.0,
         } = _spec;
         super(_screenMgr, _parent, _spec);
         this.setCanvasObj(
@@ -22,6 +23,7 @@ class RectScreenObject extends ScreenObject {
                 height: height,
                 fill: fillColor,
                 stroke: lineColor,
+                opacity: opacity,
             })
         );
     }
@@ -37,6 +39,7 @@ class RectScreenObject extends ScreenObject {
             height: cobj.height,
             fillColor: cobj.fill,
             lineColor: cobj.stroke,
+            opacity: cobj.opacity,
         };
         return { ...superSpec, ...spec };
     }
