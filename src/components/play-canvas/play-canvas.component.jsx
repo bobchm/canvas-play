@@ -7,6 +7,7 @@ const PlayCanvas = ({ spec, appManager }) => {
         if (appManager && appManager.getScreenManager()) {
             canvas.current = appManager.getScreenManager().createCanvas(spec);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     return <canvas id={spec.id} />;
 };

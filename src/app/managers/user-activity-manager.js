@@ -1,8 +1,5 @@
 import {
-    getAllUsers,
     getUser,
-    addUser,
-    deleteUser,
     getActivity,
     addActivity,
     deleteActivity,

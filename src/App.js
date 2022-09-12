@@ -56,6 +56,7 @@ const App = () => {
 
     useEffect(() => {
         initAppForNow(appManager);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     function initAppForNow(appMgr) {

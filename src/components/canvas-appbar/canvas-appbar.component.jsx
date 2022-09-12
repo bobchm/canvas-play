@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Toolbar from "@mui/material/Toolbar";
@@ -10,7 +9,6 @@ import MenuItem from "@mui/material/MenuItem";
 import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
-import { StayPrimaryLandscape } from "@mui/icons-material";
 
 export default function CanvasAppBar({ title, actions }) {
     const [anchor, setAnchor] = useState(null);
@@ -21,10 +19,6 @@ export default function CanvasAppBar({ title, actions }) {
 
     return (
         <Box sx={{ flex: 1, flexGrow: 1, backgroundColor: "primary.dark" }}>
-            {/* <AppBar
-                position="fixed"
-                sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
-            > */}
             <Toolbar>
                 <IconButton
                     size="large"
@@ -73,7 +67,6 @@ export default function CanvasAppBar({ title, actions }) {
                     <AccountCircleRoundedIcon sx={{ color: "white" }} />
                 </IconButton>
             </Toolbar>
-            {/* </AppBar> */}
         </Box>
     );
 }
