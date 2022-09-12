@@ -7,8 +7,11 @@ class ApplicationManager {
 
     constructor(userName, screenSpec) {
         this.#userActivityManager = new UserActivityManager();
-        this.#userActivityManager.setUser(userName);
         this.#screenManager = new ScreenManager(screenSpec);
+    }
+
+    async setUser(userName) {
+        return await this.#userActivityManager.setUser(userName);
     }
 
     getUserActivityManager() {
@@ -22,7 +25,7 @@ class ApplicationManager {
     openPage(pageName) {
         var pageSpec = this.#userActivityManager.getUserPage(pageName);
         if (pageSpec) {
-            this.#screenManager.openPage(pageSpec);
+            this.#screenManager.openPage(pageSpec.content);
         }
     }
 }

@@ -41,8 +41,6 @@ const PropertyPalette = ({ top, width, options, propUpdateCallback }) => {
 
     return (
         <Box
-            display="flex"
-            justifyContent="flex-end"
             sx={{
                 mt: `${top}px`,
                 width: width,

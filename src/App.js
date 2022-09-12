@@ -6,27 +6,21 @@ import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import PlayCanvas from "./components/play-canvas/play-canvas.component";
 import ObjectPalette from "./components/object-palette/object-palette.component";
 import PropertyPalette from "./components/property-palette/property-palette.component";
-import CanvasAppBar from "./components/CanvasAppBar/canvas-appbar.component";
+import CanvasAppBar from "./components/canvas-appbar/canvas-appbar.component";
 
 import ApplicationManager from "./app/managers/application-manager";
 import { AppMode } from "./app/constants/app-modes";
+import ButtonBar from "./components/button-bar/button-bar.component";
 
 const drawerWidth = 100;
 const propsWidth = 200;
 const appBarHeight = 64;
 const buttonBarHeight = 30;
-const aboveCanvasHeight = appBarHeight + buttonBarHeight;
+const aboveCanvasHeight = appBarHeight;
 
 const appName = "Canvas Play";
 
-const initAppManager = initAppForNow();
-
-function initAppForNow() {
-    var appMgr = new ApplicationManager("bobchm@gmail.com");
-    appMgr.getUserActivityManager.setActivity("First Activity");
-    appMgr.openPage("Home");
-    return appMgr;
-}
+const initAppManager = new ApplicationManager();
 
 const App = () => {
     const [title, setTitle] = useState(appName);
@@ -38,7 +32,7 @@ const App = () => {
     const canvasSpec = {
         id: "canvas",
         left: 0,
-        top: aboveCanvasHeight,
+        top: 0,
         width: window.innerWidth - (drawerWidth + propsWidth),
         height: window.innerHeight - aboveCanvasHeight,
         backgroundColor: "azure",
@@ -61,14 +55,25 @@ const App = () => {
     ];
 
     useEffect(() => {
-        var scrMgr = appManager.getScreenManager();
-        scrMgr.setSelectionCallback(handleSelectionChange);
-        scrMgr.setModeChangeCallback(handleProgrammaticModeChange);
-        scrMgr.setModifiedCallback(() => markChanged(true));
-        appManager.openPage("Home");
-        handleSelectionChange([]);
-        markChanged(false);
+        initAppForNow(appManager);
     }, []);
+
+    function initAppForNow(appMgr) {
+        appMgr.setUser("bobchm@gmail.com").then((response) => {
+            appMgr
+                .getUserActivityManager()
+                .setActivity("First Activity")
+                .then((resp) => {
+                    appMgr.openPage("Home");
+                    var scrMgr = appManager.getScreenManager();
+                    scrMgr.setSelectionCallback(handleSelectionChange);
+                    scrMgr.setModeChangeCallback(handleProgrammaticModeChange);
+                    scrMgr.setModifiedCallback(() => markChanged(true));
+                    handleSelectionChange([]);
+                    markChanged(false);
+                });
+        });
+    }
 
     function addToEditProperties(dest, src) {
         for (let i = 0; i < dest.length; i++) {
@@ -148,16 +153,17 @@ const App = () => {
 
     function markChanged(isChanged) {
         setIsModified(isChanged);
-        resetTitle();
+        resetTitle(isChanged);
     }
 
-    function resetTitle() {
+    function resetTitle(isChanged) {
         var newTitle = appName;
         if (appManager.getScreenManager().getCurrentPage()) {
             newTitle +=
-                " -- " + appManager.getScreenManager.getCurrentPage().getName();
+                " -- " +
+                appManager.getScreenManager().getCurrentPage().getName();
         }
-        if (isModified) {
+        if (isChanged) {
             newTitle += "*";
         }
         setTitle(newTitle);
@@ -166,7 +172,12 @@ const App = () => {
     return (
         <div>
             <CanvasAppBar actions={appBarMenuItems} title={title} />
-            <Box sx={{ display: "flex" }}>
+            <ButtonBar
+                top="0px"
+                height={buttonBarHeight}
+                buttons={buttonBarSpec}
+            />
+            <Box sx={{ display: "flex", top: "0px" }}>
                 <ObjectPalette
                     top={aboveCanvasHeight}
                     width={drawerWidth}

@@ -25,14 +25,14 @@ class UserActivityManager {
         this.#pageHash = new Map();
     }
 
-    getCurrentUserInfo() {
-        if (!this.#currentUserName) return null;
-
-        return getUser(this.#currentUserName);
+    async getCurrentUserInfo() {
+        if (!this.#currentUserName)
+            throw new Error("getCurrentUserInfo: no curren user");
+        return await getUser(this.#currentUserName);
     }
 
-    setUser(userName) {
-        var user = getUser(userName);
+    async setUser(userName) {
+        var user = await getUser(userName);
         if (!user) {
             throw new Error(`Unknown user: ${userName}`);
         }
@@ -40,38 +40,39 @@ class UserActivityManager {
         this.#currentUserName = userName;
         this.#currentUserId = user._id;
         this.#currentActivityId = null;
+        return;
     }
 
-    setActivity(activityName) {
-        var user = getUser(this.#currentUserName);
+    async setActivity(activityName) {
+        var user = await getUser(this.#currentUserName);
         if (!user) {
             throw new Error(`Unknown user: ${this.#currentUserName}`);
         }
         for (let i = 0; i < user.activities.length; i++) {
-            var activity = getActivity(user.activities[i]);
+            var activity = await getActivity(user.activities[i]);
             if (activity && activity.name === activityName) {
                 this.#currentActivityId = activity._id;
                 for (let j = 0; j < activity.pages.length; j++) {
-                    var page = getPage(activity.pages[i]);
+                    var page = await getPage(activity.pages[i]);
                     if (page) {
                         this.#pageHash.set(page.name, page);
                     }
                 }
-                return;
+                break;
             }
         }
-        throw new Error(`Unknown user: ${this.#currentUserName}`);
+        return;
     }
 
-    addUserActivity(activity) {
-        return addActivity(this.#currentUserId, activity);
+    async addUserActivity(activity) {
+        return await addActivity(this.#currentUserId, activity);
     }
 
-    deleteUserActivity(activityId) {
+    async deleteUserActivity(activityId) {
         if (activityId === this.#currentActivityId) {
             throw new Error("Cannot delete the current activity");
         }
-        deleteActivity(this.#currentUserId, activityId);
+        await deleteActivity(this.#currentUserId, activityId);
     }
 
     hasUserPage(name) {
@@ -82,25 +83,28 @@ class UserActivityManager {
         return this.#pageHash.get(name);
     }
 
-    addUserPage(spec) {
-        var id = addPage(this.#currentActivityId, spec);
+    async addUserPage(spec) {
+        var id = await addPage(this.#currentActivityId, spec);
         if (id) {
-            this.#pageHash.set(spec.name, getPage(id));
+            var page = await getPage(id);
+            if (page) {
+                this.#pageHash.set(spec.name, page);
+            }
         }
     }
 
-    modifyUserPage(spec) {
+    async modifyUserPage(spec) {
         if (this.hasPage(spec.name)) {
-            updatePage(spec);
+            await updatePage(spec);
             this.#pageHash.set(spec.name, spec);
         }
     }
 
-    removePage(name) {
+    async removePage(name) {
         var spec = this.getUserPage(name);
         if (spec) {
-            deletePage(this.#currentActivityId, spec._id);
             this.#pageHash.delete(name);
+            await deletePage(this.#currentActivityId, spec._id);
         }
     }
 }
