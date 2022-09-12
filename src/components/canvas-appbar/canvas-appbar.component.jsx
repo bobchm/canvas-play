@@ -10,6 +10,7 @@ import MenuItem from "@mui/material/MenuItem";
 import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
+import { StayPrimaryLandscape } from "@mui/icons-material";
 
 export default function CanvasAppBar({ title, actions }) {
     const [anchor, setAnchor] = useState(null);
@@ -19,7 +20,7 @@ export default function CanvasAppBar({ title, actions }) {
     };
 
     return (
-        <Box sx={{ flex: 1, flexGrow: 1 }}>
+        <Box sx={{ flex: 1, flexGrow: 1, backgroundColor: "primary.dark" }}>
             {/* <AppBar
                 position="fixed"
                 sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
@@ -28,12 +29,12 @@ export default function CanvasAppBar({ title, actions }) {
                 <IconButton
                     size="large"
                     edge="start"
-                    color="inherit"
                     aria-label="menu"
+                    color="inherit"
                     sx={{ mr: 2 }}
                     onClick={openMenu}
                 >
-                    <MenuIcon />
+                    <MenuIcon sx={{ color: "white" }} />
                 </IconButton>
                 <Menu
                     open={Boolean(anchor)}
@@ -61,11 +62,15 @@ export default function CanvasAppBar({ title, actions }) {
                         )
                     )}
                 </Menu>
-                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                <Typography
+                    variant="h6"
+                    component="div"
+                    sx={{ color: "white", flexGrow: 1 }}
+                >
                     {title}
                 </Typography>
                 <IconButton color="inherit" edge="end">
-                    <AccountCircleRoundedIcon />
+                    <AccountCircleRoundedIcon sx={{ color: "white" }} />
                 </IconButton>
             </Toolbar>
             {/* </AppBar> */}

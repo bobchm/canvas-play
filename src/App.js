@@ -16,7 +16,7 @@ const drawerWidth = 100;
 const propsWidth = 200;
 const appBarHeight = 64;
 const buttonBarHeight = 30;
-const aboveCanvasHeight = appBarHeight;
+const aboveCanvasHeight = appBarHeight + buttonBarHeight;
 
 const appName = "Canvas Play";
 
@@ -179,16 +179,16 @@ const App = () => {
             />
             <Box sx={{ display: "flex", top: "0px" }}>
                 <ObjectPalette
-                    top={aboveCanvasHeight}
+                    top={0}
                     width={drawerWidth}
                     modeCallback={handleUserModeChange}
                     mode={appMode}
                 />
-                <div style={{ marginTop: aboveCanvasHeight }}>
+                <div style={{ marginTop: 0 }}>
                     <PlayCanvas spec={canvasSpec} appManager={appManager} />
                 </div>
                 <PropertyPalette
-                    top={aboveCanvasHeight}
+                    top={0}
                     width={propsWidth}
                     options={editProperties}
                     propUpdateCallback={handlePropValueChange}

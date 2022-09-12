@@ -8,13 +8,14 @@ export default function ButtonBar({ top, height, buttons }) {
             display="flex"
             justifyContent="flex-end"
             sx={{
-                top: `${top}px`,
+                top: top,
                 left: "0px",
                 width: "100%",
                 height: `${height}px`,
-                bgcolor: "red",
+                bgcolor: "white",
                 border: 1,
                 borderColor: "black",
+                boxSizing: "border-box",
             }}
         >
             {buttons.map((button, idx) => (
