@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
@@ -46,16 +47,19 @@ export default function CanvasAppBar({ title, actions }) {
                             },
                         }}
                     >
-                        {actions.map(function (action, idx) {
-                            return (
+                        {actions.map((action, idx) =>
+                            action.label === "--divider--" ? (
+                                <Divider />
+                            ) : (
                                 <MenuItem
                                     key={idx}
                                     onClick={(event) => action.callback(event)}
                                 >
                                     <ListItemText>{action.label}</ListItemText>
                                 </MenuItem>
-                            );
-                        })}
+                            )
+                        )}
+                        ;
                     </Menu>
                     <Typography
                         variant="h6"

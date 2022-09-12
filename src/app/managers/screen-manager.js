@@ -23,6 +23,7 @@ class ScreenManager {
     #currentPage = null;
     #selectionCallback = null;
     #modeChangeCallback = null;
+    #modifiedCallback = null;
     #appMode = AppMode.Select;
     #selectedObjects = null;
 
@@ -97,12 +98,24 @@ class ScreenManager {
         this.#modeChangeCallback = callbk;
     }
 
+    setModifiedCallback(callbk) {
+        // this is only called on programmatic mode changes
+        this.#modifiedCallback = callbk;
+    }
+
     getBackgroundColor() {
         return getBackgroundColor(this.#canvas);
     }
 
     setBackgroundColor(_bkgColor) {
         setBackgroundColor(this.#canvas, _bkgColor);
+        this.setModified();
+    }
+
+    setModified() {
+        if (this.#modifiedCallback) {
+            this.#modifiedCallback();
+        }
     }
 
     createCanvas(screenSpec) {
@@ -137,6 +150,7 @@ class ScreenManager {
                         height: 100,
                         fillColor: "red",
                     });
+                    this.setModified();
                 }
                 break;
             case "Circle":
@@ -147,6 +161,7 @@ class ScreenManager {
                         radius: 50,
                         fillColor: "green",
                     });
+                    this.setModified();
                 }
                 break;
             default:

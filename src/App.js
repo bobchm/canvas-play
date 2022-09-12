@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
+import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
+import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 
 import PlayCanvas from "./components/play-canvas/play-canvas.component";
 import ObjectPalette from "./components/object-palette/object-palette.component";
@@ -12,18 +14,12 @@ import { AppMode } from "./app/constants/app-modes";
 const drawerWidth = 100;
 const propsWidth = 200;
 const appBarHeight = 64;
+const buttonBarHeight = 30;
+const aboveCanvasHeight = appBarHeight + buttonBarHeight;
+
+const appName = "Canvas Play";
 
 const initAppManager = initAppForNow();
-
-const canvasSpec = {
-    id: "canvas",
-    left: 0,
-    top: appBarHeight,
-    width: window.innerWidth - (drawerWidth + propsWidth),
-    height: window.innerHeight - appBarHeight,
-    backgroundColor: "azure",
-    doSelection: true,
-};
 
 function initAppForNow() {
     var appMgr = new ApplicationManager("bobchm@gmail.com");
@@ -33,10 +29,21 @@ function initAppForNow() {
 }
 
 const App = () => {
-    const [title, setTitle] = useState("Canvas Play");
+    const [title, setTitle] = useState(appName);
     const [appManager] = useState(initAppManager);
     const [appMode, setAppMode] = useState(AppMode.Select);
     const [editProperties, setEditProperties] = useState([]);
+    const [isModified, setIsModified] = useState(false);
+
+    const canvasSpec = {
+        id: "canvas",
+        left: 0,
+        top: aboveCanvasHeight,
+        width: window.innerWidth - (drawerWidth + propsWidth),
+        height: window.innerHeight - aboveCanvasHeight,
+        backgroundColor: "azure",
+        doSelection: true,
+    };
 
     const appBarMenuItems = [
         { label: "Add Page", callback: handleAddPage },
@@ -48,12 +55,19 @@ const App = () => {
         { label: "Delete Activity", callback: handleDeleteActivity },
     ];
 
+    const buttonBarSpec = [
+        { icon: <SaveRoundedIcon />, callback: HandleSavePage },
+        { icon: <DeleteRoundedIcon />, callback: HandleDeleteSelection },
+    ];
+
     useEffect(() => {
         var scrMgr = appManager.getScreenManager();
         scrMgr.setSelectionCallback(handleSelectionChange);
         scrMgr.setModeChangeCallback(handleProgrammaticModeChange);
+        scrMgr.setModifiedCallback(() => markChanged(true));
         appManager.openPage("Home");
         handleSelectionChange([]);
+        markChanged(false);
     }, []);
 
     function addToEditProperties(dest, src) {
@@ -109,6 +123,7 @@ const App = () => {
     function handlePropValueChange(propType, value) {
         appManager.getScreenManager().setSelectionProperties(propType, value);
         refreshLocalProperties(propType, value);
+        markChanged(true);
     }
 
     function handleAddPage() {}
@@ -123,21 +138,46 @@ const App = () => {
 
     function handleDeleteActivity() {}
 
+    function HandleSavePage() {
+        markChanged(false);
+    }
+
+    function HandleDeleteSelection() {
+        markChanged(true);
+    }
+
+    function markChanged(isChanged) {
+        setIsModified(isChanged);
+        resetTitle();
+    }
+
+    function resetTitle() {
+        var newTitle = appName;
+        if (appManager.getScreenManager().getCurrentPage()) {
+            newTitle +=
+                " -- " + appManager.getScreenManager.getCurrentPage().getName();
+        }
+        if (isModified) {
+            newTitle += "*";
+        }
+        setTitle(newTitle);
+    }
+
     return (
         <div>
             <CanvasAppBar actions={appBarMenuItems} title={title} />
             <Box sx={{ display: "flex" }}>
                 <ObjectPalette
-                    top={appBarHeight}
+                    top={aboveCanvasHeight}
                     width={drawerWidth}
                     modeCallback={handleUserModeChange}
                     mode={appMode}
                 />
-                <div style={{ marginTop: appBarHeight }}>
+                <div style={{ marginTop: aboveCanvasHeight }}>
                     <PlayCanvas spec={canvasSpec} appManager={appManager} />
                 </div>
                 <PropertyPalette
-                    top={appBarHeight}
+                    top={aboveCanvasHeight}
                     width={propsWidth}
                     options={editProperties}
                     propUpdateCallback={handlePropValueChange}

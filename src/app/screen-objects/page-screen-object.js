@@ -54,6 +54,10 @@ class PageScreenObject extends ContainerScreenObject {
                 super.setEditProperty(screenMgr, type, value);
         }
     }
+
+    getName() {
+        return this.#name;
+    }
 }
 
 export default PageScreenObject;
