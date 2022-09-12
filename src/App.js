@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
 
 import PlayCanvas from "./components/play-canvas/play-canvas.component";
 import ObjectPalette from "./components/object-palette/object-palette.component";
 import PropertyPalette from "./components/property-palette/property-palette.component";
+import CanvasAppBar from "./components/CanvasAppBar/canvas-appbar.component";
 
 import ApplicationManager from "./app/managers/application-manager";
 import { AppMode } from "./app/constants/app-modes";
@@ -39,6 +37,16 @@ const App = () => {
     const [appManager] = useState(initAppManager);
     const [appMode, setAppMode] = useState(AppMode.Select);
     const [editProperties, setEditProperties] = useState([]);
+
+    const appBarMenuItems = [
+        { label: "Add Page", callback: handleAddPage },
+        { label: "Open Page", callback: handleOpenPage },
+        { label: "Delete Page", callback: handleDeletePage },
+        { label: "--divider--" },
+        { label: "Add Activity", callback: handleAddActivity },
+        { label: "Open Activity", callback: handleOpenActivity },
+        { label: "Delete Activity", callback: handleDeleteActivity },
+    ];
 
     useEffect(() => {
         var scrMgr = appManager.getScreenManager();
@@ -103,18 +111,21 @@ const App = () => {
         refreshLocalProperties(propType, value);
     }
 
+    function handleAddPage() {}
+
+    function handleOpenPage() {}
+
+    function handleDeletePage() {}
+
+    function handleAddActivity() {}
+
+    function handleOpenActivity() {}
+
+    function handleDeleteActivity() {}
+
     return (
         <div>
-            <AppBar
-                position="fixed"
-                sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
-            >
-                <Toolbar>
-                    <Typography variant="h6" noWrap component="div">
-                        {title}
-                    </Typography>
-                </Toolbar>
-            </AppBar>
+            <CanvasAppBar actions={appBarMenuItems} title={title} />
             <Box sx={{ display: "flex" }}>
                 <ObjectPalette
                     top={appBarHeight}
