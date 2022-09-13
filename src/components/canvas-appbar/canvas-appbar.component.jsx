@@ -49,7 +49,10 @@ export default function CanvasAppBar({ title, actions }) {
                         ) : (
                             <MenuItem
                                 key={idx}
-                                onClick={(event) => action.callback(event)}
+                                onClick={(event) => {
+                                    setAnchor(null);
+                                    action.callback(event);
+                                }}
                             >
                                 <ListItemText>{action.label}</ListItemText>
                             </MenuItem>
