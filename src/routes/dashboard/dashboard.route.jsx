@@ -3,6 +3,17 @@ import { useNavigate } from "react-router-dom";
 import Container from "@mui/material/Container";
 import List from "@mui/material/List";
 import Typography from "@mui/material/Typography";
+import confirmationBox from "../../utils/confirm-box";
+
+//
+// const optionsWithLabelChange = {
+//     closeOnOverlayClick: false,
+//     labels: {
+//       confirmable: "Confirm",
+//       cancellable: "Cancel"
+//     }
+//   };
+
 import ActivityCard from "../../components/activity-card/activity-card.component";
 import CanvasAppBar from "../../components/canvas-appbar/canvas-appbar.component";
 
@@ -23,13 +34,12 @@ const Dashboard = () => {
 
     const appBarMenuItems = [
         { label: "Add Activity", callback: handleAddActivity },
-        { label: "Open Activity", callback: handleOpenActivity },
-        { label: "Delete Activity", callback: handleDeleteActivity },
     ];
 
     var activityActions = [
         { label: "Play", action: playActivity },
         { label: "Edit", action: editActivity },
+        { label: "Delete", action: deleteActivity },
     ];
 
     useEffect(() => {
@@ -63,11 +73,17 @@ const Dashboard = () => {
         navigate(`/edit?userName=${userName}&activityName=${activity}`);
     }
 
+    async function deleteActivity(activity) {
+        if (await confirmationBox()) {
+            console.log("Yes");
+        } else {
+            console.log("No");
+        }
+    }
+
     function handleAddActivity() {}
 
     function handleOpenActivity() {}
-
-    function handleDeleteActivity() {}
 
     return (
         <div>
