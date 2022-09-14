@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
+import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 
 import PlayCanvas from "../../components/play-canvas/play-canvas.component";
 import ObjectPalette from "../../components/object-palette/object-palette.component";
@@ -11,6 +12,7 @@ import CanvasAppBar from "../../components/canvas-appbar/canvas-appbar.component
 import ButtonBar from "../../components/button-bar/button-bar.component";
 
 import ApplicationManager from "../../app/managers/application-manager";
+import confirmationBox from "../../utils/confirm-box";
 import { EditMode } from "./edit-modes";
 
 const drawerWidth = 100;
@@ -49,9 +51,13 @@ const Editor = () => {
         { label: "Delete Page", callback: handleDeletePage },
     ];
 
-    const buttonBarSpec = [
+    const rightButtonBarSpec = [
         { icon: <SaveRoundedIcon />, callback: handleSavePage },
         { icon: <DeleteRoundedIcon />, callback: handleDeleteSelection },
+    ];
+
+    const leftButtonBarSpec = [
+        { icon: <ArrowBackRoundedIcon />, callback: handleBackToActivities },
     ];
 
     useEffect(() => {
@@ -149,6 +155,18 @@ const Editor = () => {
 
     function handleDeletePage() {}
 
+    async function handleBackToActivities() {
+        if (
+            isModified &&
+            (await confirmationBox(
+                "You made changes. Would you like to save them?"
+            ))
+        ) {
+            handleSavePage();
+        }
+        navigate("/");
+    }
+
     function handleSavePage() {
         if (isModified) {
             var page = appManager.getScreenManager().getCurrentPage();
@@ -193,7 +211,8 @@ const Editor = () => {
             <ButtonBar
                 top="0px"
                 height={buttonBarHeight}
-                buttons={buttonBarSpec}
+                leftButtons={leftButtonBarSpec}
+                rightButtons={rightButtonBarSpec}
             />
             <Box sx={{ display: "flex", top: "0px" }}>
                 <ObjectPalette

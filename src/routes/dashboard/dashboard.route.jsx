@@ -78,8 +78,6 @@ const Dashboard = () => {
         setIsActivityCreateOpen(true);
     }
 
-    function handleOpenActivity() {}
-
     function handleCreateActivity(name) {
         setIsActivityCreateOpen(false);
         console.log("create activity: ", name);
@@ -115,6 +113,7 @@ const Dashboard = () => {
                     open={isActivityCreateOpen}
                     question="Create New Activity?"
                     contentText="Enter the name of your new activity."
+                    textLabel="Activity Name"
                     yesLabel="Create"
                     yesCallback={handleCreateActivity}
                     noLabel="Cancel"
