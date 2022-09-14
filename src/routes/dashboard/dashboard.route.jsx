@@ -6,7 +6,7 @@ import Typography from "@mui/material/Typography";
 import ActivityCard from "../../components/activity-card/activity-card.component";
 import CanvasAppBar from "../../components/canvas-appbar/canvas-appbar.component";
 
-import ApplicationManager from "../../app/managers/application-manager";
+import { getUser, getActivity } from "../../utils/dbaccess";
 import "./dashboard.styles.scss";
 
 const initUserName = "bobchm@gmail.com";
@@ -17,6 +17,7 @@ var height = window.innerHeight - 64;
 
 const Dashboard = () => {
     const [userName, setUserName] = useState(initUserName);
+    const [activities, setActivities] = useState([]);
 
     const navigate = useNavigate();
 
@@ -30,6 +31,29 @@ const Dashboard = () => {
         { label: "Play", action: playActivity },
         { label: "Edit", action: editActivity },
     ];
+
+    useEffect(() => {
+        initializeCurrentUser();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    function addToActivities(activity) {
+        setActivities((current) => [...current, activity]);
+    }
+
+    function initializeCurrentUser() {
+        getUser(userName).then((user) => {
+            if (!user) {
+                throw new Error(`Unknown user: ${userName}`);
+            }
+            setActivities([]);
+            for (let i = 0; i < user.activities.length; i++) {
+                getActivity(user.activities[i]).then((activity) =>
+                    addToActivities({ name: activity.name, _id: activity._id })
+                );
+            }
+        });
+    }
 
     function playActivity(activity) {
         console.log("Play: ", activity);
@@ -56,10 +80,10 @@ const Dashboard = () => {
                     Activities for {userName}
                 </Typography>
                 <List className="dashboard-list">
-                    {[0, 1, 2, 3, 5, 6, 7, 8, 9].map((item, idx) => (
+                    {activities.map((activity, idx) => (
                         <ActivityCard
                             key={idx}
-                            name="First Activity"
+                            name={activity.name}
                             image="https://howtodrawforkids.com/wp-content/uploads/2022/05/9-easy-monkey-drawing-tutorial.jpg"
                             description="This is my favorite activity!"
                             actions={activityActions}

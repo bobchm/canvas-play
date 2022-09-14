@@ -14,6 +14,8 @@ class UserActivityManager {
     #currentUserId = null;
     #currentActivityId = null;
 
+    #homePage = null;
+
     #pageHash;
 
     constructor() {
@@ -53,6 +55,9 @@ class UserActivityManager {
                     var page = await getPage(activity.pages[i]);
                     if (page) {
                         this.#pageHash.set(page.name, page);
+                        if (activity.home === page._id) {
+                            this.#homePage = page.name;
+                        }
                     }
                 }
                 break;
@@ -78,6 +83,23 @@ class UserActivityManager {
 
     getUserPage(name) {
         return this.#pageHash.get(name);
+    }
+
+    getNumPages() {
+        return this.#pageHash.size;
+    }
+
+    getNthPage(n) {
+        var i = 0;
+        for (const value of this.#pageHash.values()) {
+            if (i++ === n) return value;
+        }
+        return null;
+    }
+
+    getHomePage() {
+        if (!this.#homePage) return null;
+        return this.getUserPage(this.#homePage);
     }
 
     async addUserPage(spec) {

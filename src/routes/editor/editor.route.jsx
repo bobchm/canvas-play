@@ -69,8 +69,15 @@ const Editor = () => {
                 .getUserActivityManager()
                 .setActivity(activityName)
                 .then((resp) => {
-                    appMgr.openPage("Home");
                     var scrMgr = appManager.getScreenManager();
+                    var userMgr = appManager.getUserActivityManager();
+                    var page = userMgr.getHomePage();
+                    if (page === null) {
+                        page = userMgr.getNthPage(0);
+                    }
+                    if (page) {
+                        appMgr.openPage(page.name);
+                    }
                     scrMgr.setSelectionCallback(handleSelectionChange);
                     scrMgr.setAfterAddCallback(handleAfterAdd);
                     scrMgr.setModifiedCallback(() => markChanged(true));
