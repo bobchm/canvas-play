@@ -16,16 +16,16 @@ import {
     deleteSelectedObjects,
     refresh,
 } from "../../utils/canvas";
-import { AppMode } from "../constants/app-modes";
+
 import { ScreenObjectType } from "../constants/screen-object-types";
 
 class ScreenManager {
     #canvas = null;
     #currentPage = null;
+    #addObjectMode = null;
     #selectionCallback = null;
-    #modeChangeCallback = null;
+    #afterAddCallback = null;
     #modifiedCallback = null;
-    #appMode = AppMode.Select;
     #selectedObjects = null;
 
     constructor() {
@@ -108,13 +108,13 @@ class ScreenManager {
         this.#selectionCallback = callbk;
     }
 
-    setModeChangeCallback(callbk) {
-        // this is only called on programmatic mode changes
-        this.#modeChangeCallback = callbk;
+    setAfterAddCallback(callbk) {
+        // this is only called after adding an object
+        this.#afterAddCallback = callbk;
     }
 
     setModifiedCallback(callbk) {
-        // this is only called on programmatic mode changes
+        // this is only called on modifications on the canvas
         this.#modifiedCallback = callbk;
     }
 
@@ -149,14 +149,9 @@ class ScreenManager {
         );
         return this.#canvas;
     }
-
-    getAppMode() {
-        return this.#appMode;
-    }
-
     addObjectOnMousedown(options) {
         var newObj = null;
-        switch (this.#appMode.submode) {
+        switch (this.#addObjectMode) {
             case "Rectangle":
                 if (this.#currentPage) {
                     newObj = new RectScreenObject(this, this.#currentPage, {
@@ -184,24 +179,23 @@ class ScreenManager {
                 return;
         }
         if (newObj && newObj.getCanvasObj()) {
-            this.setAppMode(AppMode.Select);
-            if (this.#modeChangeCallback) {
-                this.#modeChangeCallback(AppMode.Select);
+            if (this.#afterAddCallback) {
+                this.#afterAddCallback(newObj);
             }
             setSelectedObject(this.#canvas, newObj.getCanvasObj());
         }
     }
 
-    setAppMode(mode) {
-        if (this.#appMode === mode) return;
-        if (this.#appMode === AppMode.Select) {
+    setAddObjectMode(mode) {
+        if (this.#addObjectMode === mode) return;
+        if (this.#addObjectMode === null) {
             // need to turn off the selection callback at the canvas level but don't
             // clear here
             clearSelectionCallback(this.#canvas);
         } else {
             clearMousedownCallback(this.#canvas, this.addObjectOnMousedown);
         }
-        if (mode === AppMode.Select) {
+        if (mode === null) {
             // restore any selection callback
             if (this.#selectionCallback) {
                 setSelectionCallback(
@@ -210,10 +204,10 @@ class ScreenManager {
                 );
             }
             enableSelection(this.#canvas);
-            this.#appMode = mode;
+            this.#addObjectMode = mode;
         } else {
             disableSelection(this.#canvas);
-            this.#appMode = mode;
+            this.#addObjectMode = mode;
             setMousedownCallback(this.#canvas, this.addObjectOnMousedown);
         }
     }

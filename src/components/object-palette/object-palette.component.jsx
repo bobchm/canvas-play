@@ -7,23 +7,23 @@ import NorthWestRoundedIcon from "@mui/icons-material/NorthWestRounded";
 import CropSquareIcon from "@mui/icons-material/CropSquare";
 import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
 
-import { AppMode } from "../../app/constants/app-modes";
+import { EditMode } from "../../routes/editor/edit-modes";
 
 const options = [
     {
         icon: <NorthWestRoundedIcon />,
         label: "",
-        mode: AppMode.Select,
+        mode: EditMode.Select,
     },
     {
         icon: <CropSquareIcon />,
         label: "",
-        mode: AppMode.AddRectangle,
+        mode: EditMode.AddRectangle,
     },
     {
         icon: <PanoramaFishEyeIcon />,
         label: "",
-        mode: AppMode.AddCircle,
+        mode: EditMode.AddCircle,
     },
 ];
 

@@ -10,7 +10,7 @@ import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 
-export default function CanvasAppBar({ title, actions }) {
+export default function CanvasAppBar({ title, actions = [] }) {
     const [anchor, setAnchor] = useState(null);
 
     const openMenu = (event) => {
@@ -30,35 +30,37 @@ export default function CanvasAppBar({ title, actions }) {
                 >
                     <MenuIcon sx={{ color: "white" }} />
                 </IconButton>
-                <Menu
-                    open={Boolean(anchor)}
-                    anchorEl={anchor}
-                    onClose={() => setAnchor(null)}
-                    keepMounted
-                    // TransitionComponent={Slide}
-                    PaperProps={{
-                        style: {
-                            maxHeight: 40 * 10,
-                            width: "20ch",
-                        },
-                    }}
-                >
-                    {actions.map((action, idx) =>
-                        action.label === "--divider--" ? (
-                            <Divider key={idx} />
-                        ) : (
-                            <MenuItem
-                                key={idx}
-                                onClick={(event) => {
-                                    setAnchor(null);
-                                    action.callback(event);
-                                }}
-                            >
-                                <ListItemText>{action.label}</ListItemText>
-                            </MenuItem>
-                        )
-                    )}
-                </Menu>
+                {actions.length > 0 && (
+                    <Menu
+                        open={Boolean(anchor)}
+                        anchorEl={anchor}
+                        onClose={() => setAnchor(null)}
+                        keepMounted
+                        // TransitionComponent={Slide}
+                        PaperProps={{
+                            style: {
+                                maxHeight: 40 * 10,
+                                width: "20ch",
+                            },
+                        }}
+                    >
+                        {actions.map((action, idx) =>
+                            action.label === "--divider--" ? (
+                                <Divider key={idx} />
+                            ) : (
+                                <MenuItem
+                                    key={idx}
+                                    onClick={(event) => {
+                                        setAnchor(null);
+                                        action.callback(event);
+                                    }}
+                                >
+                                    <ListItemText>{action.label}</ListItemText>
+                                </MenuItem>
+                            )
+                        )}
+                    </Menu>
+                )}
                 <Typography
                     variant="h6"
                     component="div"
