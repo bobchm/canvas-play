@@ -3,16 +3,8 @@ import { useNavigate } from "react-router-dom";
 import Container from "@mui/material/Container";
 import List from "@mui/material/List";
 import Typography from "@mui/material/Typography";
+import TextInputModal from "../../components/text-input-modal/text-input-modal.component";
 import confirmationBox from "../../utils/confirm-box";
-
-//
-// const optionsWithLabelChange = {
-//     closeOnOverlayClick: false,
-//     labels: {
-//       confirmable: "Confirm",
-//       cancellable: "Cancel"
-//     }
-//   };
 
 import ActivityCard from "../../components/activity-card/activity-card.component";
 import CanvasAppBar from "../../components/canvas-appbar/canvas-appbar.component";
@@ -29,6 +21,7 @@ var height = window.innerHeight - 64;
 const Dashboard = () => {
     const [userName, setUserName] = useState(initUserName);
     const [activities, setActivities] = useState([]);
+    const [isActivityCreateOpen, setIsActivityCreateOpen] = useState(false);
 
     const navigate = useNavigate();
 
@@ -81,9 +74,21 @@ const Dashboard = () => {
         }
     }
 
-    function handleAddActivity() {}
+    function handleAddActivity() {
+        setIsActivityCreateOpen(true);
+    }
 
     function handleOpenActivity() {}
+
+    function handleCreateActivity(name) {
+        setIsActivityCreateOpen(false);
+        console.log("create activity: ", name);
+    }
+
+    function handleCancelCreateActivity(name) {
+        setIsActivityCreateOpen(false);
+        console.log("cancel create activity");
+    }
 
     return (
         <div>
@@ -106,6 +111,15 @@ const Dashboard = () => {
                         />
                     ))}
                 </List>
+                <TextInputModal
+                    open={isActivityCreateOpen}
+                    question="Create New Activity?"
+                    contentText="Enter the name of your new activity."
+                    yesLabel="Create"
+                    yesCallback={handleCreateActivity}
+                    noLabel="Cancel"
+                    noCallback={handleCancelCreateActivity}
+                />
             </Container>
         </div>
     );
