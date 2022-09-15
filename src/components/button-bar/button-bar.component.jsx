@@ -29,6 +29,7 @@ export default function ButtonBar({ top, height, leftButtons, rightButtons }) {
                     key={idx}
                     onClick={button.callback}
                     edge="end"
+                    title={button.tooltip}
                     sx={{ marginLeft: "2px" }}
                 >
                     {button.icon}
@@ -40,6 +41,7 @@ export default function ButtonBar({ top, height, leftButtons, rightButtons }) {
                         key={idx}
                         onClick={button.callback}
                         edge="end"
+                        title={button.tooltip}
                         sx={{ marginRight: "2px" }}
                     >
                         {button.icon}

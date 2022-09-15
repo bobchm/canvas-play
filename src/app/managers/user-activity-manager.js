@@ -52,7 +52,7 @@ class UserActivityManager {
             if (activity && activity.name === activityName) {
                 this.#currentActivityId = activity._id;
                 for (let j = 0; j < activity.pages.length; j++) {
-                    var page = await getPage(activity.pages[i]);
+                    var page = await getPage(activity.pages[j]);
                     if (page) {
                         this.#pageHash.set(page.name, page);
                         if (activity.home === page._id) {

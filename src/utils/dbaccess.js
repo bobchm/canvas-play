@@ -24,6 +24,18 @@ async function getUser(username) {
     return response.json();
 }
 
+// get a single user based on username
+async function getUserFromId(id) {
+    const response = await fetch(contentURL(`userid/${id}`));
+
+    if (!response.ok) {
+        console.log(`An error has occured: ${response.statusText}`);
+        return null;
+    }
+
+    return response.json();
+}
+
 // add user to the database from object
 async function addUser(user) {
     const response = await fetch(contentURL("user/add"), {
@@ -36,7 +48,8 @@ async function addUser(user) {
         console.log(error);
         return;
     });
-    return response.json();
+    var json = await response.json();
+    return json.ops[0];
 }
 
 // update user based on object
@@ -58,7 +71,7 @@ async function DBDeleteUser(id) {
 }
 
 async function deleteUser(id) {
-    var user = await getUser(id);
+    var user = await getUserFromId(id);
     if (!user) {
         console.log(`Error finding user: ${id}`);
         return;
@@ -94,7 +107,8 @@ async function DBAddActivity(activity) {
         console.log(error);
         return;
     });
-    return response.json();
+    var json = await response.json();
+    return json.ops[0];
 }
 
 async function addActivity(userid, activity) {
@@ -102,7 +116,7 @@ async function addActivity(userid, activity) {
     if (!newActivity) return null;
     const newId = newActivity._id;
 
-    var user = await getUser(userid);
+    var user = await getUserFromId(userid);
     if (!user) {
         DBDeleteActivity(newId);
         return null;
@@ -123,6 +137,11 @@ async function DBUpdateActivity(activity) {
     });
 }
 
+// update page based on object
+async function updateActivity(activity) {
+    DBUpdateActivity(activity);
+}
+
 // delete an activity from MongoDB based on id
 async function DBDeleteActivity(id) {
     await fetch(contentURL(`activity/${id}`), {
@@ -141,7 +160,7 @@ async function DBDeleteActivityAndPages(activityId) {
 }
 
 async function deleteActivity(userId, activityId) {
-    var user = await getUser(userId);
+    var user = await getUserFromId(userId);
     if (!user) {
         console.log(`Error finding user: ${userId}`);
         return;
@@ -176,7 +195,8 @@ async function DBAddPage(page) {
         console.log(error);
         return;
     });
-    return response.json();
+    var json = await response.json();
+    return json.ops[0];
 }
 
 async function addPage(activityId, page) {
@@ -227,10 +247,12 @@ async function deletePage(activityId, pageId) {
 export {
     getAllUsers,
     getUser,
+    getUserFromId,
     addUser,
     deleteUser,
     getActivity,
     addActivity,
+    updateActivity,
     deleteActivity,
     getPage,
     addPage,

@@ -51,13 +51,25 @@ const Editor = () => {
         { label: "Delete Page", callback: handleDeletePage },
     ];
 
-    const rightButtonBarSpec = [
-        { icon: <SaveRoundedIcon />, callback: handleSavePage },
-        { icon: <DeleteRoundedIcon />, callback: handleDeleteSelection },
+    const leftButtonBarSpec = [
+        {
+            icon: <ArrowBackRoundedIcon />,
+            callback: handleBackToActivities,
+            tooltip: "Back to Activity Center",
+        },
     ];
 
-    const leftButtonBarSpec = [
-        { icon: <ArrowBackRoundedIcon />, callback: handleBackToActivities },
+    const rightButtonBarSpec = [
+        {
+            icon: <SaveRoundedIcon />,
+            callback: handleSavePage,
+            tooltip: "Save Page",
+        },
+        {
+            icon: <DeleteRoundedIcon />,
+            callback: handleDeleteSelection,
+            tooltip: "Delete Selection",
+        },
     ];
 
     useEffect(() => {

@@ -5,11 +5,19 @@ import List from "@mui/material/List";
 import Typography from "@mui/material/Typography";
 import TextInputModal from "../../components/text-input-modal/text-input-modal.component";
 import confirmationBox from "../../utils/confirm-box";
+import { defaultPageSpec } from "../../utils/app-utils";
 
 import ActivityCard from "../../components/activity-card/activity-card.component";
 import CanvasAppBar from "../../components/canvas-appbar/canvas-appbar.component";
 
-import { getUser, getActivity } from "../../utils/dbaccess";
+import {
+    getUser,
+    getActivity,
+    addActivity,
+    updateActivity,
+    deleteActivity,
+    addPage,
+} from "../../utils/dbaccess";
 import "./dashboard.styles.scss";
 
 const initUserName = "bobchm@gmail.com";
@@ -29,10 +37,10 @@ const Dashboard = () => {
         { label: "Add Activity", callback: handleAddActivity },
     ];
 
-    var activityActions = [
+    const activityActions = [
         { label: "Play", action: playActivity },
         { label: "Edit", action: editActivity },
-        { label: "Delete", action: deleteActivity },
+        { label: "Delete", action: deleteAnActivity },
     ];
 
     useEffect(() => {
@@ -66,11 +74,26 @@ const Dashboard = () => {
         navigate(`/edit?userName=${userName}&activityName=${activity}`);
     }
 
-    async function deleteActivity(activity) {
+    function activityIdFromName(name) {
+        for (let i = 0; i < activities.length; i++) {
+            if (activities[i].name === name) return activities[i]._id;
+        }
+        return null;
+    }
+
+    async function deleteAnActivity(activity) {
         if (await confirmationBox()) {
-            console.log("Yes");
-        } else {
-            console.log("No");
+            getUser(userName).then((user) => {
+                if (!user) {
+                    throw new Error(`Unknown user: ${userName}`);
+                }
+                var actId = activityIdFromName(activity);
+                if (actId) {
+                    deleteActivity(user._id, actId).then((result) => {
+                        initializeCurrentUser();
+                    });
+                }
+            });
         }
     }
 
@@ -80,12 +103,33 @@ const Dashboard = () => {
 
     function handleCreateActivity(name) {
         setIsActivityCreateOpen(false);
-        console.log("create activity: ", name);
+        getUser(userName).then((user) => {
+            if (!user) {
+                throw new Error(`Unknown user: ${userName}`);
+            }
+            var spec = {
+                name: name,
+                pages: [],
+                home: null,
+            };
+            addActivity(user._id, spec).then((actId) => {
+                if (!actId) return;
+                // add a placeholder home page
+                addPage(actId, defaultPageSpec("Home")).then((pgId) => {
+                    if (!pgId) return;
+
+                    getActivity(actId).then((activity) => {
+                        activity.home = pgId;
+                        updateActivity(activity);
+                        initializeCurrentUser();
+                    });
+                });
+            });
+        });
     }
 
     function handleCancelCreateActivity(name) {
         setIsActivityCreateOpen(false);
-        console.log("cancel create activity");
     }
 
     return (

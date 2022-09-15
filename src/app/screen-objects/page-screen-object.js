@@ -13,7 +13,7 @@ class PageScreenObject extends ContainerScreenObject {
 
         this.#name = name;
         this.#backgroundColor = backgroundColor;
-        _screenMgr.setBackgroundColor(backgroundColor);
+        _screenMgr?.setBackgroundColor(backgroundColor);
     }
 
     toJSON() {

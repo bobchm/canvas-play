@@ -179,6 +179,7 @@ class ScreenManager {
                 return;
         }
         if (newObj && newObj.getCanvasObj()) {
+            this.setAddObjectMode(null);
             if (this.#afterAddCallback) {
                 this.#afterAddCallback(newObj);
             }
