@@ -10,7 +10,8 @@ import ObjectPalette from "../../components/object-palette/object-palette.compon
 import PropertyPalette from "../../components/property-palette/property-palette.component";
 import CanvasAppBar from "../../components/canvas-appbar/canvas-appbar.component";
 import ButtonBar from "../../components/button-bar/button-bar.component";
-import { ListModal } from "../../components/list-modal/list-modal.component";
+import ListModal from "../../components/list-modal/list-modal.component";
+import TextInputModal from "../../components/text-input-modal/text-input-modal.component";
 
 import ApplicationManager from "../../app/managers/application-manager";
 import confirmationBox from "../../utils/confirm-box";
@@ -34,6 +35,8 @@ const Editor = () => {
     const [isModified, setIsModified] = useState(false);
     const [isPagePickerOpen, setIsPagePickerOpen] = useState(false);
     const [pageList, setPageList] = useState([]);
+    const [pagePickerCallback, setPagePickerCallback] = null;
+    const [isAddPageOpen, setIsAddPageOpen] = useState(false);
 
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
@@ -164,7 +167,19 @@ const Editor = () => {
         markChanged(true);
     }
 
-    function handleAddPage() {}
+    function handleAddPage() {
+        setIsAddPageOpen(true);
+    }
+
+    function handleDoAddPage(name) {
+        setIsAddPageOpen(false);
+
+        // add the page
+    }
+
+    function handleCancelDoAddPage(name) {
+        setIsAddPageOpen(false);
+    }
 
     function getAllPagesButCurrent() {
         let curPage = appManager.getScreenManager().getCurrentPage();
@@ -188,11 +203,13 @@ const Editor = () => {
             return;
         }
         setPageList(pageNames);
+        setPagePickerCallback(handleSelectingOpenPage);
         setIsPagePickerOpen(true);
     }
 
     async function handleSelectingOpenPage(pageName) {
         setIsPagePickerOpen(false);
+        if (!pageName) return;
         if (
             isModified &&
             (await confirmationBox(
@@ -206,7 +223,29 @@ const Editor = () => {
         markChanged(false);
     }
 
-    function handleDeletePage() {}
+    function handleDeletePage() {
+        let pageNames = getAllPagesButCurrent();
+
+        if (!pageNames || pageNames.length === 0) {
+            alert("There are no other pages to delete.");
+            return;
+        }
+        setPageList(pageNames);
+        setPagePickerCallback(handleSelectingDeletePage);
+        setIsPagePickerOpen(true);
+    }
+
+    function handleSelectingDeletePage(pageName) {
+        setIsPagePickerOpen(false);
+        if (!pageName) return;
+
+        if (await confirmationBox(
+                `Are you sure you want to delete '${pageName}'?
+            )
+        ) {
+            // delete the page
+        }
+    }
 
     async function handleBackToActivities() {
         if (
@@ -286,8 +325,18 @@ const Editor = () => {
                 <ListModal
                     title="Select Page"
                     elements={pageList}
-                    onClose={handleSelectingOpenPage}
+                    onClose={pagePickerCallback}
                     open={isPagePickerOpen}
+                />
+                <TextInputModal
+                    open={isAddPageOpen}
+                    question="Add New Page?"
+                    contentText="Enter the name of your new page."
+                    textLabel="Page Name"
+                    yesLabel="Add"
+                    yesCallback={handleDoAddPage}
+                    noLabel="Cancel"
+                    noCallback={handleCancelDoAddPage}
                 />
             </Box>
         </div>
