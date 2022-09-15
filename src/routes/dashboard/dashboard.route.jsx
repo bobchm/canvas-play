@@ -52,18 +52,16 @@ const Dashboard = () => {
         setActivities((current) => [...current, activity]);
     }
 
-    function initializeCurrentUser() {
-        getUser(userName).then((user) => {
-            if (!user) {
-                throw new Error(`Unknown user: ${userName}`);
-            }
-            setActivities([]);
-            for (let i = 0; i < user.activities.length; i++) {
-                getActivity(user.activities[i]).then((activity) =>
-                    addToActivities({ name: activity.name, _id: activity._id })
-                );
-            }
-        });
+    async function initializeCurrentUser() {
+        const user = await getUser(userName);
+        if (!user) {
+            throw new Error(`Unknown user: ${userName}`);
+        }
+        setActivities([]);
+        for (let i = 0; i < user.activities.length; i++) {
+            const activity = await getActivity(user.activities[i]);
+            addToActivities({ name: activity.name, _id: activity._id });
+        }
     }
 
     function playActivity(activity) {

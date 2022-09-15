@@ -155,11 +155,16 @@ class ScreenManager {
             case "Rectangle":
                 if (this.#currentPage) {
                     newObj = new RectScreenObject(this, this.#currentPage, {
-                        left: options.pointer.x,
-                        top: options.pointer.y,
-                        width: 100,
-                        height: 100,
-                        fillColor: "red",
+                        type: ScreenObjectType.Rectangle,
+                        shapeSpec: {
+                            left: options.pointer.x,
+                            top: options.pointer.y,
+                            width: 100,
+                            height: 100,
+                            fill: "red",
+                            stroke: "black",
+                            opacity: 1.0,
+                        },
                     });
                     this.setModified();
                 }
@@ -167,10 +172,15 @@ class ScreenManager {
             case "Circle":
                 if (this.#currentPage) {
                     newObj = new CircleScreenObject(this, this.#currentPage, {
-                        left: options.pointer.x,
-                        top: options.pointer.y,
-                        radius: 50,
-                        fillColor: "green",
+                        type: ScreenObjectType.Circle,
+                        shapeSpec: {
+                            left: options.pointer.x,
+                            top: options.pointer.y,
+                            radius: 50,
+                            fill: "green",
+                            stroke: "black",
+                            opacity: 1.0,
+                        },
                     });
                     this.setModified();
                 }

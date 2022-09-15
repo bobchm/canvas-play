@@ -5,27 +5,8 @@ import { ScreenObjectType } from "../constants/screen-object-types";
 
 class RectScreenObject extends ScreenObject {
     constructor(_screenMgr, _parent, _spec) {
-        const {
-            left = 0,
-            top = 0,
-            width = 10,
-            height = 10,
-            fillColor = "white",
-            lineColor = "black",
-            opacity = 1.0,
-        } = _spec;
         super(_screenMgr, _parent, _spec);
-        this.setCanvasObj(
-            addRect(_screenMgr.getCanvas(), {
-                left: left,
-                top: top,
-                width: width,
-                height: height,
-                fill: fillColor,
-                stroke: lineColor,
-                opacity: opacity,
-            })
-        );
+        this.setCanvasObj(addRect(_screenMgr.getCanvas(), _spec.shapeSpec));
     }
 
     toJSON() {
@@ -33,13 +14,7 @@ class RectScreenObject extends ScreenObject {
         var cobj = this.getCanvasObj();
         var spec = {
             type: ScreenObjectType.Rectangle,
-            left: cobj.left,
-            top: cobj.top,
-            width: cobj.width,
-            height: cobj.height,
-            fillColor: cobj.fill,
-            lineColor: cobj.stroke,
-            opacity: cobj.opacity,
+            shapeSpec: cobj.toJSON(),
         };
         return { ...superSpec, ...spec };
     }

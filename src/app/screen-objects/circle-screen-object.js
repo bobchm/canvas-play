@@ -5,25 +5,8 @@ import { ScreenObjectType } from "../constants/screen-object-types";
 
 class CircleScreenObject extends ScreenObject {
     constructor(_screenMgr, _parent, _spec) {
-        const {
-            left = 0,
-            top = 0,
-            radius = 10,
-            fillColor = "white",
-            lineColor = "black",
-            opacity = 1.0,
-        } = _spec;
         super(_screenMgr, _parent, _spec);
-        this.setCanvasObj(
-            addCircle(_screenMgr.getCanvas(), {
-                left: left,
-                top: top,
-                radius: radius,
-                fill: fillColor,
-                stroke: lineColor,
-                opacity: opacity,
-            })
-        );
+        this.setCanvasObj(addCircle(_screenMgr.getCanvas(), _spec.shapeSpec));
     }
 
     toJSON() {
@@ -31,12 +14,7 @@ class CircleScreenObject extends ScreenObject {
         var cobj = this.getCanvasObj();
         var spec = {
             type: ScreenObjectType.Circle,
-            left: cobj.left,
-            top: cobj.top,
-            radius: cobj.radius,
-            fillColor: cobj.fill,
-            lineColor: cobj.stroke,
-            opacity: cobj.opacity,
+            shapeSpec: cobj.toJSON(),
         };
         return { ...superSpec, ...spec };
     }
