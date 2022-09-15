@@ -15,6 +15,7 @@ import TextInputModal from "../../components/text-input-modal/text-input-modal.c
 
 import ApplicationManager from "../../app/managers/application-manager";
 import confirmationBox from "../../utils/confirm-box";
+import { defaultPageSpec } from "../../utils/app-utils";
 import { EditMode } from "./edit-modes";
 
 const drawerWidth = 100;
@@ -35,7 +36,7 @@ const Editor = () => {
     const [isModified, setIsModified] = useState(false);
     const [isPagePickerOpen, setIsPagePickerOpen] = useState(false);
     const [pageList, setPageList] = useState([]);
-    const [pagePickerCallback, setPagePickerCallback] = null;
+    const [pagePickerCallback, setPagePickerCallback] = useState(null);
     const [isAddPageOpen, setIsAddPageOpen] = useState(false);
 
     const [searchParams, setSearchParams] = useSearchParams();
@@ -173,8 +174,10 @@ const Editor = () => {
 
     function handleDoAddPage(name) {
         setIsAddPageOpen(false);
+        if (!name || name.length === 0) return;
 
         // add the page
+        appManager.getUserActivityManager().addUserPage(defaultPageSpec(name));
     }
 
     function handleCancelDoAddPage(name) {
@@ -203,7 +206,7 @@ const Editor = () => {
             return;
         }
         setPageList(pageNames);
-        setPagePickerCallback(handleSelectingOpenPage);
+        setPagePickerCallback(() => handleSelectingOpenPage);
         setIsPagePickerOpen(true);
     }
 
@@ -231,19 +234,21 @@ const Editor = () => {
             return;
         }
         setPageList(pageNames);
-        setPagePickerCallback(handleSelectingDeletePage);
+        setPagePickerCallback(() => handleSelectingDeletePage);
         setIsPagePickerOpen(true);
     }
 
-    function handleSelectingDeletePage(pageName) {
+    async function handleSelectingDeletePage(pageName) {
         setIsPagePickerOpen(false);
         if (!pageName) return;
 
-        if (await confirmationBox(
-                `Are you sure you want to delete '${pageName}'?
+        if (
+            await confirmationBox(
+                `Are you sure you want to delete '${pageName}'?`
             )
         ) {
             // delete the page
+            appManager.getUserActivityManager().removeUserPage(pageName);
         }
     }
 

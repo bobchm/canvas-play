@@ -119,7 +119,7 @@ class UserActivityManager {
         }
     }
 
-    async removePage(name) {
+    async removeUserPage(name) {
         var spec = this.getUserPage(name);
         if (spec) {
             this.#pageHash.delete(name);

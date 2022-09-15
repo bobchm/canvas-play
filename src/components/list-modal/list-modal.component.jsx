@@ -5,7 +5,7 @@ import ListItemText from "@mui/material/ListItemText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Dialog from "@mui/material/Dialog";
 
-export function ListModal({ title, elements, onClose, open }) {
+export default function ListModal({ title, elements, onClose, open }) {
     const handleClose = () => {
         onClose(null);
     };

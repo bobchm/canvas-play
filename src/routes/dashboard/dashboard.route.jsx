@@ -101,6 +101,7 @@ const Dashboard = () => {
 
     function handleCreateActivity(name) {
         setIsActivityCreateOpen(false);
+        if (!name || name.length === 0) return;
         getUser(userName).then((user) => {
             if (!user) {
                 throw new Error(`Unknown user: ${userName}`);
