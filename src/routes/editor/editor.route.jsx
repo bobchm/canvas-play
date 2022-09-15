@@ -10,6 +10,7 @@ import ObjectPalette from "../../components/object-palette/object-palette.compon
 import PropertyPalette from "../../components/property-palette/property-palette.component";
 import CanvasAppBar from "../../components/canvas-appbar/canvas-appbar.component";
 import ButtonBar from "../../components/button-bar/button-bar.component";
+import { ListModal } from "../../components/list-modal/list-modal.component";
 
 import ApplicationManager from "../../app/managers/application-manager";
 import confirmationBox from "../../utils/confirm-box";
@@ -31,6 +32,8 @@ const Editor = () => {
     const [appMode, setAppMode] = useState(EditMode.Select);
     const [editProperties, setEditProperties] = useState([]);
     const [isModified, setIsModified] = useState(false);
+    const [isPagePickerOpen, setIsPagePickerOpen] = useState(false);
+    const [pageList, setPageList] = useState([]);
 
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
@@ -163,7 +166,45 @@ const Editor = () => {
 
     function handleAddPage() {}
 
-    function handleOpenPage() {}
+    function getAllPagesButCurrent() {
+        let curPage = appManager.getScreenManager().getCurrentPage();
+        let uam = appManager.getUserActivityManager();
+        let pageNameList = [];
+        let nPages = uam.getNumPages();
+        for (let n = 0; n < nPages; n++) {
+            let page = uam.getNthPage(n);
+            if (page.name !== curPage.getName()) {
+                pageNameList.push(page.name);
+            }
+        }
+        return pageNameList;
+    }
+
+    function handleOpenPage() {
+        let pageNames = getAllPagesButCurrent();
+
+        if (!pageNames || pageNames.length === 0) {
+            alert("There are no other pages to open.");
+            return;
+        }
+        setPageList(pageNames);
+        setIsPagePickerOpen(true);
+    }
+
+    async function handleSelectingOpenPage(pageName) {
+        setIsPagePickerOpen(false);
+        if (
+            isModified &&
+            (await confirmationBox(
+                "You made changes. Would you like to save them?"
+            ))
+        ) {
+            handleSavePage();
+        }
+        appManager.openPage(pageName);
+        handleSelectionChange([]);
+        markChanged(false);
+    }
 
     function handleDeletePage() {}
 
@@ -241,6 +282,12 @@ const Editor = () => {
                     width={propsWidth}
                     options={editProperties}
                     propUpdateCallback={handlePropValueChange}
+                />
+                <ListModal
+                    title="Select Page"
+                    elements={pageList}
+                    onClose={handleSelectingOpenPage}
+                    open={isPagePickerOpen}
                 />
             </Box>
         </div>

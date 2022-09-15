@@ -109,6 +109,11 @@ function refresh(cnv) {
     cnv.renderAll();
 }
 
+function clearCanvas(cnv) {
+    cnv.clear();
+    cnv.renderAll();
+}
+
 const addRect = (cnv, spec) => {
     const rect = new fabric.Rect(spec);
     finishObjectAdd(cnv, rect);
@@ -160,4 +165,5 @@ export {
     removeObject,
     deleteSelectedObjects,
     refresh,
+    clearCanvas,
 };

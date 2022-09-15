@@ -15,6 +15,7 @@ import {
     setSelectedObject,
     deleteSelectedObjects,
     refresh,
+    clearCanvas,
 } from "../../utils/canvas";
 
 import { ScreenObjectType } from "../constants/screen-object-types";
@@ -43,6 +44,7 @@ class ScreenManager {
     }
 
     openPage(pageSpec) {
+        clearCanvas(this.#canvas);
         this.#currentPage = new PageScreenObject(this, null, pageSpec);
     }
 
