@@ -2,6 +2,7 @@ export const PropertyValueType = {
     Color: "color",
     Text: "text",
     Percent: "percent",
+    TextStyle: "textstyle",
 };
 
 export const PropertyType = {
@@ -10,6 +11,7 @@ export const PropertyType = {
     FillColor: { name: "Fill Color", valueType: PropertyValueType.Color },
     LineColor: { name: "Line Color", valueType: PropertyValueType.Color },
     TextColor: { name: "Text Color", valueType: PropertyValueType.Color },
+    TextStyle: { name: "Text Style", valueType: PropertyValueType.TextStyle },
     BackgroundColor: {
         name: "Background Color",
         valueType: PropertyValueType.Color,

@@ -4,6 +4,7 @@ import Box from "@mui/material/Box";
 import TextPropertyPanel from "./text-proppanel.component";
 import ColorPropertyPanel from "./color-proppanel.component";
 import PercentPropertyPanel from "./percent-proppanel.component";
+import TextStylePropertyPanel from "./textstyle-proppanel.component";
 
 import "./property-palette.styles.scss";
 import { PropertyValueType } from "../../app/constants/property-types";
@@ -30,6 +31,13 @@ const PropertyPalette = ({ top, width, options, propUpdateCallback }) => {
             case PropertyValueType.Percent:
                 return (
                     <PercentPropertyPanel
+                        propOption={option}
+                        propUpdateCallback={propUpdateCallback}
+                    />
+                );
+            case PropertyValueType.TextStyle:
+                return (
+                    <TextStylePropertyPanel
                         propOption={option}
                         propUpdateCallback={propUpdateCallback}
                     />
