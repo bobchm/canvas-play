@@ -4,4 +4,5 @@ export const EditMode = {
     Select: { mode: "Select", submode: null },
     AddRectangle: { mode: "Add", submode: ScreenObjectType.Rectangle },
     AddCircle: { mode: "Add", submode: ScreenObjectType.Circle },
+    AddText: { mode: "Add", submode: ScreenObjectType.Text },
 };

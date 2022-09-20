@@ -1,6 +1,7 @@
 import PageScreenObject from "../screen-objects/page-screen-object";
 import RectScreenObject from "../screen-objects/rect-screen-object";
 import CircleScreenObject from "../screen-objects/circle-screen-object";
+import TextScreenObject from "../screen-objects/text-screen-object";
 
 import {
     initCanvas,
@@ -187,6 +188,26 @@ class ScreenManager {
                     this.setModified();
                 }
                 break;
+            case "Text":
+                if (this.#currentPage) {
+                    newObj = new TextScreenObject(
+                        this,
+                        this.#currentPage,
+                        "Enter Text",
+                        {
+                            type: ScreenObjectType.Text,
+                            shapeSpec: {
+                                left: options.pointer.x,
+                                top: options.pointer.y,
+                                fill: "black",
+                                stroke: "black",
+                                opacity: 1.0,
+                            },
+                        }
+                    );
+                    this.setModified();
+                }
+                break;
             default:
                 return;
         }
@@ -256,6 +277,8 @@ class ScreenManager {
                 return new RectScreenObject(this, parent, spec);
             case ScreenObjectType.Circle:
                 return new CircleScreenObject(this, parent, spec);
+            case ScreenObjectType.Text:
+                return new TextScreenObject(this, parent, spec.text, spec);
             default:
                 return null;
         }

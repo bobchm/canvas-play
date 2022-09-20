@@ -9,6 +9,7 @@ export const PropertyType = {
     Name: { name: "Name", valueType: PropertyValueType.Text },
     FillColor: { name: "Fill Color", valueType: PropertyValueType.Color },
     LineColor: { name: "Line Color", valueType: PropertyValueType.Color },
+    TextColor: { name: "Text Color", valueType: PropertyValueType.Color },
     BackgroundColor: {
         name: "Background Color",
         valueType: PropertyValueType.Color,

@@ -6,6 +6,7 @@ import Tab from "@mui/material/Tab";
 import NorthWestRoundedIcon from "@mui/icons-material/NorthWestRounded";
 import CropSquareIcon from "@mui/icons-material/CropSquare";
 import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
+import TextFieldsRoundedIcon from "@mui/icons-material/TextFieldsRounded";
 
 import { EditMode } from "../../routes/editor/edit-modes";
 
@@ -24,6 +25,11 @@ const options = [
         icon: <PanoramaFishEyeIcon />,
         label: "",
         mode: EditMode.AddCircle,
+    },
+    {
+        icon: <TextFieldsRoundedIcon />,
+        label: "",
+        mode: EditMode.AddText,
     },
 ];
 

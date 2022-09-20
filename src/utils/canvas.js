@@ -133,6 +133,13 @@ const addTriangle = (cnv, spec) => {
     return triangle;
 };
 
+const addText = (cnv, text, spec) => {
+    const textObj = new fabric.IText(text, spec);
+    cnv.add(textObj);
+    textObj.id = getObjectId();
+    return textObj;
+};
+
 function removeObject(cnv, obj) {
     cnv.remove(obj);
 }
@@ -153,6 +160,7 @@ export {
     addRect,
     addCircle,
     addTriangle,
+    addText,
     clearSelectionCallback,
     setSelectionCallback,
     clearMousedownCallback,
