@@ -2,7 +2,6 @@ import { PropertyType } from "../constants/property-types";
 import ScreenObject from "./screen-object";
 import { addText } from "../../utils/canvas";
 import { ScreenObjectType } from "../constants/screen-object-types";
-import { ForkLeft } from "@mui/icons-material";
 
 class TextScreenObject extends ScreenObject {
     #text;
@@ -52,7 +51,7 @@ class TextScreenObject extends ScreenObject {
         );
         cobj.set(
             "fontStyle",
-            style.styles.includes("italic") ? "itealic" : "normal"
+            style.styles.includes("italic") ? "italic" : "normal"
         );
         cobj.set("underline", style.styles.includes("underline"));
         cobj.set("linethrough", style.styles.includes("strikethrough"));
@@ -67,6 +66,10 @@ class TextScreenObject extends ScreenObject {
             {
                 type: PropertyType.TextColor,
                 current: this.getCanvasObj().fill,
+            },
+            {
+                type: PropertyType.BackgroundColor,
+                current: this.getCanvasObj().textBacgroundColor,
             },
             {
                 type: PropertyType.TextStyle,
@@ -85,6 +88,9 @@ class TextScreenObject extends ScreenObject {
             case PropertyType.TextColor:
                 this.getCanvasObj().set("fill", value);
                 this.getCanvasObj().set("stroke", value);
+                break;
+            case PropertyType.BackgroundColor:
+                this.getCanvasObj().set("textBackgroundColor", value);
                 break;
             case PropertyType.Opacity:
                 var newValue = value / 100;

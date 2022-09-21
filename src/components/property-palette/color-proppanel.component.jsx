@@ -17,6 +17,25 @@ const ColorPropertyPanel = ({ propOption, propUpdateCallback }) => {
         setAnchorEl(null);
     };
 
+    const presets = [
+        "TRANSPARENT",
+        "#D0021B",
+        "#F5A623",
+        "#F8E71C",
+        "#8B572A",
+        "#7ED321",
+        "#417505",
+        "#BD10E0",
+        "#9013FE",
+        "#4A90E2",
+        "#50E3C2",
+        "#B8E986",
+        "#000000",
+        "#4A4A4A",
+        "#9B9B9B",
+        "#FFFFFF",
+    ];
+
     const open = Boolean(anchorEl);
     const id = open ? "simple-popper" : undefined;
     return (
@@ -43,8 +62,9 @@ const ColorPropertyPanel = ({ propOption, propUpdateCallback }) => {
             <Popper id={id} open={open} anchorEl={anchorEl}>
                 <ClickAwayListener onClickAway={handleClickAway}>
                     <div>
-                        <TwitterPicker
+                        <SketchPicker
                             color={color}
+                            presetColors={presets}
                             onChange={(color, e) => {
                                 propUpdateCallback(propOption.type, color.hex);
                                 setColor(color.hex);

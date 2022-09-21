@@ -7,29 +7,6 @@ import Slider from "@mui/material/Slider";
 const PercentPropertyPanel = ({ propOption, propUpdateCallback }) => {
     const [value, setValue] = React.useState(propOption.current || 50);
 
-    const marks = [
-        {
-            value: 0,
-            label: "0%",
-        },
-        {
-            value: 25,
-            label: "25%",
-        },
-        {
-            value: 50,
-            label: "50%",
-        },
-        {
-            value: 75,
-            label: "75%",
-        },
-        {
-            value: 100,
-            label: "100%",
-        },
-    ];
-
     return (
         <Paper
             variant="outlined"
@@ -41,7 +18,7 @@ const PercentPropertyPanel = ({ propOption, propUpdateCallback }) => {
         >
             <Grid container justifyContent="Center">
                 <Slider
-                    sx={{ width: "80%", marginTop: "10px" }}
+                    sx={{ width: "80%", marginTop: "40px" }}
                     aria-label={propOption.type.name}
                     min={0}
                     max={100}
