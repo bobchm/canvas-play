@@ -153,6 +153,7 @@ class ScreenManager {
         );
         return this.#canvas;
     }
+
     addObjectOnMousedown(options) {
         var newObj = null;
         switch (this.#addObjectMode) {
@@ -211,23 +212,19 @@ class ScreenManager {
                 break;
             case "Image":
                 if (this.#currentPage) {
-                    var image = new Image();
-                    image.src =
-                        "https://www.konnecthq.com/wp-content/uploads/2019/07/cow-1-10-1.jpg?ezimgfmt=rs%3Adevice%2Frscb3-1";
-                    newObj = new ImageScreenObject(
+                    newObj = new ImageScreenObject(this, this.#currentPage, {
+                        type: ScreenObjectType.Image,
+                        shapeSpec: {
+                            left: options.pointer.x,
+                            top: options.pointer.y,
+                            width: 300,
+                            height: 300,
+                            opacity: 1.0,
+                        },
+                    });
+                    newObj.setSource(
                         this,
-                        this.#currentPage,
-                        image,
-                        {
-                            type: ScreenObjectType.Image,
-                            shapeSpec: {
-                                left: options.pointer.x,
-                                top: options.pointer.y,
-                                width: 100,
-                                height: 100,
-                                opacity: 1.0,
-                            },
-                        }
+                        "https://www.konnecthq.com/wp-content/uploads/2019/07/cow-1-10-1.jpg?ezimgfmt=rs%3Adevice%2Frscb3-1"
                     );
                     this.setModified();
                 }
@@ -303,6 +300,10 @@ class ScreenManager {
                 return new CircleScreenObject(this, parent, spec);
             case ScreenObjectType.Text:
                 return new TextScreenObject(this, parent, spec.text, spec);
+            case ScreenObjectType.Image:
+                var newImage = new ImageScreenObject(this, parent, spec);
+                newImage.setSource(this, spec.shapeSpec.src);
+                return newImage;
             default:
                 return null;
         }

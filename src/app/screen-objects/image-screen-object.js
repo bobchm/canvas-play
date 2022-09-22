@@ -1,21 +1,19 @@
 import { PropertyType } from "../constants/property-types";
 import ScreenObject from "./screen-object";
-import { addImage } from "../../utils/canvas";
+import { addImage, setImageSource } from "../../utils/canvas";
 import { ScreenObjectType } from "../constants/screen-object-types";
 
 class ImageScreenObject extends ScreenObject {
-    constructor(_screenMgr, _parent, _image, _spec) {
+    constructor(_screenMgr, _parent, _spec) {
         super(_screenMgr, _parent, _spec);
-        this.setCanvasObj(
-            addImage(_screenMgr.getCanvas(), _image, _spec.shapeSpec)
-        );
+        this.setCanvasObj(addImage(_screenMgr.getCanvas(), _spec.shapeSpec));
     }
 
     toJSON() {
         var superSpec = super.toJSON();
         var cobj = this.getCanvasObj();
         var spec = {
-            type: ScreenObjectType.Rectangle,
+            type: ScreenObjectType.Image,
             shapeSpec: cobj.toJSON(),
         };
         return { ...superSpec, ...spec };
@@ -41,6 +39,10 @@ class ImageScreenObject extends ScreenObject {
             default:
                 super.setEditProperty(screenMgr, type, value);
         }
+    }
+
+    setSource(screenMgr, source) {
+        setImageSource(screenMgr.getCanvas(), this.getCanvasObj(), source);
     }
 }
 
