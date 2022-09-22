@@ -3,6 +3,7 @@ export const PropertyValueType = {
     Text: "text",
     Percent: "percent",
     TextStyle: "textstyle",
+    ImageSource: "imagesource",
 };
 
 export const PropertyType = {
@@ -19,5 +20,9 @@ export const PropertyType = {
     Opacity: {
         name: "Opacity",
         valueType: PropertyValueType.Percent,
+    },
+    ImageSource: {
+        name: "Source",
+        valueType: PropertyValueType.ImageSource,
     },
 };

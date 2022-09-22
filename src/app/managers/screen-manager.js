@@ -3,6 +3,7 @@ import RectScreenObject from "../screen-objects/rect-screen-object";
 import CircleScreenObject from "../screen-objects/circle-screen-object";
 import TextScreenObject from "../screen-objects/text-screen-object";
 import ImageScreenObject from "../screen-objects/image-screen-object";
+import defaultImage from "../../assets/images/mountains.png";
 
 import {
     initCanvas,
@@ -224,7 +225,8 @@ class ScreenManager {
                     });
                     newObj.setSource(
                         this,
-                        "https://www.konnecthq.com/wp-content/uploads/2019/07/cow-1-10-1.jpg?ezimgfmt=rs%3Adevice%2Frscb3-1"
+                        //"https://www.konnecthq.com/wp-content/uploads/2019/07/cow-1-10-1.jpg?ezimgfmt=rs%3Adevice%2Frscb3-1"
+                        defaultImage
                     );
                     this.setModified();
                 }

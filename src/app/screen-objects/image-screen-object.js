@@ -1,6 +1,6 @@
 import { PropertyType } from "../constants/property-types";
 import ScreenObject from "./screen-object";
-import { addImage, setImageSource } from "../../utils/canvas";
+import { addImage, getImageSource, setImageSource } from "../../utils/canvas";
 import { ScreenObjectType } from "../constants/screen-object-types";
 
 class ImageScreenObject extends ScreenObject {
@@ -23,6 +23,10 @@ class ImageScreenObject extends ScreenObject {
         var superProps = super.getEditProperties();
         var thisProps = [
             {
+                type: PropertyType.ImageSource,
+                current: this.getSource(),
+            },
+            {
                 type: PropertyType.Opacity,
                 current: this.getCanvasObj().opacity * 100,
             },
@@ -32,6 +36,9 @@ class ImageScreenObject extends ScreenObject {
 
     setEditProperty(screenMgr, type, value) {
         switch (type) {
+            case PropertyType.ImageSource:
+                this.setSource(screenMgr, value);
+                break;
             case PropertyType.Opacity:
                 var newValue = value / 100;
                 this.getCanvasObj().set("opacity", newValue);
@@ -39,6 +46,10 @@ class ImageScreenObject extends ScreenObject {
             default:
                 super.setEditProperty(screenMgr, type, value);
         }
+    }
+
+    getSource() {
+        return getImageSource(this.getCanvasObj());
     }
 
     setSource(screenMgr, source) {

@@ -148,6 +148,10 @@ const addImage = (cnv, spec) => {
     return imageObj;
 };
 
+const getImageSource = (image) => {
+    return image.src;
+};
+
 const setImageSource = (cnv, image, src) => {
     var origWd = image.width * image.scaleX;
     var origHgt = image.height * image.scaleY;
@@ -201,6 +205,7 @@ export {
     addText,
     addImage,
     addImageFromURL,
+    getImageSource,
     setImageSource,
     clearSelectionCallback,
     setSelectionCallback,
