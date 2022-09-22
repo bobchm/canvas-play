@@ -1,4 +1,5 @@
 import { fabric } from "fabric";
+import { colorCloserToBlack } from "./colors";
 
 var objIdCtr = 0;
 
@@ -29,7 +30,20 @@ function initCanvas(
         });
     }
 
+    setSelectionColor(cnv);
     return cnv;
+}
+
+function setSelectionColor(cnv) {
+    var borderColor = colorCloserToBlack(cnv.backgroundColor)
+        ? "white"
+        : "black";
+    fabric.Object.prototype.set({
+        borderColor: borderColor,
+        borderScaleFactor: 2,
+        borderDashArray: [5, 5],
+        cornerColor: borderColor,
+    });
 }
 
 function setSelectionCallback(cnv, callbk) {
@@ -95,6 +109,7 @@ function getBackgroundColor(cnv) {
 
 function setBackgroundColor(cnv, _bkgColor) {
     cnv.backgroundColor = _bkgColor;
+    setSelectionColor(cnv);
     cnv.renderAll();
 }
 
@@ -159,9 +174,13 @@ const setImageSource = (cnv, image, src) => {
         img.set({
             left: image.left,
             top: image.top,
-            scaleX: origWd / img.width,
-            scaleY: origHgt / img.height,
+            // scaleX: origWd / img.width,
+            // scaleY: origHgt / img.height,
         });
+        const widthFactor = origWd / img.width;
+        const heightFactor = origHgt / img.height;
+        const minFactor = Math.min(widthFactor, heightFactor);
+        img.scale(minFactor);
         img.setCoords();
         cnv.renderAll();
     });
