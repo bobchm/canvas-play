@@ -140,6 +140,28 @@ const addText = (cnv, text, spec) => {
     return textObj;
 };
 
+const addImage = (cnv, image, spec) => {
+    const imageObj = new fabric.Image(image, spec);
+    cnv.add(imageObj);
+    imageObj.id = getObjectId();
+    return imageObj;
+};
+
+const addImageFromURL = (cnv, url, left, top, width, height, callbk) => {
+    fabric.Image.fromURL(url, (img) => {
+        img.set({
+            left: left,
+            top: top,
+            // Scale image to fit width / height ?
+        });
+        img.id = getObjectId();
+        img.scaleToHeight(height);
+        img.scaleToWidth(width);
+        cnv.add(img);
+        callbk(img);
+    });
+};
+
 function removeObject(cnv, obj) {
     cnv.remove(obj);
 }
@@ -161,6 +183,8 @@ export {
     addCircle,
     addTriangle,
     addText,
+    addImage,
+    addImageFromURL,
     clearSelectionCallback,
     setSelectionCallback,
     clearMousedownCallback,

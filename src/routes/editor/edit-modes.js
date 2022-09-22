@@ -5,4 +5,5 @@ export const EditMode = {
     AddRectangle: { mode: "Add", submode: ScreenObjectType.Rectangle },
     AddCircle: { mode: "Add", submode: ScreenObjectType.Circle },
     AddText: { mode: "Add", submode: ScreenObjectType.Text },
+    AddImage: { mode: "Add", submode: ScreenObjectType.Image },
 };

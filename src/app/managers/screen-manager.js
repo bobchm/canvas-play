@@ -2,6 +2,7 @@ import PageScreenObject from "../screen-objects/page-screen-object";
 import RectScreenObject from "../screen-objects/rect-screen-object";
 import CircleScreenObject from "../screen-objects/circle-screen-object";
 import TextScreenObject from "../screen-objects/text-screen-object";
+import ImageScreenObject from "../screen-objects/image-screen-object";
 
 import {
     initCanvas,
@@ -201,6 +202,29 @@ class ScreenManager {
                                 top: options.pointer.y,
                                 fill: "black",
                                 stroke: "black",
+                                opacity: 1.0,
+                            },
+                        }
+                    );
+                    this.setModified();
+                }
+                break;
+            case "Image":
+                if (this.#currentPage) {
+                    var image = new Image();
+                    image.src =
+                        "https://www.konnecthq.com/wp-content/uploads/2019/07/cow-1-10-1.jpg?ezimgfmt=rs%3Adevice%2Frscb3-1";
+                    newObj = new ImageScreenObject(
+                        this,
+                        this.#currentPage,
+                        image,
+                        {
+                            type: ScreenObjectType.Image,
+                            shapeSpec: {
+                                left: options.pointer.x,
+                                top: options.pointer.y,
+                                width: 100,
+                                height: 100,
                                 opacity: 1.0,
                             },
                         }
