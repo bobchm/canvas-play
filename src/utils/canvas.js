@@ -149,8 +149,8 @@ const addImage = (cnv, spec) => {
 };
 
 const setImageSource = (cnv, image, src) => {
-    var origWd = image.width;
-    var origHgt = image.height;
+    var origWd = image.width * image.scaleX;
+    var origHgt = image.height * image.scaleY;
     image.setSrc(src, function (img) {
         img.set({
             left: image.left,
