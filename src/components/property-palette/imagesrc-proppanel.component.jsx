@@ -1,6 +1,6 @@
 import React from "react";
 import Button from "@mui/material/Button";
-import TextInputModal from "../text-input-modal/text-input-modal.component";
+import ImageSearchModal from "../image-search-modal/image-search-modal.component";
 
 const ImageSourcePropertyPanel = ({ propOption, propUpdateCallback }) => {
     const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -33,14 +33,12 @@ const ImageSourcePropertyPanel = ({ propOption, propUpdateCallback }) => {
             >
                 Change Image
             </Button>
-            <TextInputModal
+            <ImageSearchModal
                 open={isModalOpen}
-                question="Image Location"
-                contentText="Enter the image location."
-                yesLabel="Change"
-                yesCallback={handleChangeLocation}
-                noLabel="Cancel"
-                noCallback={handleCancelLocation}
+                question="Image Search"
+                textLabel="Query"
+                selectionCallback={handleChangeLocation}
+                cancelCallback={handleCancelLocation}
             />
         </div>
     );
