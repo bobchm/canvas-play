@@ -6,11 +6,9 @@ class UnsplashImageService extends ImageService {
 
     constructor() {
         super();
-        var key = process.env.REACT_APP_UNSPLASH_API_KEY;
-        var test = process.env.REACT_APP_TEST;
-        console.log(key);
-        console.log(test);
-        this.#unsplash = createApi({ accessKey: key });
+        this.#unsplash = createApi({
+            accessKey: process.env.REACT_APP_UNSPLASH_API_KEY,
+        });
     }
 
     hasImageTypes() {
@@ -21,13 +19,29 @@ class UnsplashImageService extends ImageService {
         return [];
     }
 
+    convertResults(results) {
+        var formatted = [];
+        for (let i = 0; i < results.length; i++) {
+            let result = results[i];
+            formatted.push({
+                id: result.id,
+                url: result.urls.regular,
+                thumbnail: result.urls.thumb,
+                description: result.description,
+                tags: result.tags.map((tag) => tag.title),
+                author: result.user.name,
+            });
+        }
+        return formatted;
+    }
+
     doSearch(query, imageTypes, callback) {
         this.#unsplash.search
             .getPhotos({
                 query: query,
             })
             .then((result) => {
-                console.log(result);
+                callback(this.convertResults(result.response.results));
             });
     }
 }

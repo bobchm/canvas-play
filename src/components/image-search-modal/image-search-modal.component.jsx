@@ -58,8 +58,8 @@ export default function ImageSearchModal({
                             <div className="card" key={pic.id}>
                                 <img
                                     className="card--image"
-                                    alt={pic.alt_description}
-                                    src={pic.urls.full}
+                                    alt={pic.description}
+                                    src={pic.url}
                                     width="50%"
                                     height="50%"
                                     onClick={(e) =>
