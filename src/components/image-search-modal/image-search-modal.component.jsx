@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
+import Modal from "@mui/material/Modal";
+import Typography from "@mui/material/Typography";
+import Paper from "@mui/material/Paper";
+import List from "@mui/material/List";
 
 import UnsplashImageService from "../../utils/unsplash-image-service";
 
@@ -32,45 +33,74 @@ export default function ImageSearchModal({
         }
     }
 
-    return (
-        <div>
-            <Dialog open={open} onClose={() => cancelCallback()}>
-                <DialogTitle>{question}</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="name"
-                        label={textLabel}
-                        type={inputType}
-                        fullWidth
-                        variant="standard"
-                        onChange={(event) => setInputText(event.target.value)}
-                        onKeyPress={(ev) => {
-                            if (ev.key === "Enter") {
-                                doSearch();
-                            }
-                        }}
-                    />
+    function clearState() {
+        setInputText("");
+        setImageData([]);
+    }
 
-                    <div className="card-list">
-                        {imageData.map((pic) => (
-                            <div className="card" key={pic.id}>
-                                <img
-                                    className="card--image"
-                                    alt={pic.description}
-                                    src={pic.url}
-                                    width="50%"
-                                    height="50%"
-                                    onClick={(e) =>
-                                        selectionCallback(e.target.src)
-                                    }
-                                ></img>
-                            </div>
-                        ))}{" "}
-                    </div>
-                </DialogContent>
-            </Dialog>
-        </div>
+    return (
+        <Modal
+            open={open}
+            onClose={() => {
+                clearState();
+                cancelCallback();
+            }}
+            style={{
+                left: "10%",
+                alignItems: "center",
+                justifyContent: "center",
+            }}
+        >
+            <Paper
+                className="card-container"
+                sx={{ width: "80%", height: "90%", margin: "10px" }}
+            >
+                <Typography variant="h2" align="center">
+                    {question}
+                </Typography>
+                <TextField
+                    autoFocus
+                    margin="dense"
+                    id="name"
+                    label={textLabel}
+                    type={inputType}
+                    variant="standard"
+                    onChange={(event) => {
+                        clearState();
+                        setInputText(event.target.value);
+                    }}
+                    sx={{ margin: "2%", width: "95%" }}
+                    onKeyPress={(ev) => {
+                        if (ev.key === "Enter") {
+                            doSearch();
+                        }
+                    }}
+                />
+
+                <List
+                    className="card-list"
+                    sx={{
+                        position: "relative",
+                        overflow: "auto",
+                        height: "80%",
+                        paddingLeft: "8%",
+                    }}
+                >
+                    {imageData.map((pic) => (
+                        <img
+                            key={pic.id}
+                            className="card--image"
+                            alt={pic.description}
+                            src={pic.url}
+                            width="30%"
+                            onClick={(e) => {
+                                clearState();
+                                selectionCallback(e.target.src);
+                            }}
+                        />
+                    ))}{" "}
+                </List>
+            </Paper>
+        </Modal>
     );
 }

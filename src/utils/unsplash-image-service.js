@@ -39,6 +39,8 @@ class UnsplashImageService extends ImageService {
         this.#unsplash.search
             .getPhotos({
                 query: query,
+                page: 1,
+                per_page: 20,
             })
             .then((result) => {
                 callback(this.convertResults(result.response.results));
