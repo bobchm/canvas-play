@@ -12,7 +12,7 @@ class ImageService {
         return [];
     }
 
-    doSearch(text, imageTypes, callback) {
+    doSearch(text, imageTypes, nthPage, pageSz, callback) {
         callback([]);
     }
 }

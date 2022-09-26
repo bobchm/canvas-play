@@ -19,7 +19,7 @@ class UnsplashImageService extends ImageService {
         return [];
     }
 
-    convertResults(results) {
+    convertResults(numPages, results) {
         var formatted = [];
         for (let i = 0; i < results.length; i++) {
             let result = results[i];
@@ -32,18 +32,23 @@ class UnsplashImageService extends ImageService {
                 author: result.user.name,
             });
         }
-        return formatted;
+        return { totalPages: numPages, results: formatted };
     }
 
-    doSearch(query, imageTypes, callback) {
+    doSearch(query, imageTypes, nthPage, pageSz, callback) {
         this.#unsplash.search
             .getPhotos({
                 query: query,
-                page: 1,
-                per_page: 20,
+                page: nthPage,
+                per_page: pageSz,
             })
             .then((result) => {
-                callback(this.convertResults(result.response.results));
+                callback(
+                    this.convertResults(
+                        result.response.total_pages,
+                        result.response.results
+                    )
+                );
             });
     }
 }

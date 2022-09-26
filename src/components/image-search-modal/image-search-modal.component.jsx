@@ -4,8 +4,11 @@ import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import List from "@mui/material/List";
+import Pagination from "@mui/material/Pagination";
 
 import UnsplashImageService from "../../utils/unsplash-image-service";
+
+const PAGE_SZ = 20;
 
 export default function ImageSearchModal({
     open,
@@ -18,24 +21,43 @@ export default function ImageSearchModal({
     const [inputText, setInputText] = useState("");
     const [imageData, setImageData] = useState([]);
     const [imageService, setImageService] = useState(null);
+    const [numPages, setNumPages] = useState(10);
+    const [curPage, setCurPage] = useState(1);
 
     useEffect(() => {
         setImageService(new UnsplashImageService());
     }, []);
 
-    function searchCallback(results) {
+    function searchCallback({ totalPages, results }) {
+        setNumPages(totalPages);
         setImageData(results);
     }
 
-    function doSearch() {
+    function handleEnter() {
+        setCurPage(1);
+        doSearch(1);
+    }
+
+    function doSearch(nthPage) {
         if (imageService && inputText.length > 0) {
-            imageService.doSearch(inputText, [], searchCallback);
+            imageService.doSearch(
+                inputText,
+                [],
+                nthPage,
+                PAGE_SZ,
+                searchCallback
+            );
         }
     }
 
     function clearState() {
         setInputText("");
         setImageData([]);
+    }
+
+    function handlePageChange(e, n) {
+        setCurPage(n);
+        doSearch(n);
     }
 
     return (
@@ -72,7 +94,7 @@ export default function ImageSearchModal({
                     sx={{ margin: "2%", width: "95%" }}
                     onKeyPress={(ev) => {
                         if (ev.key === "Enter") {
-                            doSearch();
+                            handleEnter();
                         }
                     }}
                 />
@@ -100,6 +122,15 @@ export default function ImageSearchModal({
                         />
                     ))}{" "}
                 </List>
+                {imageData.length > 0 && (
+                    <Pagination
+                        count={numPages}
+                        page={curPage}
+                        variant="outlined"
+                        shape="rounded"
+                        onChange={handlePageChange}
+                    />
+                )}
             </Paper>
         </Modal>
     );
