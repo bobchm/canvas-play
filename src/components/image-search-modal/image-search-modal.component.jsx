@@ -104,7 +104,7 @@ export default function ImageSearchModal({
                     sx={{
                         position: "relative",
                         overflow: "auto",
-                        height: "80%",
+                        height: "78%",
                         paddingLeft: "8%",
                     }}
                 >
@@ -125,6 +125,7 @@ export default function ImageSearchModal({
                 {imageData.length > 0 && (
                     <Pagination
                         count={numPages}
+                        sx={{ mt: "10px" }}
                         page={curPage}
                         variant="outlined"
                         shape="rounded"
