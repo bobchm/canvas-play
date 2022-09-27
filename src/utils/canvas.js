@@ -1,6 +1,7 @@
 import { fabric } from "fabric";
 import { colorCloserToBlack } from "./colors";
 import errorImage from "./assets/error.png";
+import defaultImage from "./assets/mountains.png";
 
 var objIdCtr = 0;
 
@@ -186,9 +187,31 @@ const setErrorImage = (cnv, image, wd, hgt) => {
     });
 };
 
+const setDefaultImage = (cnv, image, wd, hgt) => {
+    image.setSrc(defaultImage, function (img) {
+        // error isn't explicitly signalled - check image width and height
+        img.set({
+            left: image.left,
+            top: image.top,
+            // scaleX: origWd / img.width,
+            // scaleY: origHgt / img.height,
+        });
+        const widthFactor = wd / img.width;
+        const heightFactor = hgt / img.height;
+        const minFactor = Math.min(widthFactor, heightFactor);
+        img.scale(minFactor);
+        img.setCoords();
+        cnv.renderAll();
+    });
+};
+
 const setImageSource = (cnv, image, src) => {
     var origWd = image.width * image.scaleX;
     var origHgt = image.height * image.scaleY;
+    if (src === null) {
+        setDefaultImage(cnv, image, origWd, origHgt);
+        return;
+    }
     image.setSrc(src, function (img) {
         // error isn't explicitly signalled - check image width and height
         if (img.width === 0 || img.height === 0) {
