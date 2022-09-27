@@ -2,36 +2,37 @@ import ImageService from "./image-service";
 
 class PixabayImageService extends ImageService {
     hasImageTypes() {
-        return false;
+        return true;
     }
 
     getImageTypes() {
-        return []; // does have "photo", "illustration", "vector", "all"
+        return ["all", "photo", "illustration", "vector"]; // does have "photo", "illustration", "vector", "all"
     }
 
     tags2tags(intags) {
         var tags = intags.trim();
         if (tags.length <= 0) return [];
-        return intags.split(",").map((element) => element.trim());
+        return tags.split(",").map((element) => element.trim());
     }
 
-    convertResults(numPages, results) {
+    convertResults(totalHits, pageSz, results) {
         var formatted = [];
         for (let i = 0; i < results.length; i++) {
             let result = results[i];
             formatted.push({
                 id: result.id,
-                url: result.imageURL,
+                url: result.webformatURL,
                 thumbnail: result.previewURL,
                 description: "", // no description
                 tags: this.tags2tags(result.tags), // comma-separated
                 author: result.user,
             });
         }
+        var numPages = Math.ceil(totalHits / pageSz);
         return { totalPages: numPages, results: formatted };
     }
 
-    buildQuery(qry, imageTypes, nthPage, pageSz) {
+    buildQuery(qry, imageType, nthPage, pageSz) {
         // q = qry, imageTypes we'll skip for now, nthPage = page, pageSz = per_page, key
         var API_KEY = process.env.REACT_APP_PIXABAY_API_KEY;
         var URL =
@@ -43,15 +44,20 @@ class PixabayImageService extends ImageService {
             encodeURIComponent(nthPage) +
             "&per_page=" +
             encodeURIComponent(pageSz);
+        if (imageType && imageType.length > 0) {
+            URL += "&image_type=" + encodeURIComponent(imageType);
+        }
         return URL;
     }
 
-    doSearch(query, imageTypes, nthPage, pageSz, callback) {
-        var fetchQry = this.buildQuery(query, imageTypes, nthPage, pageSz);
+    doSearch(query, imageType, nthPage, pageSz, callback) {
+        var fetchQry = this.buildQuery(query, imageType, nthPage, pageSz);
         fetch(fetchQry)
-            .then((response) => response.json())
+            .then((response) => {
+                return response.json();
+            })
             .then((json) =>
-                callback(this.convertResults(json.totalPages, json.hits))
+                callback(this.convertResults(json.totalHits, pageSz, json.hits))
             );
     }
 }

@@ -5,9 +5,12 @@ import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import List from "@mui/material/List";
 import Stack from "@mui/material/Stack";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 import Pagination from "@mui/material/Pagination";
 
 import UnsplashImageService from "../../utils/unsplash-image-service";
+import PixabayImageService from "../../utils/pixabay-image-service";
 
 const PAGE_SZ = 10;
 
@@ -24,9 +27,20 @@ export default function ImageSearchModal({
     const [imageService, setImageService] = useState(null);
     const [numPages, setNumPages] = useState(10);
     const [curPage, setCurPage] = useState(1);
+    const [imageTypes, setImageTypes] = useState([]);
+    const [imageType, setImageType] = useState("");
 
     useEffect(() => {
-        setImageService(new UnsplashImageService());
+        var imageService = new PixabayImageService();
+        if (imageService.hasImageTypes()) {
+            var imgTypes = imageService.getImageTypes();
+            setImageType(imgTypes.length > 0 ? imgTypes[0] : "");
+            setImageTypes(imgTypes);
+        } else {
+            setImageTypes([]);
+            setImageType("");
+        }
+        setImageService(imageService);
     }, []);
 
     function searchCallback({ totalPages, results }) {
@@ -36,14 +50,20 @@ export default function ImageSearchModal({
 
     function handleEnter() {
         setCurPage(1);
-        doSearch(1);
+        doSearch(1, imageType);
     }
 
-    function doSearch(nthPage) {
+    function handleChangeImageType(e) {
+        var imgType = e.target.value;
+        setImageType(imgType);
+        doSearch(1, imgType);
+    }
+
+    function doSearch(nthPage, imgType) {
         if (imageService && inputText.length > 0) {
             imageService.doSearch(
                 inputText,
-                [],
+                imgType,
                 nthPage,
                 PAGE_SZ,
                 searchCallback
@@ -58,7 +78,7 @@ export default function ImageSearchModal({
 
     function handlePageChange(e, n) {
         setCurPage(n);
-        doSearch(n);
+        doSearch(n, imageType);
     }
 
     return (
@@ -89,24 +109,45 @@ export default function ImageSearchModal({
                     <Typography variant="h3" align="center">
                         {question}
                     </Typography>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="name"
-                        label={textLabel}
-                        type={inputType}
-                        variant="standard"
-                        onChange={(event) => {
-                            clearState();
-                            setInputText(event.target.value);
-                        }}
-                        sx={{ width: "95%" }}
-                        onKeyPress={(ev) => {
-                            if (ev.key === "Enter") {
-                                handleEnter();
-                            }
-                        }}
-                    />
+                    <Stack
+                        direction="row"
+                        alignItems="flex-start"
+                        justifyContent="center"
+                        spacing={2}
+                        sx={{ width: "100%" }}
+                    >
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            id="name"
+                            label={textLabel}
+                            type={inputType}
+                            variant="standard"
+                            onChange={(event) => {
+                                clearState();
+                                setInputText(event.target.value);
+                            }}
+                            sx={{ width: "95%" }}
+                            onKeyPress={(ev) => {
+                                if (ev.key === "Enter") {
+                                    handleEnter();
+                                }
+                            }}
+                        />
+                        {imageService && imageService.hasImageTypes() && (
+                            <Select
+                                id="demo-simple-select"
+                                value={imageType}
+                                onChange={handleChangeImageType}
+                            >
+                                {imageTypes.map((imgType, idx) => (
+                                    <MenuItem key={idx} value={imgType}>
+                                        {imgType}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        )}
+                    </Stack>
                     <List
                         className="card-list"
                         sx={{
