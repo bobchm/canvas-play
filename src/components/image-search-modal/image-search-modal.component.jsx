@@ -4,11 +4,12 @@ import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import List from "@mui/material/List";
+import Stack from "@mui/material/Stack";
 import Pagination from "@mui/material/Pagination";
 
 import UnsplashImageService from "../../utils/unsplash-image-service";
 
-const PAGE_SZ = 20;
+const PAGE_SZ = 10;
 
 export default function ImageSearchModal({
     open,
@@ -75,63 +76,70 @@ export default function ImageSearchModal({
         >
             <Paper
                 className="card-container"
-                sx={{ width: "80%", height: "90%", margin: "10px" }}
+                sx={{ width: "80%", height: "95%", margin: "10px" }}
             >
-                <Typography variant="h2" align="center">
-                    {question}
-                </Typography>
-                <TextField
-                    autoFocus
-                    margin="dense"
-                    id="name"
-                    label={textLabel}
-                    type={inputType}
-                    variant="standard"
-                    onChange={(event) => {
-                        clearState();
-                        setInputText(event.target.value);
-                    }}
-                    sx={{ margin: "2%", width: "95%" }}
-                    onKeyPress={(ev) => {
-                        if (ev.key === "Enter") {
-                            handleEnter();
-                        }
-                    }}
-                />
-
-                <List
-                    className="card-list"
-                    sx={{
-                        position: "relative",
-                        overflow: "auto",
-                        height: "78%",
-                        paddingLeft: "8%",
-                    }}
+                <Stack
+                    className="container"
+                    direction="column"
+                    alignItems="center"
+                    justifyContent="flex-start"
+                    sx={{ margin: "2% 2% 2% 2%", height: "100%" }}
+                    spacing={2}
                 >
-                    {imageData.map((pic) => (
-                        <img
-                            key={pic.id}
-                            className="card--image"
-                            alt={pic.description}
-                            src={pic.url}
-                            width="30%"
-                            onClick={(e) => {
-                                clearState();
-                                selectionCallback(e.target.src);
-                            }}
-                        />
-                    ))}{" "}
-                </List>
-                {imageData.length > 0 && (
-                    <Pagination
-                        count={numPages}
-                        sx={{ mt: "10px" }}
-                        page={curPage}
-                        variant="outlined"
-                        shape="rounded"
-                        onChange={handlePageChange}
+                    <Typography variant="h3" align="center">
+                        {question}
+                    </Typography>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="name"
+                        label={textLabel}
+                        type={inputType}
+                        variant="standard"
+                        onChange={(event) => {
+                            clearState();
+                            setInputText(event.target.value);
+                        }}
+                        sx={{ width: "95%" }}
+                        onKeyPress={(ev) => {
+                            if (ev.key === "Enter") {
+                                handleEnter();
+                            }
+                        }}
                     />
-                )}
+                    <List
+                        className="card-list"
+                        sx={{
+                            overflow: "auto",
+                            height: "100%",
+                            paddingLeft: "8%",
+                        }}
+                    >
+                        {imageData.map((pic) => (
+                            <img
+                                key={pic.id}
+                                className="card--image"
+                                alt={pic.description}
+                                src={pic.url}
+                                width="30%"
+                                onClick={(e) => {
+                                    clearState();
+                                    selectionCallback(e.target.src);
+                                }}
+                            />
+                        ))}{" "}
+                    </List>
+                    {imageData.length > 0 && (
+                        <Pagination
+                            count={numPages}
+                            sx={{ mt: "5px", paddingBottom: "3px" }}
+                            page={curPage}
+                            variant="outlined"
+                            shape="rounded"
+                            onChange={handlePageChange}
+                        />
+                    )}
+                </Stack>
             </Paper>
         </Modal>
     );
