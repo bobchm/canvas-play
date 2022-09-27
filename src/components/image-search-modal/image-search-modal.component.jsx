@@ -9,10 +9,16 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Pagination from "@mui/material/Pagination";
 
+import { ImageServiceType } from "../../utils/image-service";
 import UnsplashImageService from "../../utils/unsplash-image-service";
 import PixabayImageService from "../../utils/pixabay-image-service";
 
 const PAGE_SZ = 10;
+
+const imageServices = [
+    { name: "Pixabay", service: ImageServiceType.Pixabay },
+    { name: "Unsplash", service: ImageServiceType.Unsplash },
+];
 
 export default function ImageSearchModal({
     open,
@@ -31,17 +37,34 @@ export default function ImageSearchModal({
     const [imageType, setImageType] = useState("");
 
     useEffect(() => {
-        var imageService = new PixabayImageService();
-        if (imageService.hasImageTypes()) {
-            var imgTypes = imageService.getImageTypes();
+        setupImageService(ImageServiceType.Pixabay);
+    }, []);
+
+    function setupImageService(serviceName) {
+        var imgService;
+        switch (serviceName) {
+            case ImageServiceType.Unsplash:
+                imgService = new UnsplashImageService();
+                break;
+            case ImageServiceType.Pixabay:
+                imgService = new PixabayImageService();
+                break;
+            default:
+                imgService = null;
+        }
+        if (!imgService) return null;
+
+        if (imgService.hasImageTypes()) {
+            var imgTypes = imgService.getImageTypes();
             setImageType(imgTypes.length > 0 ? imgTypes[0] : "");
             setImageTypes(imgTypes);
         } else {
             setImageTypes([]);
             setImageType("");
         }
-        setImageService(imageService);
-    }, []);
+        setImageService(imgService);
+        return imgService;
+    }
 
     function searchCallback({ totalPages, results }) {
         setNumPages(totalPages);
@@ -50,18 +73,25 @@ export default function ImageSearchModal({
 
     function handleEnter() {
         setCurPage(1);
-        doSearch(1, imageType);
+        doSearch(imageService, 1, imageType);
     }
 
     function handleChangeImageType(e) {
         var imgType = e.target.value;
         setImageType(imgType);
-        doSearch(1, imgType);
+        doSearch(imageService, 1, imgType);
     }
 
-    function doSearch(nthPage, imgType) {
-        if (imageService && inputText.length > 0) {
-            imageService.doSearch(
+    function handleChangeImageService(e) {
+        var newService = setupImageService(e.target.value);
+        if (newService) {
+            doSearch(newService, 1, imageType);
+        }
+    }
+
+    function doSearch(service, nthPage, imgType) {
+        if (service && inputText.length > 0) {
+            service.doSearch(
                 inputText,
                 imgType,
                 nthPage,
@@ -78,7 +108,7 @@ export default function ImageSearchModal({
 
     function handlePageChange(e, n) {
         setCurPage(n);
-        doSearch(n, imageType);
+        doSearch(imageService, n, imageType);
     }
 
     return (
@@ -134,6 +164,17 @@ export default function ImageSearchModal({
                                 }
                             }}
                         />
+                        <Select
+                            id="demo-simple-select"
+                            value={imageService?.getType()}
+                            onChange={handleChangeImageService}
+                        >
+                            {imageServices.map((imgService, idx) => (
+                                <MenuItem key={idx} value={imgService.service}>
+                                    {imgService.name}
+                                </MenuItem>
+                            ))}
+                        </Select>
                         {imageService && imageService.hasImageTypes() && (
                             <Select
                                 id="demo-simple-select"

@@ -1,5 +1,5 @@
 import { createApi } from "unsplash-js";
-import ImageService from "./image-service";
+import ImageService, { ImageServiceType } from "./image-service";
 
 class UnsplashImageService extends ImageService {
     #unsplash;
@@ -17,6 +17,10 @@ class UnsplashImageService extends ImageService {
 
     getImageTypes() {
         return [];
+    }
+
+    getType() {
+        return ImageServiceType.Unsplash;
     }
 
     convertResults(numPages, results) {

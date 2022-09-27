@@ -3,6 +3,11 @@ export const ImageRefType = {
     SymRef: "SymRef",
 };
 
+export const ImageServiceType = {
+    Pixabay: "pixabay",
+    Unsplash: "unsplash",
+};
+
 class ImageService {
     hasImageTypes() {
         return false;

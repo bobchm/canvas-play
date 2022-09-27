@@ -1,4 +1,4 @@
-import ImageService from "./image-service";
+import ImageService, { ImageServiceType } from "./image-service";
 
 class PixabayImageService extends ImageService {
     hasImageTypes() {
@@ -7,6 +7,10 @@ class PixabayImageService extends ImageService {
 
     getImageTypes() {
         return ["all", "photo", "illustration", "vector"]; // does have "photo", "illustration", "vector", "all"
+    }
+
+    getType() {
+        return ImageServiceType.Pixabay;
     }
 
     tags2tags(intags) {
