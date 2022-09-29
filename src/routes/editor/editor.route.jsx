@@ -275,6 +275,7 @@ const Editor = () => {
                 spec.content = content;
                 appManager.getUserActivityManager().modifyUserPage(spec);
                 markChanged(false);
+                //appManager.getScreenManager().screenToFile("zqe.png");
             }
         }
     }

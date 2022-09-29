@@ -18,6 +18,7 @@ import {
     deleteSelectedObjects,
     refresh,
     clearCanvas,
+    saveToFile,
 } from "../../utils/canvas";
 
 import { ScreenObjectType } from "../constants/screen-object-types";
@@ -308,6 +309,10 @@ class ScreenManager {
             default:
                 return null;
         }
+    }
+
+    screenToFile(filename) {
+        saveToFile(this.#canvas, filename);
     }
 }
 
