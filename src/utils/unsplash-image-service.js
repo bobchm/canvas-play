@@ -32,6 +32,7 @@ class UnsplashImageService extends ImageService {
                 url: result.urls.regular,
                 thumbnail: result.urls.thumb,
                 description: result.description,
+                source: "Unsplash",
                 tags: result.tags.map((tag) => tag.title),
                 author: result.user.name,
             });

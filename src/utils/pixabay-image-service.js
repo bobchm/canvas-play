@@ -28,6 +28,7 @@ class PixabayImageService extends ImageService {
                 url: result.webformatURL,
                 thumbnail: result.previewURL,
                 description: "", // no description
+                source: "Pixabay",
                 tags: this.tags2tags(result.tags), // comma-separated
                 author: result.user,
             });

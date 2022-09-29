@@ -12,6 +12,7 @@ import Pagination from "@mui/material/Pagination";
 import { ImageServiceType } from "../../utils/image-service";
 import UnsplashImageService from "../../utils/unsplash-image-service";
 import PixabayImageService from "../../utils/pixabay-image-service";
+import ImageCard from "../image-card/image-card.component";
 
 const PAGE_SZ = 10;
 
@@ -111,6 +112,11 @@ export default function ImageSearchModal({
         doSearch(imageService, n, imageType);
     }
 
+    function handleSelectImage(e) {
+        clearState();
+        selectionCallback(e.target.src);
+    }
+
     return (
         <Modal
             open={open}
@@ -190,26 +196,22 @@ export default function ImageSearchModal({
                         )}
                     </Stack>
                     <List
-                        className="card-list"
                         sx={{
                             overflow: "auto",
+                            width: "100%",
                             height: "100%",
-                            paddingLeft: "8%",
+                            display: "flex",
+                            justifyContent: "center",
+                            flexFlow: "row wrap",
                         }}
                     >
                         {imageData.map((pic) => (
-                            <img
+                            <ImageCard
                                 key={pic.id}
-                                className="card--image"
-                                alt={pic.description}
-                                src={pic.url}
-                                width="30%"
-                                onClick={(e) => {
-                                    clearState();
-                                    selectionCallback(e.target.src);
-                                }}
+                                image={pic}
+                                callback={handleSelectImage}
                             />
-                        ))}{" "}
+                        ))}
                     </List>
                     {imageData.length > 0 && (
                         <Pagination

@@ -268,11 +268,28 @@ function deleteSelectedObjects(cnv) {
     }
 }
 
+function createThumbnail(cnv, width, height, callback) {
+    cnv.getElement().toBlob(function (blob) {
+        var url = URL.createObjectURL(blob);
+        fabric.Image.fromURL(url, (img) => {
+            img.set({
+                left: 0,
+                top: 0,
+                // Scale image to fit width / height ?
+            });
+            img.id = getObjectId();
+            img.scaleToHeight(height);
+            img.scaleToWidth(width);
+            if (callback) {
+                callback(img);
+            }
+        });
+    });
+}
+
 function saveToFile(cnv, filename) {
     cnv.getElement().toBlob(function (blob) {
-        var src = URL.createObjectURL(blob);
-        addImageFromURL(cnv, src, 10, 10, 100, 100, null);
-        //FileSaver.saveAs(blob, filename);
+        FileSaver.saveAs(blob, filename);
     });
 }
 
@@ -299,5 +316,6 @@ export {
     deleteSelectedObjects,
     refresh,
     clearCanvas,
+    createThumbnail,
     saveToFile,
 };
