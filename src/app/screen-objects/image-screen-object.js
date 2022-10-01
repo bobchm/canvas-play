@@ -1,7 +1,14 @@
 import { PropertyType } from "../constants/property-types";
 import ScreenObject from "./screen-object";
-import { addImage, getImageSource, setImageSource } from "../../utils/canvas";
+import {
+    addImage,
+    getImageSource,
+    setImageSource,
+    isImageEmbedded,
+    embedImage,
+} from "../../utils/canvas";
 import { ScreenObjectType } from "../constants/screen-object-types";
+import PropertyPalette from "../../components/property-palette/property-palette.component";
 
 class ImageScreenObject extends ScreenObject {
     constructor(_screenMgr, _parent, _spec) {
@@ -27,6 +34,10 @@ class ImageScreenObject extends ScreenObject {
                 current: this.getSource(),
             },
             {
+                type: PropertyType.EmbedImage,
+                current: isImageEmbedded(this.getCanvasObj()),
+            },
+            {
                 type: PropertyType.Opacity,
                 current: this.getCanvasObj().opacity * 100,
             },
@@ -38,6 +49,9 @@ class ImageScreenObject extends ScreenObject {
         switch (type) {
             case PropertyType.ImageSource:
                 this.setSource(screenMgr, value);
+                break;
+            case PropertyType.EmbedImage:
+                embedImage(screenMgr.getCanvas(), this.getCanvasObj());
                 break;
             case PropertyType.Opacity:
                 var newValue = value / 100;

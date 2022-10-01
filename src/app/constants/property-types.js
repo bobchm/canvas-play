@@ -4,6 +4,7 @@ export const PropertyValueType = {
     Percent: "percent",
     TextStyle: "textstyle",
     ImageSource: "imagesource",
+    EmbedImage: "embedimage",
 };
 
 export const PropertyType = {
@@ -24,5 +25,9 @@ export const PropertyType = {
     ImageSource: {
         name: "Source",
         valueType: PropertyValueType.ImageSource,
+    },
+    EmbedImage: {
+        name: "Embed Image",
+        valueType: PropertyValueType.EmbedImage,
     },
 };

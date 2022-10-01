@@ -169,7 +169,7 @@ const addImage = (cnv, spec) => {
 };
 
 const getImageSource = (image) => {
-    return image.src;
+    return image.getSrc();
 };
 
 const setErrorImage = (cnv, image, wd, hgt) => {
@@ -231,6 +231,7 @@ const setImageSource = (cnv, image, src) => {
         const heightFactor = origHgt / img.height;
         const minFactor = Math.min(widthFactor, heightFactor);
         img.scale(minFactor);
+        img.src = src;
         img.setCoords();
         cnv.renderAll();
     });
@@ -293,6 +294,33 @@ function saveToFile(cnv, filename) {
     });
 }
 
+function isImageEmbedded(image) {
+    if (image.get("type") === "image") {
+        var src = getImageSource(image);
+        return src && src.startsWith("data:image");
+    }
+    return false;
+}
+
+function embedImage(cnv, image) {
+    if (!isImageEmbedded(image)) {
+        var url = getImageSource(image);
+        fetch(url)
+            .then(function (response) {
+                if (response.ok) {
+                    return response.blob();
+                }
+            })
+            .then(function (myBlob) {
+                var a = new FileReader();
+                a.onload = function (e) {
+                    setImageSource(cnv, image, e.target.result);
+                };
+                a.readAsDataURL(myBlob);
+            });
+    }
+}
+
 export {
     initCanvas,
     addRect,
@@ -318,4 +346,6 @@ export {
     clearCanvas,
     createThumbnail,
     saveToFile,
+    isImageEmbedded,
+    embedImage,
 };
