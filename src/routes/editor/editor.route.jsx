@@ -38,7 +38,6 @@ const Editor = () => {
     const [pageList, setPageList] = useState([]);
     const [pagePickerCallback, setPagePickerCallback] = useState(null);
     const [isAddPageOpen, setIsAddPageOpen] = useState(false);
-
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
 

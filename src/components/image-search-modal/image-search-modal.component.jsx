@@ -12,13 +12,18 @@ import Pagination from "@mui/material/Pagination";
 import { ImageServiceType } from "../../utils/image-service";
 import UnsplashImageService from "../../utils/unsplash-image-service";
 import PixabayImageService from "../../utils/pixabay-image-service";
+import OpenSymbolsImageService from "../../utils/opensymbols-image-service";
+import ArasaacImageService from "../../utils/arasaac-image-service";
 import ImageCard from "../image-card/image-card.component";
 
-const PAGE_SZ = 10;
+const PAGE_SZ = 20;
+var currentImageService = ImageServiceType.Pixabay;
 
 const imageServices = [
     { name: "Pixabay", service: ImageServiceType.Pixabay },
     { name: "Unsplash", service: ImageServiceType.Unsplash },
+    // { name: "OpenSymbols", service: ImageServiceType.OpenSymbols },
+    { name: "ARASAAC", service: ImageServiceType.ARASAAC },
 ];
 
 export default function ImageSearchModal({
@@ -38,7 +43,7 @@ export default function ImageSearchModal({
     const [imageType, setImageType] = useState("");
 
     useEffect(() => {
-        setupImageService(ImageServiceType.Pixabay);
+        setupImageService(currentImageService);
     }, []);
 
     function setupImageService(serviceName) {
@@ -49,6 +54,12 @@ export default function ImageSearchModal({
                 break;
             case ImageServiceType.Pixabay:
                 imgService = new PixabayImageService();
+                break;
+            case ImageServiceType.OpenSymbols:
+                imgService = new OpenSymbolsImageService();
+                break;
+            case ImageServiceType.ARASAAC:
+                imgService = new ArasaacImageService();
                 break;
             default:
                 imgService = null;
@@ -86,6 +97,7 @@ export default function ImageSearchModal({
     function handleChangeImageService(e) {
         var newService = setupImageService(e.target.value);
         if (newService) {
+            currentImageService = e.target.value;
             doSearch(newService, 1, imageType);
         }
     }
@@ -112,9 +124,9 @@ export default function ImageSearchModal({
         doSearch(imageService, n, imageType);
     }
 
-    function handleSelectImage(e) {
+    function handleSelectImage(e, url) {
         clearState();
-        selectionCallback(e.target.src);
+        selectionCallback(url);
     }
 
     return (

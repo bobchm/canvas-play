@@ -6,6 +6,8 @@ export const ImageRefType = {
 export const ImageServiceType = {
     Pixabay: "pixabay",
     Unsplash: "unsplash",
+    OpenSymbols: "opensymbols",
+    ARASAAC: "ARASAAC",
 };
 
 class ImageService {

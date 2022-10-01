@@ -18,11 +18,11 @@ export default function ImageCard({ image, callback }) {
     }
     return (
         <Paper
-            onClick={(e) => callback(e)}
+            onClick={(e) => callback(e, image.url)}
             sx={{
                 margin: "10px",
-                width: "30%",
-                height: "30%",
+                width: "20%",
+                height: "20%",
                 overflow: "hidden",
                 textAlign: "center",
             }}
@@ -30,10 +30,9 @@ export default function ImageCard({ image, callback }) {
             <img
                 key={image.id}
                 alt={image.description}
-                src={image.url}
+                src={image.thumbnail}
                 width="auto%"
                 height="80%"
-                onClick={(e) => callback(e)}
             />
             <Typography gutterBottom variant="p" component="div">
                 {imageLabel(image)}
