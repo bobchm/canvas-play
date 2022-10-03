@@ -269,7 +269,7 @@ class ScreenManager {
         }
     }
 
-    setSelectionProperties(propType, value) {
+    async setSelectionProperties(propType, value) {
         var objs = this.#selectedObjects;
         var anySet = false;
         if (!objs || objs.length <= 0) {
@@ -282,7 +282,7 @@ class ScreenManager {
             for (let i = 0; i < objs.length; i++) {
                 var obj = objs[i];
                 anySet = true;
-                obj.setEditProperty(this, propType, value);
+                await obj.setEditProperty(this, propType, value);
             }
         }
         if (anySet) {

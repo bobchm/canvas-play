@@ -83,7 +83,7 @@ class TextScreenObject extends ScreenObject {
         return superProps.concat(thisProps);
     }
 
-    setEditProperty(screenMgr, type, value) {
+    async setEditProperty(screenMgr, type, value) {
         switch (type) {
             case PropertyType.TextColor:
                 this.getCanvasObj().set("fill", value);

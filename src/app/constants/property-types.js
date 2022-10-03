@@ -8,26 +8,50 @@ export const PropertyValueType = {
 };
 
 export const PropertyType = {
-    Id: { name: "ID", valueType: PropertyValueType.Text },
-    Name: { name: "Name", valueType: PropertyValueType.Text },
-    FillColor: { name: "Fill Color", valueType: PropertyValueType.Color },
-    LineColor: { name: "Line Color", valueType: PropertyValueType.Color },
-    TextColor: { name: "Text Color", valueType: PropertyValueType.Color },
-    TextStyle: { name: "Text Style", valueType: PropertyValueType.TextStyle },
+    Id: { name: "ID", valueType: PropertyValueType.Text, forceReset: false },
+    Name: {
+        name: "Name",
+        valueType: PropertyValueType.Text,
+        forceReset: false,
+    },
+    FillColor: {
+        name: "Fill Color",
+        valueType: PropertyValueType.Color,
+        forceReset: false,
+    },
+    LineColor: {
+        name: "Line Color",
+        valueType: PropertyValueType.Color,
+        forceReset: false,
+    },
+    TextColor: {
+        name: "Text Color",
+        valueType: PropertyValueType.Color,
+        forceReset: false,
+    },
+    TextStyle: {
+        name: "Text Style",
+        valueType: PropertyValueType.TextStyle,
+        forceReset: false,
+    },
     BackgroundColor: {
         name: "Background Color",
         valueType: PropertyValueType.Color,
+        forceReset: false,
     },
     Opacity: {
         name: "Opacity",
         valueType: PropertyValueType.Percent,
+        forceReset: false,
     },
     ImageSource: {
         name: "Source",
         valueType: PropertyValueType.ImageSource,
+        forceReset: true,
     },
     EmbedImage: {
         name: "Embed Image",
         valueType: PropertyValueType.EmbedImage,
+        forceReset: false,
     },
 };

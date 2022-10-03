@@ -38,7 +38,7 @@ class RectScreenObject extends ScreenObject {
         return superProps.concat(thisProps);
     }
 
-    setEditProperty(screenMgr, type, value) {
+    async setEditProperty(screenMgr, type, value) {
         switch (type) {
             case PropertyType.FillColor:
                 this.getCanvasObj().set("fill", value);

@@ -161,9 +161,21 @@ const Editor = () => {
         }
     }
 
-    function handlePropValueChange(propType, value) {
-        appManager.getScreenManager().setSelectionProperties(propType, value);
-        refreshLocalProperties(propType, value);
+    // this needs to be async because some of the property setters need to call asynchronous functions but we
+    // need to wait until they are complete to update the property panel
+    async function handlePropValueChange(propType, value) {
+        await appManager
+            .getScreenManager()
+            .setSelectionProperties(propType, value);
+
+        // does changing this property value force us to reevaluate all properties?
+        if (propType.forceReset) {
+            handleSelectionChange(
+                appManager.getScreenManager().getSelectedObjects()
+            );
+        } else {
+            refreshLocalProperties(propType, value);
+        }
         markChanged(true);
     }
 

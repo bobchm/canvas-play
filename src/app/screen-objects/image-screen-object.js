@@ -4,11 +4,11 @@ import {
     addImage,
     getImageSource,
     setImageSource,
+    setImageSourceA,
     isImageEmbedded,
     embedImage,
 } from "../../utils/canvas";
 import { ScreenObjectType } from "../constants/screen-object-types";
-import PropertyPalette from "../../components/property-palette/property-palette.component";
 
 class ImageScreenObject extends ScreenObject {
     constructor(_screenMgr, _parent, _spec) {
@@ -45,10 +45,14 @@ class ImageScreenObject extends ScreenObject {
         return superProps.concat(thisProps);
     }
 
-    setEditProperty(screenMgr, type, value) {
+    async setEditProperty(screenMgr, type, value) {
         switch (type) {
             case PropertyType.ImageSource:
-                this.setSource(screenMgr, value);
+                await setImageSourceA(
+                    screenMgr.getCanvas(),
+                    this.getCanvasObj(),
+                    value
+                );
                 break;
             case PropertyType.EmbedImage:
                 embedImage(screenMgr.getCanvas(), this.getCanvasObj());

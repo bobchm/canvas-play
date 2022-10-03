@@ -56,7 +56,7 @@ class ScreenObject {
         ];
     }
 
-    setEditProperty(screenMgr, type, value) {
+    async setEditProperty(screenMgr, type, value) {
         if (type === PropertyType.Id) {
             this.#id = value;
         }

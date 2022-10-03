@@ -2,10 +2,13 @@ import contentURL from "./contentURL";
 
 // get all users
 async function getAllUsers() {
-    const response = await fetch(contentURL("user/"));
+    const response = await fetch(contentURL("user/")).catch((error) => {
+        console.log(error);
+        return null;
+    });
 
     if (!response.ok) {
-        console.log(`An error occured: ${response.statusText}`);
+        console.log(`An error occured in getAllUsers: ${response.statusText}`);
         return null;
     }
 
@@ -14,10 +17,15 @@ async function getAllUsers() {
 
 // get a single user based on username
 async function getUser(username) {
-    const response = await fetch(contentURL(`user/${username}`));
+    const response = await fetch(contentURL(`user/${username}`)).catch(
+        (error) => {
+            console.log(error);
+            return null;
+        }
+    );
 
     if (!response.ok) {
-        console.log(`An error has occured: ${response.statusText}`);
+        console.log(`An error has occured in getUser: ${response.statusText}`);
         return null;
     }
 
@@ -26,10 +34,15 @@ async function getUser(username) {
 
 // get a single user based on username
 async function getUserFromId(id) {
-    const response = await fetch(contentURL(`userid/${id}`));
+    const response = await fetch(contentURL(`userid/${id}`)).catch((error) => {
+        console.log(error);
+        return null;
+    });
 
     if (!response.ok) {
-        console.log(`An error has occured: ${response.statusText}`);
+        console.log(
+            `An error has occured in getUserFromId: ${response.statusText}`
+        );
         return null;
     }
 
@@ -46,28 +59,52 @@ async function addUser(user) {
         body: JSON.stringify(user),
     }).catch((error) => {
         console.log(error);
-        return;
+        return null;
     });
-    var json = await response.json();
-    return json.ops[0];
+
+    if (!response.ok) {
+        console.log(`An error has occured in addUser: ${response.statusText}`);
+        return null;
+    } else {
+        var json = await response.json();
+        return json.ops[0];
+    }
 }
 
 // update user based on object
 async function DBUpdateUser(user) {
-    await fetch(contentURL(`user/update/${user._id}`), {
+    const response = await fetch(contentURL(`user/update/${user._id}`), {
         method: "POST",
         body: JSON.stringify(user),
         headers: {
             "Content-Type": "application/json",
         },
+    }).catch((error) => {
+        console.log(error);
+        return;
     });
+
+    if (!response.ok) {
+        console.log(
+            `An error has occured in DBUpdateUser: ${response.statusText}`
+        );
+        return null;
+    }
 }
 
 // delete a user from MongoDB based on id
 async function DBDeleteUser(id) {
-    await fetch(contentURL(`user/${id}`), {
+    const response = await fetch(contentURL(`user/${id}`), {
         method: "DELETE",
+    }).catch((error) => {
+        console.log(error);
+        return;
     });
+    if (!response.ok) {
+        console.log(
+            `An error has occured in DBDeleteUser: ${response.statusText}`
+        );
+    }
 }
 
 async function deleteUser(id) {
@@ -85,10 +122,17 @@ async function deleteUser(id) {
 
 // get an activity from id
 async function getActivity(id) {
-    const response = await fetch(contentURL(`activity/${id}`));
+    const response = await fetch(contentURL(`activity/${id}`)).catch(
+        (error) => {
+            console.log(error);
+            return null;
+        }
+    );
 
     if (!response.ok) {
-        console.log(`An error has occured: ${response.statusText}`);
+        console.log(
+            `An error has occured in getActivity: ${response.statusText}`
+        );
         return null;
     }
 
@@ -176,7 +220,7 @@ async function getPage(id) {
     const response = await fetch(contentURL(`page/${id}`));
 
     if (!response.ok) {
-        console.log(`An error has occured: ${response.statusText}`);
+        console.log(`An error has occured in getPage: ${response.statusText}`);
         return null;
     }
 
@@ -195,6 +239,14 @@ async function DBAddPage(page) {
         console.log(error);
         return;
     });
+
+    if (!response.ok) {
+        console.log(
+            `An error has occured in DBAddPage: ${response.statusText}`
+        );
+        return null;
+    }
+
     var json = await response.json();
     return json.ops[0];
 }
@@ -222,14 +274,31 @@ async function updatePage(page) {
         headers: {
             "Content-Type": "application/json",
         },
-    });
+    })
+        .then((response) => {
+            if (!response.ok) {
+                console.log(
+                    `Error in updatePage: ${page.name} - status: ${response.status}`
+                );
+            }
+        })
+        .catch((error) => {
+            console.log("Error in updatePage: ", error);
+        });
 }
 
 // delete a page from MongoDB based on id
 async function DBDeletePage(id) {
-    await fetch(contentURL(`page/${id}`), {
+    const response = await fetch(contentURL(`page/${id}`), {
         method: "DELETE",
+    }).catch((error) => {
+        console.log(error);
+        return;
     });
+
+    if (!response.ok) {
+        console.log(`Error in DBDeletePage: ${response.status}`);
+    }
 }
 
 async function deletePage(activityId, pageId) {

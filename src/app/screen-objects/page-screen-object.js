@@ -41,7 +41,7 @@ class PageScreenObject extends ContainerScreenObject {
         return superProps.concat(thisProps);
     }
 
-    setEditProperty(screenMgr, type, value) {
+    async setEditProperty(screenMgr, type, value) {
         switch (type) {
             case PropertyType.BackgroundColor:
                 this.#backgroundColor = value;
