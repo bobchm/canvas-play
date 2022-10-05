@@ -54,4 +54,9 @@ export const PropertyType = {
         valueType: PropertyValueType.EmbedImage,
         forceReset: false,
     },
+    ButtonLabel: {
+        name: "Label",
+        valueType: PropertyValueType.Text,
+        forceReset: false,
+    },
 };

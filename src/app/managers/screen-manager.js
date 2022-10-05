@@ -3,6 +3,7 @@ import RectScreenObject from "../screen-objects/rect-screen-object";
 import CircleScreenObject from "../screen-objects/circle-screen-object";
 import TextScreenObject from "../screen-objects/text-screen-object";
 import ImageScreenObject from "../screen-objects/image-screen-object";
+import SymbolButtonScreenObject from "../screen-objects/symbol-button-screen-object";
 
 import {
     initCanvas,
@@ -231,6 +232,29 @@ class ScreenManager {
                     this.setModified();
                 }
                 break;
+            case "SymbolButton":
+                if (this.#currentPage) {
+                    newObj = new SymbolButtonScreenObject(
+                        this,
+                        this.#currentPage,
+                        "Label",
+                        {
+                            type: ScreenObjectType.Text,
+                            shapeSpec: {
+                                left: options.pointer.x,
+                                top: options.pointer.y,
+                                width: 200,
+                                height: 200,
+                                fill: "white",
+                                stroke: "black",
+                                opacity: 1.0,
+                            },
+                        }
+                    );
+                    this.setModified();
+                }
+                break;
+
             default:
                 return;
         }
@@ -306,6 +330,13 @@ class ScreenManager {
                 var newImage = new ImageScreenObject(this, parent, spec);
                 newImage.setSource(this, spec.shapeSpec.src);
                 return newImage;
+            case ScreenObjectType.SymbolButton:
+                return new SymbolButtonScreenObject(
+                    this,
+                    parent,
+                    spec.label,
+                    spec
+                );
             default:
                 return null;
         }

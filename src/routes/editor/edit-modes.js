@@ -6,4 +6,5 @@ export const EditMode = {
     AddCircle: { mode: "Add", submode: ScreenObjectType.Circle },
     AddText: { mode: "Add", submode: ScreenObjectType.Text },
     AddImage: { mode: "Add", submode: ScreenObjectType.Image },
+    AddSymbolButton: { mode: "Add", submode: ScreenObjectType.SymbolButton },
 };

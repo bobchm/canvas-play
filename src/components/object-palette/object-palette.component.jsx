@@ -8,6 +8,7 @@ import CropSquareIcon from "@mui/icons-material/CropSquare";
 import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
 import TextFieldsRoundedIcon from "@mui/icons-material/TextFieldsRounded";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
+import { BsFileRichtext } from "react-icons/bs";
 
 import { EditMode } from "../../routes/editor/edit-modes";
 
@@ -36,6 +37,11 @@ const options = [
         icon: <ImageOutlinedIcon />,
         label: "",
         mode: EditMode.AddImage,
+    },
+    {
+        icon: <BsFileRichtext />,
+        label: "",
+        mode: EditMode.AddSymbolButton,
     },
 ];
 
