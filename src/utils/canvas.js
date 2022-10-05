@@ -1,4 +1,5 @@
 import { fabric } from "fabric";
+import { SymbolButton } from "./symbol-button";
 import { colorCloserToBlack } from "./colors";
 import FileSaver from "file-saver";
 
@@ -169,9 +170,9 @@ const addImage = (cnv, spec) => {
 };
 
 const addSymbolButton = (cnv, label, spec) => {
-    const rect = new fabric.Rect(spec);
-    finishObjectAdd(cnv, rect);
-    return rect;
+    const symBtn = new SymbolButton(label, spec);
+    finishObjectAdd(cnv, symBtn);
+    return symBtn;
 };
 
 const getImageSource = (image) => {
