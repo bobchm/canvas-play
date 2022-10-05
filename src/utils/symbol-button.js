@@ -72,8 +72,32 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         }
     },
 
-    decorateText: function (metrics, x, y) {
-        // to implement linethrough & underline
+    drawHorizontalLine: function (ctx, x1, x2, y) {
+        ctx.beginPath();
+        ctx.strokeStyle = this.textColor;
+        ctx.lineWidth = 1;
+        ctx.moveTo(x1, y);
+        ctx.lineTo(x2, y);
+        ctx.stroke();
+    },
+
+    decorateText: function (ctx, metrics, x, y) {
+        if (this.underline) {
+            this.drawHorizontalLine(
+                ctx,
+                x,
+                x + metrics.width,
+                y + metrics.fontBoundingBoxDescent
+            );
+        }
+        if (this.linethrough) {
+            this.drawHorizontalLine(
+                ctx,
+                x,
+                x + metrics.width,
+                y - metrics.fontBoundingBoxAscent / 4
+            );
+        }
     },
 
     _render: function (ctx) {
@@ -87,7 +111,7 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         var x = -this.width / 2 + this.justifiedTextX(ctx, metrics);
         var y = -this.height / 2 + 20;
         ctx.fillText(this.label, x, y);
-        this.decorateText(metrics, x, y);
+        this.decorateText(ctx, metrics, x, y);
     },
 
     setLabel(cnv, label) {
