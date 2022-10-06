@@ -60,3 +60,42 @@ export const PropertyType = {
         forceReset: false,
     },
 };
+
+function checkTextStyleStyle(dest, src, styles, prop) {
+    if (
+        dest.current.styles.includes(prop) &&
+        src.current.styles.includes(prop)
+    ) {
+        styles.push(prop);
+    }
+}
+
+export function combineProperties(dest, src) {
+    if (dest.type !== src.type) return;
+
+    switch (dest.type) {
+        case PropertyType.TextStyle:
+            if (dest.current.fontFamily !== src.current.fontFamily) {
+                dest.current.fontFamily = "";
+            }
+            if (dest.current.fontSize !== src.current.fontSize) {
+                dest.current.fontSize = 0;
+            }
+            if (dest.current.alignment !== src.current.alignment) {
+                dest.current.alignment = "";
+            }
+            if (dest.current.styles !== src.current.styles) {
+                var styles = [];
+                checkTextStyleStyle(dest, src, styles, "bold");
+                checkTextStyleStyle(dest, src, styles, "italic");
+                checkTextStyleStyle(dest, src, styles, "underline");
+                checkTextStyleStyle(dest, src, styles, "strikethrough");
+                dest.current.styles = styles;
+            }
+            break;
+        default:
+            if (dest.current !== src.current) {
+                dest.current = null;
+            }
+    }
+}

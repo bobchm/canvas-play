@@ -5,7 +5,7 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
     type: "symbolButton",
     // initialize can be of type function(options) or function(property, options), like for text.
     // no other signatures allowed.
-    initialize: function (label, options) {
+    initialize: function (label, options, callback) {
         options || (options = {});
 
         this.callSuper("initialize", options);
@@ -13,7 +13,7 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         this.setFont(options);
         this.textColor = options.textColor || "black";
         this.image = new Image();
-        this.setImageSource(options.imageSource);
+        this.setImageSource(options.imageSource, callback);
         this.killScaling();
     },
 
@@ -34,9 +34,44 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         this.makeDirty();
     },
 
-    setImageSource: function (src) {
-        this.image.src = src || defaultImageData;
+    getImageSource: function () {
+        return this.image.src;
+    },
+
+    isImageEmbedded: function () {
+        return this.image.src && this.image.src.startsWith("data:image");
+    },
+
+    setImageSourceA: function (src, afterLoad) {},
+
+    embedImage: function (cnv) {
+        if (!this.isImageEmbedded()) {
+            var url = this.image.src;
+            fetch(url)
+                .then(function (response) {
+                    if (response.ok) {
+                        return response.blob();
+                    }
+                })
+                .then(function (myBlob) {
+                    var a = new FileReader();
+                    a.onload = function (e) {
+                        this.setImageSource(e.target.result, null);
+                    };
+                    a.readAsDataURL(myBlob);
+                });
+        }
+    },
+
+    setImageSource: function (src, callback) {
+        if (callback) {
+            this.image.onload = () => {
+                this.makeDirty();
+                callback();
+            };
+        }
         this.makeDirty();
+        this.image.src = src || defaultImageData;
     },
 
     buildFont: function (spec) {

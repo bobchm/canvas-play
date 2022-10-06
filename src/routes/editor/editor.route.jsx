@@ -17,6 +17,7 @@ import ApplicationManager from "../../app/managers/application-manager";
 import confirmationBox from "../../utils/confirm-box";
 import { defaultPageSpec } from "../../utils/app-utils";
 import { EditMode } from "./edit-modes";
+import { combineProperties } from "../../app/constants/property-types";
 
 const drawerWidth = 100;
 const propsWidth = 200;
@@ -114,9 +115,7 @@ const Editor = () => {
     function addToEditProperties(dest, src) {
         for (let i = 0; i < dest.length; i++) {
             if (dest[i].type === src.type) {
-                if (dest[i].current !== src.current) {
-                    dest[i].current = null;
-                }
+                combineProperties(dest[i], src);
                 return;
             }
         }

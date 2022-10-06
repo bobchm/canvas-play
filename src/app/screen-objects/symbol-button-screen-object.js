@@ -1,6 +1,6 @@
 import { PropertyType } from "../constants/property-types";
 import ScreenObject from "./screen-object";
-import { addSymbolButton } from "../../utils/canvas";
+import { addSymbolButton, refresh } from "../../utils/canvas";
 import { ScreenObjectType } from "../constants/screen-object-types";
 
 class SymbolButtonScreenObject extends ScreenObject {
@@ -80,6 +80,14 @@ class SymbolButtonScreenObject extends ScreenObject {
                 current: this.getTextStyle(),
             },
             {
+                type: PropertyType.ImageSource,
+                current: this.getCanvasObj().getImageSource(),
+            },
+            {
+                type: PropertyType.EmbedImage,
+                current: this.getCanvasObj().isImageEmbedded(),
+            },
+            {
                 type: PropertyType.Opacity,
                 current: this.getCanvasObj().opacity * 100,
             },
@@ -104,6 +112,15 @@ class SymbolButtonScreenObject extends ScreenObject {
                 break;
             case PropertyType.TextStyle:
                 this.setTextStyle(value);
+                break;
+            case PropertyType.ImageSource:
+                var cnv = screenMgr.getCanvas();
+                await this.getCanvasObj().setImageSourceA(value, () =>
+                    refresh(cnv)
+                );
+                break;
+            case PropertyType.EmbedImage:
+                this.getCanvasObj().embedImage(screenMgr.getCanvas());
                 break;
             case PropertyType.Opacity:
                 var newValue = value / 100;

@@ -167,7 +167,7 @@ const addImage = (cnv, spec) => {
 };
 
 const addSymbolButton = (cnv, label, spec) => {
-    const symBtn = new SymbolButton(label, spec);
+    const symBtn = new SymbolButton(label, spec, () => refresh(cnv));
     finishObjectAdd(cnv, symBtn);
     return symBtn;
 };
