@@ -1,5 +1,6 @@
 import { fabric } from "fabric";
 import { defaultImageData, errorImageData } from "./image-defaults";
+import { roundRect } from "./canvas";
 
 var SymbolButton = fabric.util.createClass(fabric.Rect, {
     type: "symbolButton",
@@ -180,10 +181,25 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         );
     },
 
-    _render: function (ctx) {
-        this.callSuper("_render", ctx);
+    drawRoundedRect: function (ctx) {
+        ctx.fillStyle = this.fill;
+        ctx.strokeStyle = this.stroke;
+        roundRect(
+            ctx,
+            -this.width / 2,
+            -this.height / 2,
+            this.width,
+            this.height,
+            10,
+            true,
+            true
+        );
+    },
 
-        console.log(this.scaleX, this.scaleY);
+    _render: function (ctx) {
+        // this.callSuper("_render", ctx);
+
+        this.drawRoundedRect(ctx);
 
         const imageMargin = 5; // margin around the image
         const textYOffset = 20; // Y offset of text below the top of the button
