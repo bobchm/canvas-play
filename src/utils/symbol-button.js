@@ -70,6 +70,10 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
                 callback();
             };
         }
+        this.image.onerror = (e) => {
+            this.image.src = errorImageData;
+            this.makeDirty();
+        };
         this.makeDirty();
         this.image.src = src || defaultImageData;
     },
