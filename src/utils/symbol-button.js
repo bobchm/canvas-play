@@ -1,6 +1,18 @@
 import { fabric } from "fabric";
 import { defaultImageData, errorImageData } from "./image-defaults";
-import { roundRect } from "./canvas";
+import { drawRoundRect, drawFolder } from "./canvas";
+
+const SymBtnShape = {
+    Rectangle: "rectangle",
+    RoundedRect: "rounded ",
+    Folder: "folder",
+};
+
+export const SymbolButtonShapes = [
+    { name: "Rectangle", value: SymBtnShape.Rectangle },
+    { name: "Rounded Rectangle", value: SymBtnShape.RoundedRect },
+    { name: "Folder", value: SymBtnShape.Folder },
+];
 
 var SymbolButton = fabric.util.createClass(fabric.Rect, {
     type: "symbolButton",
@@ -10,6 +22,7 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         options || (options = {});
 
         this.embedImage = this.embedImage.bind(this);
+        this.shape = options.shape || SymBtnShape.RoundedRect;
         this.callSuper("initialize", options);
         this.set("label", label || "");
         this.setFont(options);
@@ -28,6 +41,15 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         this.set("linethrough", spec.linethrough || false);
         this.set("textAlign", spec.textAlign || "center");
         this.buildFont();
+        this.makeDirty();
+    },
+
+    getShape: function () {
+        return this.shape;
+    },
+
+    setShape: function (shape) {
+        this.shape = shape;
         this.makeDirty();
     },
 
@@ -181,10 +203,10 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         );
     },
 
-    drawRoundedRect: function (ctx) {
+    drawRoundRectShape: function (ctx) {
         ctx.fillStyle = this.fill;
         ctx.strokeStyle = this.stroke;
-        roundRect(
+        drawRoundRect(
             ctx,
             -this.width / 2,
             -this.height / 2,
@@ -196,13 +218,47 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         );
     },
 
-    _render: function (ctx) {
-        // this.callSuper("_render", ctx);
+    drawFolderShape: function (ctx) {
+        ctx.fillStyle = this.fill;
+        ctx.strokeStyle = this.stroke;
+        drawFolder(
+            ctx,
+            -this.width / 2,
+            -this.height / 2,
+            this.width,
+            this.height,
+            10,
+            true,
+            true
+        );
+    },
 
-        this.drawRoundedRect(ctx);
+    drawBackground: function (ctx) {
+        switch (this.shape) {
+            case SymBtnShape.RoundedRect:
+                this.drawRoundRectShape(ctx);
+                break;
+            case SymBtnShape.Folder:
+                this.drawFolderShape(ctx);
+                break;
+            default:
+                this.callSuper("_render", ctx);
+        }
+    },
+
+    labelYOffset: function (shape) {
+        var yOffset = 20;
+        if (shape === SymBtnShape.Folder) {
+            yOffset += this.height / 5;
+        }
+        return yOffset;
+    },
+
+    _render: function (ctx) {
+        this.drawBackground(ctx);
 
         const imageMargin = 5; // margin around the image
-        const textYOffset = 20; // Y offset of text below the top of the button
+        const textYOffset = this.labelYOffset(this.shape); // Y offset of text below the top of the button
 
         ctx.font = this.font;
         ctx.fillStyle = this.textColor;

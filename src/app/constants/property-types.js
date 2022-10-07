@@ -5,6 +5,7 @@ export const PropertyValueType = {
     TextStyle: "textstyle",
     ImageSource: "imagesource",
     EmbedImage: "embedimage",
+    ButtonShape: "buttonshape",
 };
 
 export const PropertyType = {
@@ -57,6 +58,11 @@ export const PropertyType = {
     ButtonLabel: {
         name: "Label",
         valueType: PropertyValueType.Text,
+        forceReset: false,
+    },
+    ButtonShape: {
+        name: "Shape",
+        valueType: PropertyValueType.ButtonShape,
         forceReset: false,
     },
 };

@@ -7,6 +7,7 @@ import PercentPropertyPanel from "./percent-proppanel.component";
 import TextStylePropertyPanel from "./textstyle-proppanel.component";
 import ImageSourcePropertyPanel from "./imagesrc-proppanel.component";
 import EmbedImagePropertyPanel from "./embedimage-proppanel-component";
+import ButtonShapePropertyPanel from "./button-shape.component";
 
 import "./property-palette.styles.scss";
 import { PropertyValueType } from "../../app/constants/property-types";
@@ -54,6 +55,13 @@ const PropertyPalette = ({ top, width, options, propUpdateCallback }) => {
             case PropertyValueType.EmbedImage:
                 return (
                     <EmbedImagePropertyPanel
+                        propOption={option}
+                        propUpdateCallback={propUpdateCallback}
+                    />
+                );
+            case PropertyValueType.ButtonShape:
+                return (
+                    <ButtonShapePropertyPanel
                         propOption={option}
                         propUpdateCallback={propUpdateCallback}
                     />

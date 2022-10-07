@@ -88,6 +88,10 @@ class SymbolButtonScreenObject extends ScreenObject {
                 current: this.getCanvasObj().isImageEmbedded(),
             },
             {
+                type: PropertyType.ButtonShape,
+                current: this.getCanvasObj().getShape(),
+            },
+            {
                 type: PropertyType.Opacity,
                 current: this.getCanvasObj().opacity * 100,
             },
@@ -121,6 +125,9 @@ class SymbolButtonScreenObject extends ScreenObject {
                 break;
             case PropertyType.EmbedImage:
                 this.getCanvasObj().embedImage(screenMgr.getCanvas());
+                break;
+            case PropertyType.ButtonShape:
+                this.getCanvasObj().setShape(value);
                 break;
             case PropertyType.Opacity:
                 var newValue = value / 100;
