@@ -8,6 +8,7 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
     initialize: function (label, options, callback) {
         options || (options = {});
 
+        this.embedImage = this.embedImage.bind(this);
         this.callSuper("initialize", options);
         this.set("label", label || "");
         this.setFont(options);
@@ -42,11 +43,10 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         return this.image.src && this.image.src.startsWith("data:image");
     },
 
-    setImageSourceA: function (src, afterLoad) {},
-
     embedImage: function (cnv) {
         if (!this.isImageEmbedded()) {
             var url = this.image.src;
+            var theThis = this;
             fetch(url)
                 .then(function (response) {
                     if (response.ok) {
@@ -56,7 +56,7 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
                 .then(function (myBlob) {
                     var a = new FileReader();
                     a.onload = function (e) {
-                        this.setImageSource(e.target.result, null);
+                        theThis.setImageSource(e.target.result, null);
                     };
                     a.readAsDataURL(myBlob);
                 });

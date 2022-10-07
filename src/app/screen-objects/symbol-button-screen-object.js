@@ -115,7 +115,7 @@ class SymbolButtonScreenObject extends ScreenObject {
                 break;
             case PropertyType.ImageSource:
                 var cnv = screenMgr.getCanvas();
-                await this.getCanvasObj().setImageSourceA(value, () =>
+                await this.getCanvasObj().setImageSource(value, () =>
                     refresh(cnv)
                 );
                 break;
