@@ -3,6 +3,7 @@ import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import Typography from "@mui/material/Typography";
 import { SymbolButtonShapes } from "../../utils/symbol-button";
 
 const ButtonShapePropertyPanel = ({ propOption, propUpdateCallback }) => {
@@ -25,6 +26,9 @@ const ButtonShapePropertyPanel = ({ propOption, propUpdateCallback }) => {
             }}
         >
             <Grid container justifyContent="Center">
+                <Typography variant="button" mt={0} mb={0}>
+                    Shape
+                </Typography>
                 <Select
                     aria-label="font-family"
                     id="shape"
@@ -35,6 +39,7 @@ const ButtonShapePropertyPanel = ({ propOption, propUpdateCallback }) => {
                         fontSize: 13,
                         height: 40,
                         mt: elementSpacing,
+                        mb: elementSpacing,
                     }}
                     onChange={(e, child) => updateShape(e.target.value)}
                 >
