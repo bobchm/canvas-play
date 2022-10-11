@@ -334,7 +334,9 @@ const Editor = () => {
                 </div>
                 <PropertyPalette
                     top={0}
+                    left={window.innerWidth - propsWidth}
                     width={propsWidth}
+                    height={canvasSpec.height}
                     options={editProperties}
                     propUpdateCallback={handlePropValueChange}
                 />

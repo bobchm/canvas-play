@@ -147,10 +147,11 @@ class ScreenManager {
             id,
             left,
             top,
-            width,
-            height,
+            width / 2,
+            height / 2,
             backgroundColor,
             doSelection,
+            true,
             this.setModified
         );
         return this.#canvas;

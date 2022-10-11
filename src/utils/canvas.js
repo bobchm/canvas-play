@@ -5,6 +5,8 @@ import { defaultImageData, errorImageData } from "./image-defaults";
 import FileSaver from "file-saver";
 
 var objIdCtr = 0;
+var containerWidth = 1500;
+var containerHeight = 800;
 
 function initCanvas(
     _id,
@@ -14,13 +16,16 @@ function initCanvas(
     _height,
     _bkgColor,
     _doSelection,
+    _allowZoom,
     _modifiedCallback
 ) {
     var cnv = new fabric.Canvas(_id, {
         left: _left,
         top: _top,
-        width: _width,
-        height: _height,
+        // width: _width,
+        // height: _height,
+        width: containerWidth,
+        height: containerHeight,
         backgroundColor: _bkgColor,
         selection: _doSelection,
         renderOnAddRemove: true,
@@ -30,6 +35,27 @@ function initCanvas(
         cnv.on({
             "object:moved": _modifiedCallback,
             "object:modified": _modifiedCallback,
+        });
+    }
+
+    if (_allowZoom) {
+        cnv.on("mouse:wheel", function (opt) {
+            var delta = opt.e.deltaY;
+            var zoom = cnv.getZoom();
+            zoom *= 0.999 ** delta;
+            if (zoom > 20) zoom = 20;
+            if (zoom < 0.01) zoom = 0.01;
+            // cnv.setDimensions({
+            //     width: containerWidth * zoom,
+            //     height: containerHeight * zoom,
+            // });
+            cnv.setZoom(zoom);
+            opt.e.preventDefault();
+            opt.e.stopPropagation();
+        });
+        cnv.on("mouse:move", function (opt) {
+            var e = opt.e;
+            console.log(e.x, ".", e.y);
         });
     }
 

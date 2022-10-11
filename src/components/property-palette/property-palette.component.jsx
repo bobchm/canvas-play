@@ -14,7 +14,14 @@ import { PropertyValueType } from "../../app/constants/property-types";
 
 var ctr = 0;
 
-const PropertyPalette = ({ top, width, options, propUpdateCallback }) => {
+const PropertyPalette = ({
+    top,
+    left,
+    width,
+    height,
+    options,
+    propUpdateCallback,
+}) => {
     const selectPanel = (option, propUpdateCallback) => {
         switch (option.type.valueType) {
             case PropertyValueType.Text:
@@ -75,10 +82,18 @@ const PropertyPalette = ({ top, width, options, propUpdateCallback }) => {
         <Box
             sx={{
                 mt: `${top}px`,
+                position: "sticky",
+                left: left,
                 width: width,
                 bgcolor: "lightgray",
                 border: 1,
                 borderColor: "black",
+                height: { height },
+                display: "flex",
+                flexDirection: "column",
+                overflow: "hidden",
+                overflowY: "scroll",
+                boxSizing: "border-box",
             }}
         >
             {options.map((option, idx) => (
