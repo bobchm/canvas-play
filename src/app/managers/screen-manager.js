@@ -11,6 +11,8 @@ import {
     setSelectionCallback,
     getBackgroundColor,
     setBackgroundColor,
+    clearBackgroundImage,
+    setBackgroundImageURL,
     clearMousedownCallback,
     setMousedownCallback,
     disableSelection,
@@ -21,6 +23,8 @@ import {
     clearCanvas,
     saveToFile,
 } from "../../utils/canvas";
+
+import { defaultImageData } from "../../utils/image-defaults";
 
 import { ScreenObjectType } from "../constants/screen-object-types";
 
@@ -133,6 +137,14 @@ class ScreenManager {
         this.setModified();
     }
 
+    clearBackgroundImage() {
+        clearBackgroundImage(this.#canvas);
+    }
+
+    setBackgroundImage(imageURL, bkgStyle) {
+        setBackgroundImageURL(this.#canvas, imageURL, bkgStyle);
+    }
+
     setModified() {
         if (this.#modifiedCallback) {
             this.#modifiedCallback();
@@ -147,8 +159,8 @@ class ScreenManager {
             id,
             left,
             top,
-            width / 2,
-            height / 2,
+            width,
+            height,
             backgroundColor,
             doSelection,
             true,
@@ -240,7 +252,7 @@ class ScreenManager {
                         this.#currentPage,
                         "Label",
                         {
-                            type: ScreenObjectType.Text,
+                            type: ScreenObjectType.SymbolButton,
                             shapeSpec: {
                                 left: options.pointer.x,
                                 top: options.pointer.y,
@@ -249,6 +261,7 @@ class ScreenManager {
                                 fill: "white",
                                 stroke: "black",
                                 opacity: 1.0,
+                                imageSource: defaultImageData,
                             },
                         }
                     );

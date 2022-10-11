@@ -6,6 +6,8 @@ import ColorPropertyPanel from "./color-proppanel.component";
 import PercentPropertyPanel from "./percent-proppanel.component";
 import TextStylePropertyPanel from "./textstyle-proppanel.component";
 import ImageSourcePropertyPanel from "./imagesrc-proppanel.component";
+import SymbolSourcePropertyPanel from "./symbolsrc-proppanel.component";
+import BackgroundSourcePropertyPanel from "./bkgimagesrc-proppanel.component";
 import EmbedImagePropertyPanel from "./embedimage-proppanel-component";
 import ButtonShapePropertyPanel from "./button-shape.component";
 
@@ -55,6 +57,20 @@ const PropertyPalette = ({
             case PropertyValueType.ImageSource:
                 return (
                     <ImageSourcePropertyPanel
+                        propOption={option}
+                        propUpdateCallback={propUpdateCallback}
+                    />
+                );
+            case PropertyValueType.SymBtnImageSource:
+                return (
+                    <SymbolSourcePropertyPanel
+                        propOption={option}
+                        propUpdateCallback={propUpdateCallback}
+                    />
+                );
+            case PropertyValueType.BackgroundImageSource:
+                return (
+                    <BackgroundSourcePropertyPanel
                         propOption={option}
                         propUpdateCallback={propUpdateCallback}
                     />

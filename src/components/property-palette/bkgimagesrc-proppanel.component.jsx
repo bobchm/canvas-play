@@ -1,17 +1,22 @@
 import React from "react";
 import Button from "@mui/material/Button";
-import ImageSearchModal from "../image-search-modal/image-search-modal.component";
+import ImageSearchModal, {
+    ImageSearchNoImage,
+} from "../image-search-modal/image-search-modal.component";
 import { ImageServiceType } from "../../utils/image-service";
 
-const ImageSourcePropertyPanel = ({ propOption, propUpdateCallback }) => {
+const BackgroundSourcePropertyPanel = ({ propOption, propUpdateCallback }) => {
     const [isSearchModalOpen, setIsSearchModalOpen] = React.useState(false);
 
     const handleSearchButtonClick = (event) => {
         setIsSearchModalOpen(true);
     };
 
-    const handleChangeLocationFromSearch = (newLocation) => {
-        propUpdateCallback(propOption.type, newLocation);
+    const handleChangeLocationFromSearch = (newSpec) => {
+        if (newSpec.url === ImageSearchNoImage) {
+            newSpec.url = null;
+        }
+        propUpdateCallback(propOption.type, newSpec);
         setIsSearchModalOpen(false);
     };
 
@@ -33,7 +38,7 @@ const ImageSourcePropertyPanel = ({ propOption, propUpdateCallback }) => {
                 onClick={handleSearchButtonClick}
                 variant="outlined"
             >
-                Image Search
+                Background Image
             </Button>
             <ImageSearchModal
                 open={isSearchModalOpen}
@@ -42,9 +47,11 @@ const ImageSourcePropertyPanel = ({ propOption, propUpdateCallback }) => {
                 selectionCallback={handleChangeLocationFromSearch}
                 cancelCallback={handleCancelLocationFromSearch}
                 preferredService={ImageServiceType.Unsplash}
+                allowNoImage={true}
+                allowStretchCenter={true}
             />
         </div>
     );
 };
 
-export default ImageSourcePropertyPanel;
+export default BackgroundSourcePropertyPanel;

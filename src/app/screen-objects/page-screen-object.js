@@ -5,15 +5,29 @@ import { ScreenObjectType } from "../constants/screen-object-types";
 class PageScreenObject extends ContainerScreenObject {
     #name;
     #backgroundColor;
+    #backgroundImage;
+    #backgroundImageStyle;
 
     constructor(_screenMgr, _parent, _spec) {
-        const { backgroundColor = "white", name = "" } = _spec;
+        const {
+            backgroundColor = "white",
+            backgroundImage = "",
+            backgroundImageStyle = "",
+            name = "",
+        } = _spec;
 
         super(_screenMgr, _parent, _spec);
 
         this.#name = name;
         this.#backgroundColor = backgroundColor;
+        this.#backgroundImage = backgroundImage;
         _screenMgr?.setBackgroundColor(backgroundColor);
+        if (backgroundImage && backgroundImage.length) {
+            _screenMgr?.setBackgroundImage(
+                backgroundImage,
+                backgroundImageStyle
+            );
+        }
     }
 
     toJSON() {
@@ -22,6 +36,8 @@ class PageScreenObject extends ContainerScreenObject {
             type: ScreenObjectType.Page,
             name: this.#name,
             backgroundColor: this.#backgroundColor,
+            backgroundImage: this.#backgroundImage,
+            backgroundImageStyle: this.#backgroundImageStyle,
         };
         return { ...superSpec, ...spec };
     }
@@ -37,6 +53,10 @@ class PageScreenObject extends ContainerScreenObject {
                 type: PropertyType.BackgroundColor,
                 current: this.#backgroundColor,
             },
+            {
+                type: PropertyType.BackgroundImageSource,
+                current: {},
+            },
         ];
         return superProps.concat(thisProps);
     }
@@ -49,6 +69,11 @@ class PageScreenObject extends ContainerScreenObject {
                 break;
             case PropertyType.Name:
                 this.#name = value;
+                break;
+            case PropertyType.BackgroundImageSource:
+                this.#backgroundImage = value.url;
+                this.#backgroundImageStyle = value.style;
+                screenMgr.setBackgroundImage(value.url, value.style);
                 break;
             default:
                 super.setEditProperty(screenMgr, type, value);

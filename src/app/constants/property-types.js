@@ -4,6 +4,8 @@ export const PropertyValueType = {
     Percent: "percent",
     TextStyle: "textstyle",
     ImageSource: "imagesource",
+    SymBtnImageSource: "symbtnimagesource",
+    BackgroundImageSource: "backgroundimagesource",
     EmbedImage: "embedimage",
     ButtonShape: "buttonshape",
 };
@@ -48,6 +50,16 @@ export const PropertyType = {
     ImageSource: {
         name: "Source",
         valueType: PropertyValueType.ImageSource,
+        forceReset: true,
+    },
+    SymbolButtonImageSource: {
+        name: "Symbol",
+        valueType: PropertyValueType.SymBtnImageSource,
+        forceReset: true,
+    },
+    BackgroundImageSource: {
+        name: "Source",
+        valueType: PropertyValueType.BackgroundImageSource,
         forceReset: true,
     },
     EmbedImage: {

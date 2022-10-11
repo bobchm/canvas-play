@@ -1,11 +1,13 @@
 import { fabric } from "fabric";
-import { defaultImageData, errorImageData } from "./image-defaults";
+import { errorImageData } from "./image-defaults";
 
 const SymBtnShape = {
     Rectangle: "rectangle",
     RoundedRect: "rounded ",
     Folder: "folder",
 };
+
+const LabelMargin = 20;
 
 export const SymbolButtonShapes = [
     { name: "Rectangle", value: SymBtnShape.Rectangle },
@@ -149,6 +151,7 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
     },
 
     embedImage: function (cnv) {
+        if (this.image.src === null) return;
         if (!this.isImageEmbedded()) {
             var url = this.image.src;
             var theThis = this;
@@ -180,7 +183,7 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
             this.makeDirty();
         };
         this.makeDirty();
-        this.image.src = src || defaultImageData;
+        this.image.src = src; // || defaultImageData;
     },
 
     buildFont: function (spec) {
@@ -328,19 +331,28 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         }
     },
 
-    labelYOffset: function (shape) {
-        var yOffset = 20;
+    labelYOffset: function (shape, buttonHgt, hasSymbol) {
+        var shapeOffset = 0;
         if (shape === SymBtnShape.Folder) {
-            yOffset += tabHeight(this.height);
+            shapeOffset = tabHeight(this.height);
         }
-        return yOffset;
+        if (hasSymbol) {
+            return shapeOffset + LabelMargin;
+        }
+
+        // center vertically in button area
+        return (buttonHgt - shapeOffset) / 2;
     },
 
     _render: function (ctx) {
         this.drawBackground(ctx);
 
         const imageMargin = 5; // margin around the image
-        const textYOffset = this.labelYOffset(this.shape); // Y offset of text below the top of the button
+        const textYOffset = this.labelYOffset(
+            this.shape,
+            this.height,
+            this.image.src !== null
+        ); // Y offset of text below the top of the button
 
         ctx.font = this.font;
         ctx.fillStyle = this.textColor;
@@ -352,16 +364,20 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         ctx.fillText(this.label, x, y);
         this.decorateText(ctx, metrics, x, y);
 
-        x = -this.width / 2 + imageMargin; // x is left of the button plus the margin
-        y += metrics.fontBoundingBoxDescent + imageMargin; // y is bottom of the text plus the margin
-        var width = this.width - 2 * imageMargin; // width is button width minus margin on either side
+        if (this.image.src) {
+            x = -this.width / 2 + imageMargin; // x is left of the button plus the margin
+            y += metrics.fontBoundingBoxDescent + imageMargin; // y is bottom of the text plus the margin
+            var width = this.width - 2 * imageMargin; // width is button width minus margin on either side
 
-        // height is button height minus the Y offset of the text + text descent + image margin
-        var height =
-            this.height -
-            (textYOffset + metrics.fontBoundingBoxDescent + 2 * imageMargin);
+            // height is button height minus the Y offset of the text + text descent + image margin
+            var height =
+                this.height -
+                (textYOffset +
+                    metrics.fontBoundingBoxDescent +
+                    2 * imageMargin);
 
-        this.drawImageScaled(ctx, x, y, width, height);
+            this.drawImageScaled(ctx, x, y, width, height);
+        }
     },
 
     setLabel(cnv, label) {

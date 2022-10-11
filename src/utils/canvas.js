@@ -5,8 +5,12 @@ import { defaultImageData, errorImageData } from "./image-defaults";
 import FileSaver from "file-saver";
 
 var objIdCtr = 0;
-var containerWidth = 1500;
-var containerHeight = 800;
+
+export const BackgroundImageStyle = {
+    Center: "center",
+    Stretch: "stretch",
+    Tile: "tile", // not implemented yet - need to create the tiled image and then assign that
+};
 
 function initCanvas(
     _id,
@@ -22,10 +26,8 @@ function initCanvas(
     var cnv = new fabric.Canvas(_id, {
         left: _left,
         top: _top,
-        // width: _width,
-        // height: _height,
-        width: containerWidth,
-        height: containerHeight,
+        width: _width,
+        height: _height,
         backgroundColor: _bkgColor,
         selection: _doSelection,
         renderOnAddRemove: true,
@@ -53,10 +55,10 @@ function initCanvas(
             opt.e.preventDefault();
             opt.e.stopPropagation();
         });
-        cnv.on("mouse:move", function (opt) {
-            var e = opt.e;
-            console.log(e.x, ".", e.y);
-        });
+        // cnv.on("mouse:move", function (opt) {
+        //     var e = opt.e;
+        //     console.log(e.x, ".", e.y);
+        // });
     }
 
     setSelectionColor(cnv);
@@ -140,6 +142,39 @@ function setBackgroundColor(cnv, _bkgColor) {
     cnv.backgroundColor = _bkgColor;
     setSelectionColor(cnv);
     cnv.renderAll();
+}
+
+function getBackgroundImage(cnv) {
+    return cnv.backgroundImage;
+}
+
+function clearBackgroundImage(cnv) {
+    cnv.setBackgroundImage(null, cnv.renderAll.bind(cnv));
+}
+
+function setBackgroundImageURL(cnv, _imageURL, bkgStyle) {
+    fabric.Image.fromURL(_imageURL, function (img) {
+        var widthFactor = cnv.width / img.width;
+        var heightFactor = cnv.height / img.height;
+        var x, y;
+        if (bkgStyle === BackgroundImageStyle.Center) {
+            var minFactor = Math.min(widthFactor, heightFactor);
+            x = (cnv.width - minFactor * img.width) / 2;
+            y = (cnv.height - minFactor * img.height) / 2;
+            widthFactor = minFactor;
+            heightFactor = minFactor;
+        } else {
+            // style === BackgroundImageStyle.Stretch
+            x = 0;
+            y = 0;
+        }
+        cnv.setBackgroundImage(img, cnv.renderAll.bind(cnv), {
+            left: x,
+            top: y,
+            scaleX: widthFactor,
+            scaleY: heightFactor,
+        });
+    });
 }
 
 function finishObjectAdd(cnv, obj) {
@@ -380,6 +415,9 @@ export {
     enableSelection,
     getBackgroundColor,
     setBackgroundColor,
+    getBackgroundImage,
+    clearBackgroundImage,
+    setBackgroundImageURL,
     setSelectedObject,
     removeObject,
     deleteSelectedObjects,

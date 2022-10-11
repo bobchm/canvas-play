@@ -3,6 +3,7 @@ import TextField from "@mui/material/TextField";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
+import Button from "@mui/material/Button";
 import List from "@mui/material/List";
 import Stack from "@mui/material/Stack";
 import Select from "@mui/material/Select";
@@ -16,8 +17,9 @@ import OpenSymbolsImageService from "../../utils/opensymbols-image-service";
 import ArasaacImageService from "../../utils/arasaac-image-service";
 import ImageCard from "../image-card/image-card.component";
 
+import { BackgroundImageStyle } from "../../utils/canvas";
+
 const PAGE_SZ = 20;
-var currentImageService = ImageServiceType.Pixabay;
 
 const imageServices = [
     { name: "Pixabay", service: ImageServiceType.Pixabay },
@@ -26,6 +28,13 @@ const imageServices = [
     { name: "ARASAAC", service: ImageServiceType.ARASAAC },
 ];
 
+const backgroundStyles = [
+    { name: "Center", style: BackgroundImageStyle.Center },
+    { name: "Stretch", style: BackgroundImageStyle.Stretch },
+];
+
+export const ImageSearchNoImage = "imageSearchNoImage";
+
 export default function ImageSearchModal({
     open,
     question,
@@ -33,18 +42,26 @@ export default function ImageSearchModal({
     inputType = "text",
     selectionCallback,
     cancelCallback,
+    preferredService = ImageServiceType.Unsplash,
+    allowNoImage = false,
+    allowStretchCenter = false,
 }) {
     const [inputText, setInputText] = useState("");
     const [imageData, setImageData] = useState([]);
-    const [imageService, setImageService] = useState(null);
     const [numPages, setNumPages] = useState(10);
     const [curPage, setCurPage] = useState(1);
     const [imageTypes, setImageTypes] = useState([]);
     const [imageType, setImageType] = useState("");
+    const [imageService, setImageService] = useState(null);
+    const [backgroundStyle, setBackgroundStyle] = useState(
+        BackgroundImageStyle.Center
+    );
 
     useEffect(() => {
-        setupImageService(currentImageService);
-    }, []);
+        setupImageService(preferredService);
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [preferredService]);
 
     function setupImageService(serviceName) {
         var imgService;
@@ -94,10 +111,13 @@ export default function ImageSearchModal({
         doSearch(imageService, 1, imgType);
     }
 
+    function handleChangeBackgroundStyle(e) {
+        setBackgroundStyle(e.target.value);
+    }
+
     function handleChangeImageService(e) {
         var newService = setupImageService(e.target.value);
         if (newService) {
-            currentImageService = e.target.value;
             doSearch(newService, 1, imageType);
         }
     }
@@ -124,9 +144,20 @@ export default function ImageSearchModal({
         doSearch(imageService, n, imageType);
     }
 
+    function valueForState(url) {
+        if (!allowStretchCenter) return url;
+
+        return { url: url, style: backgroundStyle };
+    }
+
     function handleSelectImage(e, url) {
         clearState();
-        selectionCallback(url);
+        selectionCallback(valueForState(url));
+    }
+
+    function handleNoImage(e) {
+        clearState();
+        selectionCallback(valueForState(ImageSearchNoImage));
     }
 
     return (
@@ -182,6 +213,24 @@ export default function ImageSearchModal({
                                 }
                             }}
                         />
+                        {allowNoImage && (
+                            <Button variant="outlined" onClick={handleNoImage}>
+                                No Image
+                            </Button>
+                        )}
+                        {allowStretchCenter && (
+                            <Select
+                                id="stretch-center-select"
+                                value={backgroundStyle}
+                                onChange={handleChangeBackgroundStyle}
+                            >
+                                {backgroundStyles.map((bkgStyle, idx) => (
+                                    <MenuItem key={idx} value={bkgStyle.style}>
+                                        {bkgStyle.name}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        )}
                         <Select
                             id="demo-simple-select"
                             value={imageService?.getType()}
