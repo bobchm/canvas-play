@@ -111,8 +111,12 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         this.set("label", label || "");
         this.setFont(options);
         this.textColor = options.textColor || "black";
-        this.image = new Image();
-        this.setImageSource(options.imageSource, callback);
+        if (options.imageSource) {
+            this.image = new Image();
+            this.setImageSource(options.imageSource, callback);
+        } else {
+            this.image = null;
+        }
         this.killScaling();
     },
 
@@ -143,15 +147,20 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
     },
 
     getImageSource: function () {
+        if (!this.image) return null;
         return this.image.src;
     },
 
     isImageEmbedded: function () {
-        return this.image.src && this.image.src.startsWith("data:image");
+        return (
+            this.image &&
+            this.image.src &&
+            this.image.src.startsWith("data:image")
+        );
     },
 
     embedImage: function (cnv) {
-        if (this.image.src === null) return;
+        if (this.image === null) return;
         if (!this.isImageEmbedded()) {
             var url = this.image.src;
             var theThis = this;
@@ -172,6 +181,14 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
     },
 
     setImageSource: function (src, callback) {
+        if (src === null) {
+            this.image = null;
+            this.makeDirty();
+            return;
+        }
+        if (this.image === null) {
+            this.image = new Image();
+        }
         if (callback) {
             this.image.onload = () => {
                 this.makeDirty();
@@ -223,7 +240,7 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
             linethrough: this.get("linethrough"),
             textAlign: this.get("textAlign"),
             textColor: this.get("textColor"),
-            imageSource: this.image.src,
+            imageSource: this.image ? this.image.src : null,
         });
     },
 
@@ -351,7 +368,7 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         const textYOffset = this.labelYOffset(
             this.shape,
             this.height,
-            this.image.src !== null
+            this.image !== null
         ); // Y offset of text below the top of the button
 
         ctx.font = this.font;
@@ -364,7 +381,7 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         ctx.fillText(this.label, x, y);
         this.decorateText(ctx, metrics, x, y);
 
-        if (this.image.src) {
+        if (this.image) {
             x = -this.width / 2 + imageMargin; // x is left of the button plus the margin
             y += metrics.fontBoundingBoxDescent + imageMargin; // y is bottom of the text plus the margin
             var width = this.width - 2 * imageMargin; // width is button width minus margin on either side

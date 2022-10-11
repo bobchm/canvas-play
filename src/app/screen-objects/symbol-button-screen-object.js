@@ -80,7 +80,7 @@ class SymbolButtonScreenObject extends ScreenObject {
                 current: this.getTextStyle(),
             },
             {
-                type: PropertyType.SymBtnImageSource,
+                type: PropertyType.SymbolButtonImageSource,
                 current: this.getCanvasObj().getImageSource(),
             },
             {
@@ -117,7 +117,7 @@ class SymbolButtonScreenObject extends ScreenObject {
             case PropertyType.TextStyle:
                 this.setTextStyle(value);
                 break;
-            case PropertyType.SymBtnImageSource:
+            case PropertyType.SymbolButtonImageSource:
                 var cnv = screenMgr.getCanvas();
                 await this.getCanvasObj().setImageSource(value, () =>
                     refresh(cnv)
