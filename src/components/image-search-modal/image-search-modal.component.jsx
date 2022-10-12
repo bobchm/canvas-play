@@ -16,6 +16,7 @@ import PixabayImageService from "../../utils/pixabay-image-service";
 import OpenSymbolsImageService from "../../utils/opensymbols-image-service";
 import ArasaacImageService from "../../utils/arasaac-image-service";
 import ImageCard from "../image-card/image-card.component";
+import TextInputModal from "../text-input-modal/text-input-modal.component";
 
 import { BackgroundImageStyle } from "../../utils/canvas";
 
@@ -53,6 +54,7 @@ export default function ImageSearchModal({
     const [imageTypes, setImageTypes] = useState([]);
     const [imageType, setImageType] = useState("");
     const [imageService, setImageService] = useState(null);
+    const [isEntryModalOpen, setIsEntryModalOpen] = useState(false);
     const [backgroundStyle, setBackgroundStyle] = useState(
         BackgroundImageStyle.Center
     );
@@ -160,6 +162,19 @@ export default function ImageSearchModal({
         selectionCallback(valueForState(ImageSearchNoImage));
     }
 
+    function handleEnterURL(e) {
+        setIsEntryModalOpen(true);
+    }
+
+    function handleChangeLocationFromEntry(url) {
+        setIsEntryModalOpen(false);
+        handleSelectImage(null, url);
+    }
+
+    function handleCancelLocationFromEntry() {
+        setIsEntryModalOpen(false);
+    }
+
     return (
         <Modal
             open={open}
@@ -231,6 +246,9 @@ export default function ImageSearchModal({
                                 ))}
                             </Select>
                         )}
+                        <Button variant="outlined" onClick={handleEnterURL}>
+                            Image URL
+                        </Button>
                         <Select
                             id="demo-simple-select"
                             value={imageService?.getType()}
@@ -285,6 +303,16 @@ export default function ImageSearchModal({
                         />
                     )}
                 </Stack>
+                <TextInputModal
+                    open={isEntryModalOpen}
+                    question="Image Location"
+                    contentText="Enter the URL of the image."
+                    textLabel="URL"
+                    yesLabel="OK"
+                    yesCallback={handleChangeLocationFromEntry}
+                    noLabel="Cancel"
+                    noCallback={handleCancelLocationFromEntry}
+                />
             </Paper>
         </Modal>
     );
