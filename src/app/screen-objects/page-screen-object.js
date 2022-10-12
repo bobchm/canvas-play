@@ -22,6 +22,7 @@ class PageScreenObject extends ContainerScreenObject {
         this.#name = name;
         this.#backgroundColor = backgroundColor;
         this.#backgroundImage = backgroundImage;
+        this.#backgroundImageStyle = backgroundImageStyle;
         _screenMgr?.setBackgroundColor(backgroundColor);
         if (backgroundImage && backgroundImage.length) {
             _screenMgr?.setBackgroundImage(
