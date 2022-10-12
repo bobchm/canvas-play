@@ -223,6 +223,7 @@ export default function ImageSearchModal({
                             }}
                             sx={{ width: "95%" }}
                             onKeyPress={(ev) => {
+                                console.log("key: ", ev.key);
                                 if (ev.key === "Enter") {
                                     handleEnter();
                                 }
