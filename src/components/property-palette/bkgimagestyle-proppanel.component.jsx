@@ -52,7 +52,7 @@ const BackgroundImageStylePropertyPanel = ({
                     onChange={(e, child) => updateStyle(e.target.value)}
                 >
                     {backgroundStyles.map((style, idx) => (
-                        <MenuItem key={idx} value={style.value}>
+                        <MenuItem key={idx} value={style.style}>
                             {style.name}
                         </MenuItem>
                     ))}
