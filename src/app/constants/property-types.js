@@ -6,6 +6,7 @@ export const PropertyValueType = {
     ImageSource: "imagesource",
     SymBtnImageSource: "symbtnimagesource",
     BackgroundImageSource: "backgroundimagesource",
+    BackgroundImageStyle: "backgroundimagestyle",
     EmbedImage: "embedimage",
     ButtonShape: "buttonshape",
 };
@@ -58,9 +59,14 @@ export const PropertyType = {
         forceReset: true,
     },
     BackgroundImageSource: {
-        name: "Source",
+        name: "BackgroundImageSource",
         valueType: PropertyValueType.BackgroundImageSource,
-        forceReset: true,
+        forceReset: false,
+    },
+    BackgroundImageStyle: {
+        name: "BackgroundImageStyle",
+        valueType: PropertyValueType.BackgroundImageStyle,
+        forceReset: false,
     },
     EmbedImage: {
         name: "Embed Image",

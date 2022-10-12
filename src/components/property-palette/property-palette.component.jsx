@@ -10,6 +10,7 @@ import SymbolSourcePropertyPanel from "./symbolsrc-proppanel.component";
 import BackgroundSourcePropertyPanel from "./bkgimagesrc-proppanel.component";
 import EmbedImagePropertyPanel from "./embedimage-proppanel-component";
 import ButtonShapePropertyPanel from "./button-shape.component";
+import BackgroundImageStylePropertyPanel from "./bkgimagestyle-proppanel.component";
 
 import "./property-palette.styles.scss";
 import { PropertyValueType } from "../../app/constants/property-types";
@@ -89,6 +90,14 @@ const PropertyPalette = ({
                         propUpdateCallback={propUpdateCallback}
                     />
                 );
+            case PropertyValueType.BackgroundImageStyle:
+                return (
+                    <BackgroundImageStylePropertyPanel
+                        propOption={option}
+                        propUpdateCallback={propUpdateCallback}
+                    />
+                );
+
             default:
                 return <h1>No Matching Panel Element</h1>;
         }

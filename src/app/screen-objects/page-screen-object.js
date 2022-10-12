@@ -1,6 +1,7 @@
 import { PropertyType } from "../constants/property-types";
 import ContainerScreenObject from "./container-screen-object";
 import { ScreenObjectType } from "../constants/screen-object-types";
+import { BackgroundImageStyle } from "../../utils/canvas";
 
 class PageScreenObject extends ContainerScreenObject {
     #name;
@@ -12,7 +13,7 @@ class PageScreenObject extends ContainerScreenObject {
         const {
             backgroundColor = "white",
             backgroundImage = "",
-            backgroundImageStyle = "",
+            backgroundImageStyle = BackgroundImageStyle.Center,
             name = "",
         } = _spec;
 
@@ -55,7 +56,11 @@ class PageScreenObject extends ContainerScreenObject {
             },
             {
                 type: PropertyType.BackgroundImageSource,
-                current: {},
+                current: "",
+            },
+            {
+                type: PropertyType.BackgroundImageStyle,
+                current: this.#backgroundImageStyle,
             },
         ];
         return superProps.concat(thisProps);
@@ -71,9 +76,12 @@ class PageScreenObject extends ContainerScreenObject {
                 this.#name = value;
                 break;
             case PropertyType.BackgroundImageSource:
-                this.#backgroundImage = value.url;
+                this.#backgroundImage = value;
+                screenMgr.setBackgroundImage(value, this.#backgroundImageStyle);
+                break;
+            case PropertyType.BackgroundImageStyle:
                 this.#backgroundImageStyle = value.style;
-                screenMgr.setBackgroundImage(value.url, value.style);
+                screenMgr.setBackgroundImageStyle(value);
                 break;
             default:
                 super.setEditProperty(screenMgr, type, value);

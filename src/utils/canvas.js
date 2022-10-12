@@ -3,6 +3,7 @@ import { SymbolButton } from "./symbol-button";
 import { colorCloserToBlack } from "./colors";
 import { defaultImageData, errorImageData } from "./image-defaults";
 import FileSaver from "file-saver";
+import cssVars from "@mui/system/cssVars";
 
 var objIdCtr = 0;
 
@@ -152,29 +153,51 @@ function clearBackgroundImage(cnv) {
     cnv.setBackgroundImage(null, cnv.renderAll.bind(cnv));
 }
 
+function calcBkgImageScaling(cnv, img, bkgStyle) {
+    var widthFactor = cnv.width / img.width;
+    var heightFactor = cnv.height / img.height;
+    var x, y;
+    if (bkgStyle === BackgroundImageStyle.Center) {
+        var minFactor = Math.min(widthFactor, heightFactor);
+        x = (cnv.width - minFactor * img.width) / 2;
+        y = (cnv.height - minFactor * img.height) / 2;
+        widthFactor = minFactor;
+        heightFactor = minFactor;
+    } else {
+        // style === BackgroundImageStyle.Stretch
+        x = 0;
+        y = 0;
+    }
+    return {
+        x: x,
+        y: y,
+        widthFactor: widthFactor,
+        heightFactor: heightFactor,
+    };
+}
+
 function setBackgroundImageURL(cnv, _imageURL, bkgStyle) {
     fabric.Image.fromURL(_imageURL, function (img) {
-        var widthFactor = cnv.width / img.width;
-        var heightFactor = cnv.height / img.height;
-        var x, y;
-        if (bkgStyle === BackgroundImageStyle.Center) {
-            var minFactor = Math.min(widthFactor, heightFactor);
-            x = (cnv.width - minFactor * img.width) / 2;
-            y = (cnv.height - minFactor * img.height) / 2;
-            widthFactor = minFactor;
-            heightFactor = minFactor;
-        } else {
-            // style === BackgroundImageStyle.Stretch
-            x = 0;
-            y = 0;
-        }
+        var scaling = calcBkgImageScaling(cnv, img, bkgStyle);
         cnv.setBackgroundImage(img, cnv.renderAll.bind(cnv), {
-            left: x,
-            top: y,
-            scaleX: widthFactor,
-            scaleY: heightFactor,
+            left: scaling.x,
+            top: scaling.y,
+            scaleX: scaling.widthFactor,
+            scaleY: scaling.heightFactor,
         });
     });
+}
+
+function setBackgroundImageStyle(cnv, bkgStyle) {
+    if (cnv.backgroundImage) {
+        var scaling = calcBkgImageScaling(cnv, cnv.backgroundImage, bkgStyle);
+        cnv.backgroundImage.set({
+            left: scaling.x,
+            top: scaling.y,
+            scaleX: scaling.widthFactor,
+            scaleY: scaling.heightFactor,
+        });
+    }
 }
 
 function finishObjectAdd(cnv, obj) {
@@ -418,6 +441,7 @@ export {
     getBackgroundImage,
     clearBackgroundImage,
     setBackgroundImageURL,
+    setBackgroundImageStyle,
     setSelectedObject,
     removeObject,
     deleteSelectedObjects,

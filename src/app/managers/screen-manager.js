@@ -13,6 +13,7 @@ import {
     setBackgroundColor,
     clearBackgroundImage,
     setBackgroundImageURL,
+    setBackgroundImageStyle,
     clearMousedownCallback,
     setMousedownCallback,
     disableSelection,
@@ -143,6 +144,10 @@ class ScreenManager {
 
     setBackgroundImage(imageURL, bkgStyle) {
         setBackgroundImageURL(this.#canvas, imageURL, bkgStyle);
+    }
+
+    setBackgroundImageStyle(bkgStyle) {
+        setBackgroundImageStyle(this.#canvas, bkgStyle);
     }
 
     setModified() {

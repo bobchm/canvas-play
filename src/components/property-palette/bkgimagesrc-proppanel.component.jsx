@@ -48,7 +48,6 @@ const BackgroundSourcePropertyPanel = ({ propOption, propUpdateCallback }) => {
                 cancelCallback={handleCancelLocationFromSearch}
                 preferredService={ImageServiceType.Unsplash}
                 allowNoImage={true}
-                allowStretchCenter={true}
             />
         </div>
     );
