@@ -80,7 +80,7 @@ class PageScreenObject extends ContainerScreenObject {
                 screenMgr.setBackgroundImage(value, this.#backgroundImageStyle);
                 break;
             case PropertyType.BackgroundImageStyle:
-                this.#backgroundImageStyle = value.style;
+                this.#backgroundImageStyle = value;
                 screenMgr.setBackgroundImageStyle(value);
                 break;
             default:
