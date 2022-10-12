@@ -104,6 +104,7 @@ export default function ImageSearchModal({
 
     function handleEnter() {
         setCurPage(1);
+        console.log("doing search");
         doSearch(imageService, 1, imageType);
     }
 
@@ -225,6 +226,7 @@ export default function ImageSearchModal({
                             onKeyPress={(ev) => {
                                 console.log("key: ", ev.key);
                                 if (ev.key === "Enter") {
+                                    console.log("handling Enter");
                                     handleEnter();
                                 }
                             }}
