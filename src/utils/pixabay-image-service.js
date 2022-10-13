@@ -57,15 +57,11 @@ class PixabayImageService extends ImageService {
 
     doSearch(query, imageType, nthPage, pageSz, callback) {
         var fetchQry = this.buildQuery(query, imageType, nthPage, pageSz);
-        console.log("pixabay doSearch");
         fetch(fetchQry)
             .then((response) => {
-                console.log("OK response", response);
-                console.log(typeof response);
                 return response.json();
             })
             .then((json) => {
-                console.log("json: ", json);
                 callback(
                     this.convertResults(json.totalHits, pageSz, json.hits)
                 );

@@ -224,7 +224,6 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
             this.height = Math.max(this.height * this.scaleY, 5);
             this.scaleX = 1;
             this.scaleY = 1;
-            //console.log(this.width, this.height, this.scaleX, this.scaleY);
             this.makeDirty();
         });
     },

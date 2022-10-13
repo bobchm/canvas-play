@@ -9,7 +9,6 @@ class UnsplashImageService extends ImageService {
         this.#unsplash = createApi({
             accessKey: process.env.REACT_APP_UNSPLASH_API_KEY,
         });
-        console.log(process.env.REACT_APP_UNSPLASH_API_KEY);
     }
 
     hasImageTypes() {
@@ -42,7 +41,6 @@ class UnsplashImageService extends ImageService {
     }
 
     doSearch(query, imageTypes, nthPage, pageSz, callback) {
-        console.log("calling unsplash.search");
         this.#unsplash.search
             .getPhotos({
                 query: query,
@@ -50,10 +48,6 @@ class UnsplashImageService extends ImageService {
                 per_page: pageSz,
             })
             .then((result) => {
-                console.log("unsplash.doSearch good results");
-                console.log("typeof result");
-                console.log(typeof result);
-                console.log(result.response);
                 callback(
                     this.convertResults(
                         result.response.total_pages,
