@@ -41,6 +41,7 @@ class UnsplashImageService extends ImageService {
     }
 
     doSearch(query, imageTypes, nthPage, pageSz, callback) {
+        console.log("calling unsplash.search");
         this.#unsplash.search
             .getPhotos({
                 query: query,
@@ -48,12 +49,16 @@ class UnsplashImageService extends ImageService {
                 per_page: pageSz,
             })
             .then((result) => {
+                console.log("unsplash.doSearch good results");
                 callback(
                     this.convertResults(
                         result.response.total_pages,
                         result.response.results
                     )
                 );
+            })
+            .catch((err) => {
+                console.log("unsplash.doSearch error: ", err);
             });
     }
 }

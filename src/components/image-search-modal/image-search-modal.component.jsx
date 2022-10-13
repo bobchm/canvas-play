@@ -126,7 +126,9 @@ export default function ImageSearchModal({
     }
 
     function doSearch(service, nthPage, imgType) {
+        console.log("in doSearch");
         if (service && inputText.length > 0) {
+            console.log("calling service.doSearch");
             service.doSearch(
                 inputText,
                 imgType,
