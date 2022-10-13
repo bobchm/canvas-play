@@ -61,6 +61,7 @@ class PixabayImageService extends ImageService {
         fetch(fetchQry)
             .then((response) => {
                 console.log("OK response", response);
+                console.log(typeof response);
                 return response.json();
             })
             .then((json) => {

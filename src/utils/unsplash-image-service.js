@@ -50,7 +50,8 @@ class UnsplashImageService extends ImageService {
             })
             .then((result) => {
                 console.log("unsplash.doSearch good results");
-                console.log(result);
+                console.log("typeof result");
+                console.log(typeof result);
                 console.log(result.response);
                 callback(
                     this.convertResults(
