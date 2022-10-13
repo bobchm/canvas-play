@@ -9,6 +9,7 @@ class UnsplashImageService extends ImageService {
         this.#unsplash = createApi({
             accessKey: process.env.REACT_APP_UNSPLASH_API_KEY,
         });
+        console.log(process.env.REACT_APP_UNSPLASH_API_KEY);
     }
 
     hasImageTypes() {
