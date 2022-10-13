@@ -14,6 +14,13 @@ class ApplicationManager {
         return await this.#userActivityManager.setUser(userName);
     }
 
+    async setActivity(activityName) {
+        var activity = this.#userActivityManager.setActivity(activityName);
+        if (activity) {
+            this.#screenManager.setupForActivity(activity);
+        }
+    }
+
     getUserActivityManager() {
         return this.#userActivityManager;
     }

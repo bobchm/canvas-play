@@ -3,7 +3,6 @@ import { SymbolButton } from "./symbol-button";
 import { colorCloserToBlack } from "./colors";
 import { defaultImageData, errorImageData } from "./image-defaults";
 import FileSaver from "file-saver";
-import cssVars from "@mui/system/cssVars";
 
 var objIdCtr = 0;
 

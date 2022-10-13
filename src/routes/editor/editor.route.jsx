@@ -27,11 +27,11 @@ const aboveCanvasHeight = appBarHeight + buttonBarHeight;
 
 const appName = "Canvas Play";
 
-const initAppManager = new ApplicationManager();
-
 const Editor = () => {
+    let location = useLocation();
+
     const [title, setTitle] = useState(appName);
-    const [appManager] = useState(initAppManager);
+    const [appManager] = useState(location.state.appManager);
     const [appMode, setAppMode] = useState(EditMode.Select);
     const [editProperties, setEditProperties] = useState([]);
     const [isModified, setIsModified] = useState(false);
@@ -41,9 +41,6 @@ const Editor = () => {
     const [isAddPageOpen, setIsAddPageOpen] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
-
-    let location = useLocation();
-    console.log(location);
 
     const canvasSpec = {
         id: "canvas",
@@ -83,35 +80,26 @@ const Editor = () => {
     ];
 
     useEffect(() => {
-        initAppForNow(
-            appManager,
-            searchParams.get("userName"),
-            searchParams.get("activityName")
-        );
+        initAppForNow(appManager, location.state.activityName);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    function initAppForNow(appMgr, userName, activityName) {
-        appMgr.setUser(userName).then((response) => {
-            appMgr
-                .getUserActivityManager()
-                .setActivity(activityName)
-                .then((resp) => {
-                    var scrMgr = appManager.getScreenManager();
-                    var userMgr = appManager.getUserActivityManager();
-                    var page = userMgr.getHomePage();
-                    if (page === null) {
-                        page = userMgr.getNthPage(0);
-                    }
-                    if (page) {
-                        appMgr.openPage(page.name);
-                    }
-                    scrMgr.setSelectionCallback(handleSelectionChange);
-                    scrMgr.setAfterAddCallback(handleAfterAdd);
-                    scrMgr.setModifiedCallback(() => markChanged(true));
-                    handleSelectionChange([]);
-                    markChanged(false);
-                });
+    function initAppForNow(appMgr, activityName) {
+        appMgr.setActivity(activityName).then((resp) => {
+            var scrMgr = appManager.getScreenManager();
+            var userMgr = appManager.getUserActivityManager();
+            var page = userMgr.getHomePage();
+            if (page === null) {
+                page = userMgr.getNthPage(0);
+            }
+            if (page) {
+                appMgr.openPage(page.name);
+            }
+            scrMgr.setSelectionCallback(handleSelectionChange);
+            scrMgr.setAfterAddCallback(handleAfterAdd);
+            scrMgr.setModifiedCallback(() => markChanged(true));
+            handleSelectionChange([]);
+            markChanged(false);
         });
     }
 

@@ -37,6 +37,8 @@ class ScreenManager {
     #afterAddCallback = null;
     #modifiedCallback = null;
     #selectedObjects = null;
+    #aspectRatio = null;
+    #screenRegion;
 
     constructor() {
         this.addObjectOnMousedown = this.addObjectOnMousedown.bind(this);
@@ -150,6 +152,12 @@ class ScreenManager {
         setBackgroundImageStyle(this.#canvas, bkgStyle);
     }
 
+    setupForActivity(activity) {
+        // resize and reposition the canvas to accommodate activity.aspectRatio
+        if (activity.aspectRatio !== this.#aspectRatio) {
+        }
+    }
+
     setModified() {
         if (this.#modifiedCallback) {
             this.#modifiedCallback();
@@ -171,6 +179,13 @@ class ScreenManager {
             true,
             this.setModified
         );
+        this.#aspectRatio = width / height;
+        this.#screenRegion = {
+            left: left,
+            top: top,
+            width: width,
+            height: height,
+        };
         return this.#canvas;
     }
 

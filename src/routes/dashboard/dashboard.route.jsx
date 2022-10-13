@@ -11,24 +11,20 @@ import ApplicationManager from "../../app/managers/application-manager";
 import ActivityCard from "../../components/activity-card/activity-card.component";
 import CanvasAppBar from "../../components/canvas-appbar/canvas-appbar.component";
 
-import {
-    getUser,
-    getActivity,
-    addActivity,
-    updateActivity,
-    deleteActivity,
-    addPage,
-} from "../../utils/dbaccess";
 import "./dashboard.styles.scss";
 
 const initUserName = "bobchm@gmail.com";
 const appName = "Canvas Play";
+const aspectRatio = 4 / 3;
 
 var width = window.innerWidth;
 var height = window.innerHeight - 64;
 
 const Dashboard = () => {
     const [userName, setUserName] = useState(initUserName);
+    const [applicationManager, setApplicationManager] = useState(
+        new ApplicationManager()
+    );
     const [activities, setActivities] = useState([]);
     const [isActivityCreateOpen, setIsActivityCreateOpen] = useState(false);
 
@@ -45,23 +41,36 @@ const Dashboard = () => {
     ];
 
     useEffect(() => {
-        initializeCurrentUser();
+        setupForUser(userName);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    async function setupForUser(name) {
+        await applicationManager.setUser(name);
+        initializeCurrentUser();
+    }
 
     function addToActivities(activity) {
         setActivities((current) => [...current, activity]);
     }
 
     async function initializeCurrentUser() {
-        const user = await getUser(userName);
+        var uaManager = applicationManager.getUserActivityManager();
+
+        const user = await uaManager.getCurrentUserInfo();
         if (!user) {
             throw new Error(`Unknown user: ${userName}`);
         }
         setActivities([]);
         for (let i = 0; i < user.activities.length; i++) {
-            const activity = await getActivity(user.activities[i]);
-            addToActivities({ name: activity.name, _id: activity._id });
+            const activity = await uaManager.getActivityFromId(
+                user.activities[i]
+            );
+            addToActivities({
+                name: activity.name,
+                _id: activity._id,
+                aspectRatio: aspectRatio,
+            });
         }
     }
 
@@ -70,8 +79,8 @@ const Dashboard = () => {
     }
 
     function editActivity(activity) {
-        navigate(`/edit?userName=${userName}&activityName=${activity}`, {
-            state: { appMgr: new ApplicationManager() },
+        navigate("/edit", {
+            state: { appMgr: applicationManager, activityName: activity },
         });
     }
 
@@ -84,17 +93,16 @@ const Dashboard = () => {
 
     async function deleteAnActivity(activity) {
         if (await confirmationBox()) {
-            getUser(userName).then((user) => {
-                if (!user) {
-                    throw new Error(`Unknown user: ${userName}`);
-                }
-                var actId = activityIdFromName(activity);
-                if (actId) {
-                    deleteActivity(user._id, actId).then((result) => {
-                        initializeCurrentUser();
-                    });
-                }
-            });
+            var uaManager = applicationManager.getUserActivityManager();
+            var user = await uaManager.getCurrentUserInfo();
+            if (!user) {
+                throw new Error(`Unknown user: ${userName}`);
+            }
+            var actId = activityIdFromName(activity);
+            if (actId) {
+                await uaManager.deleteUserActivity(actId);
+                initializeCurrentUser();
+            }
         }
     }
 
@@ -105,29 +113,28 @@ const Dashboard = () => {
     function handleCreateActivity(name) {
         setIsActivityCreateOpen(false);
         if (!name || name.length === 0) return;
-        getUser(userName).then((user) => {
-            if (!user) {
-                throw new Error(`Unknown user: ${userName}`);
-            }
-            var spec = {
-                name: name,
-                pages: [],
-                home: null,
-            };
-            addActivity(user._id, spec).then((actId) => {
-                if (!actId) return;
-                // add a placeholder home page
-                addPage(actId, defaultPageSpec("Home")).then((pgId) => {
-                    if (!pgId) return;
+        var uaManager = applicationManager.getUserActivityManager();
+        var spec = {
+            name: name,
+            pages: [],
+            home: null,
+            aspectRatio: aspectRatio,
+        };
+        var actId = uaManager.addUserActivity(spec);
+        if (!actId) return;
+        // add a placeholder home page
+        var pgId = uaManager.addUserPageToActivity(
+            actId,
+            defaultPageSpec("Home")
+        );
+        if (!pgId) return;
+        var activity = uaManager.getActivityFromId(actId);
+        if (activity) {
+        }
 
-                    getActivity(actId).then((activity) => {
-                        activity.home = pgId;
-                        updateActivity(activity);
-                        initializeCurrentUser();
-                    });
-                });
-            });
-        });
+        activity.home = pgId;
+        uaManager.updateActivity(activity);
+        initializeCurrentUser();
     }
 
     function handleCancelCreateActivity(name) {

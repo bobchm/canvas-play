@@ -3,6 +3,7 @@ import {
     getActivity,
     addActivity,
     deleteActivity,
+    updateActivity,
     getPage,
     addPage,
     updatePage,
@@ -42,6 +43,28 @@ class UserActivityManager {
         return;
     }
 
+    async getActivityFromId(id) {
+        return await getActivity(id);
+    }
+
+    async getActivity(activityName) {
+        var user = await getUser(this.#currentUserName);
+        if (!user) {
+            throw new Error(`Unknown user: ${this.#currentUserName}`);
+        }
+        for (let i = 0; i < user.activities.length; i++) {
+            var activity = await getActivity(user.activities[i]);
+            if (activity && activity.name === activityName) {
+                return activity;
+            }
+        }
+        return;
+    }
+
+    async updateActivity(activity) {
+        await updateActivity(activity);
+    }
+
     async setActivity(activityName) {
         var user = await getUser(this.#currentUserName);
         if (!user) {
@@ -60,10 +83,10 @@ class UserActivityManager {
                         }
                     }
                 }
-                break;
+                return activity;
             }
         }
-        return;
+        return null;
     }
 
     async addUserActivity(activity) {
@@ -110,6 +133,10 @@ class UserActivityManager {
                 this.#pageHash.set(spec.name, page);
             }
         }
+    }
+
+    async addUserPageToActivity(actId, spec) {
+        return await addPage(actId, spec);
     }
 
     async modifyUserPage(spec) {
