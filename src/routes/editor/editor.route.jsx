@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate, useLocation } from "react-router-dom";
 import Box from "@mui/material/Box";
 import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
@@ -41,6 +41,9 @@ const Editor = () => {
     const [isAddPageOpen, setIsAddPageOpen] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
+
+    let location = useLocation();
+    console.log(location);
 
     const canvasSpec = {
         id: "canvas",

@@ -6,6 +6,7 @@ import Typography from "@mui/material/Typography";
 import TextInputModal from "../../components/text-input-modal/text-input-modal.component";
 import confirmationBox from "../../utils/confirm-box";
 import { defaultPageSpec } from "../../utils/app-utils";
+import ApplicationManager from "../../app/managers/application-manager";
 
 import ActivityCard from "../../components/activity-card/activity-card.component";
 import CanvasAppBar from "../../components/canvas-appbar/canvas-appbar.component";
@@ -69,7 +70,9 @@ const Dashboard = () => {
     }
 
     function editActivity(activity) {
-        navigate(`/edit?userName=${userName}&activityName=${activity}`);
+        navigate(`/edit?userName=${userName}&activityName=${activity}`, {
+            state: { appMgr: new ApplicationManager() },
+        });
     }
 
     function activityIdFromName(name) {
