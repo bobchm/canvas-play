@@ -2,134 +2,6 @@
 var ttsManager = null;
 var ttsVoices = [];
 
-const languageTags = [
-    "af",
-    "am",
-    "ar",
-    "arn",
-    "as",
-    "az",
-    "ba",
-    "be",
-    "bg",
-    "bn",
-    "bo",
-    "br",
-    "bs",
-    "ca",
-    "co",
-    "cs",
-    "cy",
-    "da",
-    "de",
-    "dsb",
-    "dv",
-    "el",
-    "en",
-    "es",
-    "et",
-    "eu",
-    "fa",
-    "fi",
-    "fil",
-    "fo",
-    "fr",
-    "fy",
-    "ga",
-    "gd",
-    "gl",
-    "gsw",
-    "gu",
-    "ha",
-    "he",
-    "hi",
-    "hr",
-    "hsb",
-    "hu",
-    "hy",
-    "id",
-    "ig",
-    "ii",
-    "is",
-    "it",
-    "iu",
-    "ja",
-    "ka",
-    "kk",
-    "kl",
-    "km",
-    "kn",
-    "ko",
-    "kok",
-    "ky",
-    "lb",
-    "lo",
-    "lt",
-    "lv",
-    "mi",
-    "mk",
-    "ml",
-    "mn",
-    "moh",
-    "mr",
-    "ms",
-    "mt",
-    "my",
-    "nb",
-    "ne",
-    "nl",
-    "nn",
-    "no",
-    "nso",
-    "oc",
-    "or",
-    "pa",
-    "pl",
-    "prs",
-    "ps",
-    "pt",
-    "quc",
-    "quz",
-    "rm",
-    "ro",
-    "ru",
-    "rw",
-    "sa",
-    "sah",
-    "se",
-    "si",
-    "sk",
-    "sl",
-    "sma",
-    "smj",
-    "smn",
-    "sms",
-    "sq",
-    "sr",
-    "sv",
-    "sw",
-    "syr",
-    "ta",
-    "te",
-    "tg",
-    "th",
-    "tk",
-    "tn",
-    "tr",
-    "tt",
-    "tzm",
-    "ug",
-    "uk",
-    "ur",
-    "uz",
-    "vi",
-    "wo",
-    "xh",
-    "yo",
-    "zh",
-    "zu",
-];
-
 function ttsInit() {
     if (!ttsManager) {
         ttsManager = new SpeechSynthesisUtterance();
@@ -137,12 +9,14 @@ function ttsInit() {
         window.speechSynthesis.onvoiceschanged = () => {
             ttsVoices = window.speechSynthesis.getVoices();
             ttsManager.voice = ttsVoices[0];
+            ttsSetVolume(1);
+            ttsSetRate(1);
+            ttsSetPitch(1);
+            ttsGetVoices();
+            ttsSetVoice("Samantha");
+            ttsSpeak("Here I am testing whether speech works or not.");
         };
     }
-}
-
-function ttsGetLanguageTags() {
-    return languageTags;
 }
 
 function ttsGetLanguage() {
@@ -150,22 +24,26 @@ function ttsGetLanguage() {
 }
 
 function ttsSetLanguage(langTag) {
-    if (!languageTags.includes(langTag)) {
-        throw new Error("Invalid language tag for ttsSetLanguage");
-    }
     ttsManager.lang = langTag;
 }
 
 function ttsGetVoices() {
-    return ttsVoices;
+    var rvoices = ttsVoices.map((voice) => {
+        return { name: voice.name, lang: voice.lang };
+    });
+    return rvoices;
 }
 
 function ttsGetVoice() {
     return ttsManager.voice;
 }
 
-function ttsSetVoice(voice) {
-    ttsManager.voice = voice;
+function ttsSetVoice(name) {
+    var ttsVoice = ttsVoices.find((voice) => voice.name === name);
+    if (!ttsVoice) {
+        throw new Error("Invalid volume for ttsSetVolume");
+    }
+    ttsManager.voice = ttsVoice;
 }
 
 function ttsGetVolume() {
@@ -202,8 +80,12 @@ function ttsSetPitch(pitch) {
 }
 
 function ttsSpeak(text) {
+    var speech = new SpeechSynthesisUtterance(text);
+    speech.pitch = 1;
+    speech.rate = 1;
+    speech.voice = ttsVoices[0];
     ttsManager.text = text;
-    window.speechSynthesis.speak(ttsManager);
+    window.speechSynthesis.speak(speech);
 }
 
 function ttsPauseSpeech() {
@@ -216,7 +98,6 @@ function ttsResumeSpeech() {
 
 export {
     ttsInit,
-    ttsGetLanguageTags,
     ttsGetLanguage,
     ttsSetLanguage,
     ttsGetVoices,
