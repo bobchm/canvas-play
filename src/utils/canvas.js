@@ -223,6 +223,8 @@ function resizeCanvas(cnv, width, height) {
         width: width,
         height: height,
     });
+    containerWidth = width;
+    containerHeight = height;
 }
 
 const addRect = (cnv, spec) => {
