@@ -12,9 +12,7 @@ function ttsInit() {
             ttsSetVolume(1);
             ttsSetRate(1);
             ttsSetPitch(1);
-            ttsGetVoices();
             ttsSetVoice("Samantha");
-            ttsSpeak("Here I am testing whether speech works or not.");
         };
     }
 }
@@ -80,12 +78,8 @@ function ttsSetPitch(pitch) {
 }
 
 function ttsSpeak(text) {
-    var speech = new SpeechSynthesisUtterance(text);
-    speech.pitch = 1;
-    speech.rate = 1;
-    speech.voice = ttsVoices[0];
     ttsManager.text = text;
-    window.speechSynthesis.speak(speech);
+    window.speechSynthesis.speak(ttsManager);
 }
 
 function ttsPauseSpeech() {

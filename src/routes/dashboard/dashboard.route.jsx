@@ -6,7 +6,7 @@ import Typography from "@mui/material/Typography";
 import TextInputModal from "../../components/text-input-modal/text-input-modal.component";
 import confirmationBox from "../../utils/confirm-box";
 import { defaultPageSpec } from "../../utils/app-utils";
-import { ttsInit } from "../../utils/textToSpeech";
+import { ttsInit, ttsSpeak } from "../../utils/textToSpeech";
 import ApplicationManager from "../../app/managers/application-manager";
 
 import ActivityCard from "../../components/activity-card/activity-card.component";
@@ -78,6 +78,7 @@ const Dashboard = () => {
 
     function playActivity(activity) {
         console.log("Play: ", activity);
+        ttsSpeak("We're about to play!");
     }
 
     function editActivity(activity) {
