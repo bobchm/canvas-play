@@ -79,9 +79,7 @@ const Dashboard = () => {
     }
 
     function editActivity(activity) {
-        navigate("/edit", {
-            state: { appManager: applicationManager, activityName: activity },
-        });
+        navigate(`/edit?userName=${userName}&activityName=${activity}`);
     }
 
     function activityIdFromName(name) {
