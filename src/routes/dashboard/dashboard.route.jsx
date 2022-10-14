@@ -35,6 +35,10 @@ const Dashboard = () => {
         { label: "Add Activity", callback: handleAddActivity },
     ];
 
+    const accountMenuItems = [
+        { label: "Settings", callback: handleOpenSettings },
+    ];
+
     const activityActions = [
         { label: "Play", action: playActivity },
         { label: "Edit", action: editActivity },
@@ -111,6 +115,10 @@ const Dashboard = () => {
         setIsActivityCreateOpen(true);
     }
 
+    function handleOpenSettings() {
+        alert("No settings yet!");
+    }
+
     function handleCreateActivity(name) {
         setIsActivityCreateOpen(false);
         if (!name || name.length === 0) return;
@@ -144,7 +152,11 @@ const Dashboard = () => {
 
     return (
         <div>
-            <CanvasAppBar title={appName} actions={appBarMenuItems} />
+            <CanvasAppBar
+                title={appName}
+                menuActions={appBarMenuItems}
+                accountActions={accountMenuItems}
+            />
             <Container
                 className="dashboard-container"
                 sx={{ width: width, height: height }}

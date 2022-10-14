@@ -311,7 +311,7 @@ const Editor = () => {
 
     return (
         <div>
-            <CanvasAppBar actions={appBarMenuItems} title={title} />
+            <CanvasAppBar menuActions={appBarMenuItems} title={title} />
             <ButtonBar
                 top="0px"
                 height={buttonBarHeight}
