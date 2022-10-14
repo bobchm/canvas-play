@@ -69,7 +69,7 @@ const Dashboard = () => {
             addToActivities({
                 name: activity.name,
                 _id: activity._id,
-                aspectRatio: aspectRatio,
+                aspectRatio: activity.aspectRatio,
             });
         }
     }
@@ -80,7 +80,7 @@ const Dashboard = () => {
 
     function editActivity(activity) {
         navigate("/edit", {
-            state: { appMgr: applicationManager, activityName: activity },
+            state: { appManager: applicationManager, activityName: activity },
         });
     }
 

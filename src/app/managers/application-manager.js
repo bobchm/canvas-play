@@ -15,7 +15,9 @@ class ApplicationManager {
     }
 
     async setActivity(activityName) {
-        var activity = this.#userActivityManager.setActivity(activityName);
+        var activity = await this.#userActivityManager.setActivity(
+            activityName
+        );
         if (activity) {
             this.#screenManager.setupForActivity(activity);
         }

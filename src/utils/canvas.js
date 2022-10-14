@@ -5,6 +5,7 @@ import { defaultImageData, errorImageData } from "./image-defaults";
 import FileSaver from "file-saver";
 
 var objIdCtr = 0;
+var containerWidth, containerHeight;
 
 export const BackgroundImageStyle = {
     Center: "center",
@@ -32,6 +33,8 @@ function initCanvas(
         selection: _doSelection,
         renderOnAddRemove: true,
     });
+    containerWidth = _width;
+    containerHeight = _height;
 
     if (_modifiedCallback) {
         cnv.on({
@@ -47,10 +50,10 @@ function initCanvas(
             zoom *= 0.999 ** delta;
             if (zoom > 20) zoom = 20;
             if (zoom < 0.01) zoom = 0.01;
-            // cnv.setDimensions({
-            //     width: containerWidth * zoom,
-            //     height: containerHeight * zoom,
-            // });
+            cnv.setDimensions({
+                width: containerWidth * zoom,
+                height: containerHeight * zoom,
+            });
             cnv.setZoom(zoom);
             opt.e.preventDefault();
             opt.e.stopPropagation();
@@ -213,6 +216,13 @@ function refresh(cnv) {
 function clearCanvas(cnv) {
     cnv.clear();
     cnv.renderAll();
+}
+
+function resizeCanvas(cnv, width, height) {
+    cnv.setDimensions({
+        width: width,
+        height: height,
+    });
 }
 
 const addRect = (cnv, spec) => {
@@ -446,6 +456,7 @@ export {
     deleteSelectedObjects,
     refresh,
     clearCanvas,
+    resizeCanvas,
     createThumbnail,
     saveToFile,
     isImageEmbedded,

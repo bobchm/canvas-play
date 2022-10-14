@@ -21,6 +21,7 @@ import {
     setSelectedObject,
     deleteSelectedObjects,
     refresh,
+    resizeCanvas,
     clearCanvas,
     saveToFile,
 } from "../../utils/canvas";
@@ -155,6 +156,19 @@ class ScreenManager {
     setupForActivity(activity) {
         // resize and reposition the canvas to accommodate activity.aspectRatio
         if (activity.aspectRatio !== this.#aspectRatio) {
+            var screenWidth = this.#screenRegion.width;
+            var screenHeight = this.#screenRegion.height;
+            var screenRatio = screenWidth / screenHeight;
+            var newWidth, newHeight;
+            if (screenRatio < activity.aspectRatio) {
+                newWidth = screenWidth;
+                newHeight = newWidth / activity.aspectRatio;
+            } else {
+                newHeight = screenHeight;
+                newWidth = newHeight * activity.aspectRatio;
+            }
+            this.#aspectRatio = activity.aspectRatio;
+            resizeCanvas(this.#canvas, newWidth, newHeight);
         }
     }
 
@@ -257,11 +271,7 @@ class ScreenManager {
                             opacity: 1.0,
                         },
                     });
-                    newObj.setSource(
-                        this,
-                        //"https://www.konnecthq.com/wp-content/uploads/2019/07/cow-1-10-1.jpg?ezimgfmt=rs%3Adevice%2Frscb3-1"
-                        null
-                    );
+                    newObj.setSource(this, null);
                     this.setModified();
                 }
                 break;

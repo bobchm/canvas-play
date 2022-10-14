@@ -44,7 +44,7 @@ const Editor = () => {
 
     const canvasSpec = {
         id: "canvas",
-        left: 0,
+        left: 8,
         top: 0,
         width: window.innerWidth - (drawerWidth + propsWidth),
         height: window.innerHeight - aboveCanvasHeight,
@@ -80,7 +80,7 @@ const Editor = () => {
     ];
 
     useEffect(() => {
-        initAppForNow(appManager, location.state.activityName);
+        initAppForNow(location.state.appManager, location.state.activityName);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -313,14 +313,20 @@ const Editor = () => {
                 leftButtons={leftButtonBarSpec}
                 rightButtons={rightButtonBarSpec}
             />
-            <Box sx={{ display: "flex", top: "0px" }}>
+            <Box
+                sx={{
+                    display: "flex",
+                    top: "0px",
+                    backgroundColor: "aliceblue",
+                }}
+            >
                 <ObjectPalette
                     top={0}
                     width={drawerWidth}
                     modeCallback={handleUserModeChange}
                     mode={appMode}
                 />
-                <div style={{ marginTop: 0 }}>
+                <div style={{ margin: "auto" }}>
                     <PlayCanvas spec={canvasSpec} appManager={appManager} />
                 </div>
                 <PropertyPalette
