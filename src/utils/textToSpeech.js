@@ -1,99 +1,129 @@
-// global speech synthesis instance
-var ttsManager = null;
-var ttsVoices = [];
+import WebSpeechTTSService from "./WebSpeech-tts-service";
 
-function ttsInit() {
-    if (!ttsManager) {
-        ttsManager = new SpeechSynthesisUtterance();
+var ttsServices = [];
+var ttsCurrentService = null;
 
-        window.speechSynthesis.onvoiceschanged = () => {
-            ttsVoices = window.speechSynthesis.getVoices();
-            ttsManager.voice = ttsVoices[0];
-            ttsSetVolume(1);
-            ttsSetRate(1);
-            ttsSetPitch(1);
-            ttsSetVoice("Samantha");
-        };
+function ttsIsInitialized() {
+    return ttsServices.length > 0;
+}
+
+function ttsInit(serviceName, voice, volume, rate, pitch) {
+    if (!ttsIsInitialized()) {
+        // initialize each supported TTS service
+        var service = new WebSpeechTTSService();
+        service.init(serviceName, voice, volume, rate, pitch);
+        ttsServices.push({ name: service.getServiceName(), service: service });
+        if (service.getServiceName() === serviceName) {
+            ttsCurrentService = service;
+        }
+    } else {
+        ttsSetVoice(serviceName, voice, volume, rate, pitch);
     }
-}
-
-function ttsGetLanguage() {
-    return ttsManager.lang;
-}
-
-function ttsSetLanguage(langTag) {
-    ttsManager.lang = langTag;
 }
 
 function ttsGetVoices() {
-    var rvoices = ttsVoices.map((voice) => {
-        return { name: voice.name, lang: voice.lang };
-    });
-    return rvoices;
+    var voices = [];
+    for (let i = 0; i < ttsServices.length; i++) {
+        var theseVoices = ttsServices[i].service.getVoices();
+        voices = [...voices, theseVoices];
+    }
+    return voices;
 }
 
 function ttsGetVoice() {
-    return ttsManager.voice;
+    if (!ttsCurrentService) {
+        throw new Error("There is no current voice service.");
+    }
+    ttsCurrentService.getVoice();
 }
 
-function ttsSetVoice(name) {
-    var ttsVoice = ttsVoices.find((voice) => voice.name === name);
-    if (!ttsVoice) {
-        throw new Error("Invalid volume for ttsSetVolume");
+function ttsSetVoice(serviceName, voice, volume, rate, pitch) {
+    if (!ttsCurrentService) {
+        throw new Error("There is no current voice service.");
     }
-    ttsManager.voice = ttsVoice;
+    if (ttsCurrentService.getServiceName() === serviceName) {
+        ttsCurrentService.ttsSetVoice(voice);
+    } else {
+        var service = serviceFromName(serviceName);
+        if (!service) {
+            throw new Error("Unknown service name");
+        }
+        service.makeActive(voice, volume, rate, pitch);
+    }
 }
 
 function ttsGetVolume() {
-    return ttsManager.volume;
+    if (!ttsCurrentService) {
+        throw new Error("There is no current voice service.");
+    }
+    ttsCurrentService.getVolume();
 }
 
 function ttsSetVolume(vol) {
-    if (vol < 0 || vol > 1) {
-        throw new Error("Invalid volume for ttsSetVolume");
+    if (!ttsCurrentService) {
+        throw new Error("There is no current voice service.");
     }
-    ttsManager.volume = vol;
+    ttsCurrentService.setVolume(vol);
 }
 
 function ttsGetRate() {
-    return ttsManager.rate;
+    if (!ttsCurrentService) {
+        throw new Error("There is no current voice service.");
+    }
+    ttsCurrentService.getRate();
 }
 
 function ttsSetRate(rate) {
-    if (rate < 0.1 || rate > 10) {
-        throw new Error("Invalid rate for ttsSetRate");
+    if (!ttsCurrentService) {
+        throw new Error("There is no current voice service.");
     }
-    ttsManager.rate = rate;
+    ttsCurrentService.setRate(rate);
 }
 
 function ttsGetPitch() {
-    return ttsManager.pitch;
+    if (!ttsCurrentService) {
+        throw new Error("There is no current voice service.");
+    }
+    ttsCurrentService.getPitch();
 }
 
 function ttsSetPitch(pitch) {
-    if (pitch < 0 || pitch > 2) {
-        throw new Error("Invalid pitch for ttsSetPitch");
+    if (!ttsCurrentService) {
+        throw new Error("There is no current voice service.");
     }
-    ttsManager.pitch = pitch;
+    ttsCurrentService.setPitch(pitch);
 }
 
 function ttsSpeak(text) {
-    ttsManager.text = text;
-    window.speechSynthesis.speak(ttsManager);
+    if (!ttsCurrentService) {
+        throw new Error("There is no current voice service.");
+    }
+    ttsCurrentService.speak(text);
 }
 
 function ttsPauseSpeech() {
-    window.speechSynthesis.pause();
+    if (!ttsCurrentService) {
+        throw new Error("There is no current voice service.");
+    }
+    ttsCurrentService.pauseSpeech();
 }
 
 function ttsResumeSpeech() {
-    window.speechSynthesis.resume();
+    if (!ttsCurrentService) {
+        throw new Error("There is no current voice service.");
+    }
+    ttsCurrentService.resumeSpeech();
+}
+
+function serviceFromName(serviceName) {
+    return ttsServices.find(
+        (service) => service.getServiceName() === serviceName
+    );
 }
 
 export {
+    ttsIsInitialized,
     ttsInit,
-    ttsGetLanguage,
-    ttsSetLanguage,
     ttsGetVoices,
     ttsGetVoice,
     ttsSetVoice,

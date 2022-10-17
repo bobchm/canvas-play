@@ -71,6 +71,15 @@ async function addUser(user) {
     }
 }
 
+async function changeUserSettings(userid, settings) {
+    var user = await getUserFromId(userid);
+    if (!user) {
+        throw new Error("Unknown user in changeUserSettings");
+    }
+    user.settings = settings;
+    await DBUpdateUser(user);
+}
+
 // update user based on object
 async function DBUpdateUser(user) {
     const response = await fetch(contentURL(`user/update/${user._id}`), {
@@ -318,6 +327,7 @@ export {
     getUser,
     getUserFromId,
     addUser,
+    changeUserSettings,
     deleteUser,
     getActivity,
     addActivity,

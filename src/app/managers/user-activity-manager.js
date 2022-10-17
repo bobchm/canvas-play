@@ -1,5 +1,6 @@
 import {
     getUser,
+    changeUserSettings,
     getActivity,
     addActivity,
     deleteActivity,
@@ -10,12 +11,20 @@ import {
     deletePage,
 } from "../../utils/dbaccess";
 
+import { settingsDefaults } from "./settings-defaults";
+
+import { ttsInit } from "../../utils/textToSpeech";
+
 class UserActivityManager {
     #currentUserName = null;
     #currentUserId = null;
     #currentActivityId = null;
 
     #homePage = null;
+
+    #settings = {};
+
+    #inSettingsChange = false;
 
     #pageHash;
 
@@ -36,10 +45,14 @@ class UserActivityManager {
         if (!user) {
             throw new Error(`Unknown user: ${userName}`);
         }
+
+        this.initSettings(user);
         this.#pageHash.clear();
         this.#currentUserName = userName;
         this.#currentUserId = user._id;
         this.#currentActivityId = null;
+
+        this.initServicesForUser();
         return;
     }
 
@@ -123,6 +136,55 @@ class UserActivityManager {
     getHomePage() {
         if (!this.#homePage) return null;
         return this.getUserPage(this.#homePage);
+    }
+
+    initSettings(user) {
+        if (user.hasOwnProperty("settings")) {
+            this.#settings = user.settings;
+        }
+
+        for (const property in settingsDefaults) {
+            if (!this.#settings.hasOwnProperty(property)) {
+                this.#settings[property] = settingsDefaults[property];
+            }
+        }
+    }
+
+    initServicesForUser() {
+        ttsInit(
+            this.getSetting("ttsService"),
+            this.getSetting("ttsVoice"),
+            this.getSetting("ttsVolume"),
+            this.getSetting("ttsRate"),
+            this.getSetting("ttsPitch")
+        );
+    }
+
+    getSetting(settingName) {
+        if (!this.#settings.hasOwnProperty(settingName)) {
+            throw new Error(`Unknown setting: ${settingName}`);
+        }
+        return this.#settings[settingName];
+    }
+
+    setSetting(settingName, value) {
+        this.#settings[settingName] = value;
+        this.saveSettings();
+    }
+
+    openSettingsChange() {
+        this.#inSettingsChange = true;
+    }
+
+    closeSettingsChange() {
+        this.#inSettingsChange = false;
+        this.saveSettings();
+    }
+
+    saveSettings() {
+        if (!this.#inSettingsChange) {
+            changeUserSettings(this.#currentUserId, this.#settings);
+        }
     }
 
     async addUserPage(spec) {

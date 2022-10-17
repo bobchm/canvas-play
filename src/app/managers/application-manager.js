@@ -37,6 +37,14 @@ class ApplicationManager {
             this.#screenManager.openPage(pageSpec.content);
         }
     }
+
+    getSetting(settingName) {
+        return this.#userActivityManager().getSetting(settingName);
+    }
+
+    setSetting(settingName, value) {
+        return this.#userActivityManager().setSetting(settingName, value);
+    }
 }
 
 export default ApplicationManager;

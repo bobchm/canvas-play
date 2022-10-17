@@ -13,3 +13,9 @@ export function defaultPageSpec(name) {
         content: page.toJSON(),
     };
 }
+
+export function mapRange(value, fromLow, fromHigh, toLow, toHigh) {
+    return (
+        ((value - fromLow) / (fromHigh - fromLow)) * (toHigh - toLow) + toLow
+    );
+}

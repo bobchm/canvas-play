@@ -6,7 +6,7 @@ import Typography from "@mui/material/Typography";
 import TextInputModal from "../../components/text-input-modal/text-input-modal.component";
 import confirmationBox from "../../utils/confirm-box";
 import { defaultPageSpec } from "../../utils/app-utils";
-import { ttsInit, ttsSpeak } from "../../utils/textToSpeech";
+import { ttsSpeak } from "../../utils/textToSpeech";
 import ApplicationManager from "../../app/managers/application-manager";
 
 import ActivityCard from "../../components/activity-card/activity-card.component";
@@ -47,7 +47,6 @@ const Dashboard = () => {
 
     useEffect(() => {
         setupForUser(userName);
-        ttsInit();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -119,7 +118,7 @@ const Dashboard = () => {
         alert("No settings yet!");
     }
 
-    function handleCreateActivity(name) {
+    async function handleCreateActivity(name) {
         setIsActivityCreateOpen(false);
         if (!name || name.length === 0) return;
         var uaManager = applicationManager.getUserActivityManager();
@@ -129,20 +128,20 @@ const Dashboard = () => {
             home: null,
             aspectRatio: aspectRatio,
         };
-        var actId = uaManager.addUserActivity(spec);
+        var actId = await uaManager.addUserActivity(spec);
         if (!actId) return;
         // add a placeholder home page
-        var pgId = uaManager.addUserPageToActivity(
+        var pgId = await uaManager.addUserPageToActivity(
             actId,
             defaultPageSpec("Home")
         );
         if (!pgId) return;
-        var activity = uaManager.getActivityFromId(actId);
+        var activity = await uaManager.getActivityFromId(actId);
         if (activity) {
         }
 
         activity.home = pgId;
-        uaManager.updateActivity(activity);
+        await uaManager.updateActivity(activity);
         initializeCurrentUser();
     }
 
