@@ -25,6 +25,7 @@ class UserActivityManager {
     #settings = {};
 
     #inSettingsChange = false;
+    #settingsAreModified = false;
 
     #pageHash;
 
@@ -169,6 +170,7 @@ class UserActivityManager {
 
     setSetting(settingName, value) {
         this.#settings[settingName] = value;
+        this.#settingsAreModified = true;
         this.saveSettings();
     }
 
@@ -184,6 +186,7 @@ class UserActivityManager {
     saveSettings() {
         if (!this.#inSettingsChange) {
             changeUserSettings(this.#currentUserId, this.#settings);
+            this.#settingsAreModified = false;
         }
     }
 

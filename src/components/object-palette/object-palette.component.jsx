@@ -8,7 +8,6 @@ import CropSquareIcon from "@mui/icons-material/CropSquare";
 import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
 import TextFieldsRoundedIcon from "@mui/icons-material/TextFieldsRounded";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
-import PictureInPictureAltRoundedIcon from "@mui/icons-material/PictureInPictureAltRounded";
 import { ReactComponent as SymButton } from "./button.svg";
 import SvgIcon from "@mui/material/SvgIcon";
 

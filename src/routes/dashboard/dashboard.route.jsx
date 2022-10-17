@@ -11,6 +11,7 @@ import ApplicationManager from "../../app/managers/application-manager";
 
 import ActivityCard from "../../components/activity-card/activity-card.component";
 import CanvasAppBar from "../../components/canvas-appbar/canvas-appbar.component";
+import SettingsModal from "../../components/settings-modal/settings-modal.component";
 
 import "./dashboard.styles.scss";
 
@@ -28,6 +29,7 @@ const Dashboard = () => {
     );
     const [activities, setActivities] = useState([]);
     const [isActivityCreateOpen, setIsActivityCreateOpen] = useState(false);
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
     const navigate = useNavigate();
 
@@ -115,7 +117,13 @@ const Dashboard = () => {
     }
 
     function handleOpenSettings() {
-        alert("No settings yet!");
+        applicationManager.getUserActivityManager().openSettingsChange();
+        setIsSettingsOpen(true);
+    }
+
+    function settingsCloseCallback() {
+        setIsSettingsOpen(false);
+        applicationManager.getUserActivityManager().closeSettingsChange();
     }
 
     async function handleCreateActivity(name) {
@@ -183,6 +191,11 @@ const Dashboard = () => {
                     yesCallback={handleCreateActivity}
                     noLabel="Cancel"
                     noCallback={handleCancelCreateActivity}
+                />
+                <SettingsModal
+                    open={isSettingsOpen}
+                    closeCallback={settingsCloseCallback}
+                    uaManager={applicationManager.getUserActivityManager()}
                 />
             </Container>
         </div>
