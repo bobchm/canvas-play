@@ -42,7 +42,7 @@ function ttsSetVoice(serviceName, voice, volume, rate, pitch) {
         throw new Error("There is no current voice service.");
     }
     if (ttsCurrentService.getServiceName() === serviceName) {
-        ttsCurrentService.ttsSetVoice(voice);
+        ttsCurrentService.setVoice(voice);
     } else {
         var service = serviceFromName(serviceName);
         if (!service) {

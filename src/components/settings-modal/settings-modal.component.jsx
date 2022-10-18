@@ -26,7 +26,7 @@ export default function SettingsModal({ open, uaManager, closeCallback }) {
                 justifyContent: "center",
             }}
         >
-            <Paper sx={{ width: "80%" }}>
+            <Paper sx={{ width: "80%", height: "80%" }}>
                 <Tabs
                     value={tabIndex}
                     onChange={handleTabChange}
