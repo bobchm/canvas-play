@@ -18,6 +18,7 @@ import {
     ttsGetVoice,
     ttsGetVoices,
     ttsSetVoice,
+    ttsSpeak,
 } from "../../utils/textToSpeech";
 
 const getLanguages = (voices) => {
@@ -239,7 +240,14 @@ export default function SpeechSettings({ uaManager }) {
                             <Typography gutterBottom>Pitch</Typography>
                         </Stack>
                     </Stack>
-                    <Button>Test</Button>
+                    <Button
+                        variant="outlined"
+                        onClick={() =>
+                            ttsSpeak("This is how the voice currently sounds")
+                        }
+                    >
+                        Test
+                    </Button>
                 </Stack>
             </Grid>
         </Paper>
