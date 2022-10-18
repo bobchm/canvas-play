@@ -25,7 +25,7 @@ function ttsGetVoices() {
     var voices = [];
     for (let i = 0; i < ttsServices.length; i++) {
         var theseVoices = ttsServices[i].service.getVoices();
-        voices = [...voices, theseVoices];
+        voices = [...voices, ...theseVoices];
     }
     return voices;
 }
@@ -34,7 +34,7 @@ function ttsGetVoice() {
     if (!ttsCurrentService) {
         throw new Error("There is no current voice service.");
     }
-    ttsCurrentService.getVoice();
+    return ttsCurrentService.getVoice();
 }
 
 function ttsSetVoice(serviceName, voice, volume, rate, pitch) {
@@ -56,7 +56,7 @@ function ttsGetVolume() {
     if (!ttsCurrentService) {
         throw new Error("There is no current voice service.");
     }
-    ttsCurrentService.getVolume();
+    return ttsCurrentService.getVolume();
 }
 
 function ttsSetVolume(vol) {
@@ -70,7 +70,7 @@ function ttsGetRate() {
     if (!ttsCurrentService) {
         throw new Error("There is no current voice service.");
     }
-    ttsCurrentService.getRate();
+    return ttsCurrentService.getRate();
 }
 
 function ttsSetRate(rate) {
@@ -84,7 +84,7 @@ function ttsGetPitch() {
     if (!ttsCurrentService) {
         throw new Error("There is no current voice service.");
     }
-    ttsCurrentService.getPitch();
+    return ttsCurrentService.getPitch();
 }
 
 function ttsSetPitch(pitch) {

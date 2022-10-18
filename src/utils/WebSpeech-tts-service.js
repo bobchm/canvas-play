@@ -46,9 +46,10 @@ class WebSpeechTTSService extends TTSService {
     }
 
     setVoice(name) {
-        var voice = this.#voices.find((voice) => voice.name === name);
+        var voice = this.#voices.find((tvoice) => tvoice.name === name);
         if (!voice) {
-            throw new Error("Invalid volume for ttsSetVolume");
+            voice = this.#voices.find((tvoice) => tvoice.lang === "en-US");
+            if (!voice) throw new Error("Invalid voice for ttsSetVoice");
         }
         this.#speech.voice = voice;
     }
