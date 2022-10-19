@@ -6,18 +6,27 @@ const serviceName = "Web Speech API";
 class WebSpeechTTSService extends TTSService {
     #voices;
     #speech = null;
+    #voiceFallenBackFrom = null;
 
     init(service, voice, volume, rate, pitch) {
         if (!this.#speech) {
             this.#speech = new SpeechSynthesisUtterance();
-
+            this.#voices = window.speechSynthesis.getVoices();
+            if (this.#voices && service === serviceName) {
+                this.setVoice(voice);
+            }
+            this.setVolume(volume);
+            this.setRate(rate);
+            this.setPitch(pitch);
             window.speechSynthesis.onvoiceschanged = () => {
                 this.#voices = window.speechSynthesis.getVoices();
-                if (service === serviceName) {
-                    this.setVoice(voice);
-                    this.setVolume(volume);
-                    this.setRate(rate);
-                    this.setPitch(pitch);
+
+                // did our preferred voice just arrive?
+                if (
+                    this.#voiceFallenBackFrom &&
+                    this.fullVoiceFromName(this.#voiceFallenBackFrom)
+                ) {
+                    this.setVoice(this.#voiceFallenBackFrom);
                 }
             };
         }
@@ -41,15 +50,27 @@ class WebSpeechTTSService extends TTSService {
         return rvoices;
     }
 
+    fullVoiceFromName(name) {
+        return this.#voices.find((tvoice) => tvoice.name === name);
+    }
+
     getVoice() {
         return this.#speech.voice;
     }
 
     setVoice(name) {
-        var voice = this.#voices.find((tvoice) => tvoice.name === name);
+        if (!this.#voices || this.#voices.length === 0) {
+            this.#voiceFallenBackFrom = name;
+            this.#speech.voice = null;
+            return;
+        }
+        var voice = this.fullVoiceFromName(name);
         if (!voice) {
+            this.#voiceFallenBackFrom = name;
             voice = this.#voices.find((tvoice) => tvoice.lang === "en-US");
             if (!voice) throw new Error("Invalid voice for ttsSetVoice");
+        } else {
+            this.#voiceFallenBackFrom = null;
         }
         this.#speech.voice = voice;
     }

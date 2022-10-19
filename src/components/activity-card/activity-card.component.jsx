@@ -8,8 +8,14 @@ import Typography from "@mui/material/Typography";
 
 export default function ActivityCard({ image, name, description, actions }) {
     return (
-        <Card sx={{ margin: "20px", maxWidth: 345 }}>
-            <CardMedia component="img" height="140" image={image} alt="name" />
+        <Card sx={{ margin: "20px", width: 250 }}>
+            <CardMedia
+                component="img"
+                height="140"
+                image={image}
+                alt="name"
+                sx={{ objectFit: "contain" }}
+            />
             <CardContent>
                 <Typography gutterBottom variant="h5" component="div">
                     {name}
