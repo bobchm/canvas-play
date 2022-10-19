@@ -55,7 +55,7 @@ class WebSpeechTTSService extends TTSService {
     }
 
     getVolume() {
-        return mapRange(this.#speech.volume, 0, 1, 0, 100);
+        return Math.round(mapRange(this.#speech.volume, 0, 1, 0, 100));
     }
 
     setVolume(ivol) {
@@ -67,7 +67,7 @@ class WebSpeechTTSService extends TTSService {
     }
 
     getRate() {
-        return mapRange(this.#speech.rate, 0.1, 10, 0, 100);
+        return Math.round(mapRange(this.#speech.rate, 0.1, 10, 0, 100));
     }
 
     setRate(irate) {
@@ -79,7 +79,7 @@ class WebSpeechTTSService extends TTSService {
     }
 
     getPitch() {
-        return mapRange(this.#speech.pitch, 0, 2, 0, 100);
+        return Math.round(mapRange(this.#speech.pitch, 0, 2, 0, 100));
     }
 
     setPitch(ipitch) {
@@ -91,6 +91,7 @@ class WebSpeechTTSService extends TTSService {
     }
 
     speak(text) {
+        window.speechSynthesis.cancel();
         this.#speech.text = text;
         window.speechSynthesis.speak(this.#speech);
     }

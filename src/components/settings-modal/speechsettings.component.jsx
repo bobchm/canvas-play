@@ -86,10 +86,12 @@ export default function SpeechSettings({ uaManager }) {
         if (!newVoices || newVoices.length === 0) {
             throw new Error("No voices for language -- shouldn't happen");
         }
+        var newVoice = newVoices[0];
         setLangVoices(newVoices);
-        setVoice(newVoices[0]);
-        var fullVoice = getFullVoice(voices, newVoices[0], newValue);
+        setVoice(newVoice);
+        var fullVoice = getFullVoice(voices, newVoice, newValue);
         if (fullVoice) {
+            ttsSetVoice(fullVoice.service, fullVoice.name, volume, rate, pitch);
             uaManager.setSetting("ttsService", fullVoice.service);
             uaManager.setSetting("ttsVoice", fullVoice.name);
         }
@@ -119,10 +121,10 @@ export default function SpeechSettings({ uaManager }) {
                 <Stack
                     spacing={2}
                     direction="column"
-                    sx={{ margin: 10 }}
+                    sx={{ margin: 1 }}
                     alignItems="center"
                 >
-                    <Stack spacing={2} direction="row" sx={{ mt: 3, mb: 5 }}>
+                    <Stack spacing={2} direction="row" sx={{ mt: 1, mb: 5 }}>
                         <h1>Speech Settings</h1>
                     </Stack>
                     <Stack spacing={2} direction="row" sx={{ mt: 10, mb: 20 }}>
@@ -191,7 +193,7 @@ export default function SpeechSettings({ uaManager }) {
                         <Stack
                             spacing={2}
                             direction="column"
-                            sx={{ mt: 20, mb: 1 }}
+                            sx={{ mt: 10, mb: 1 }}
                             alignItems="center"
                         >
                             <Slider
@@ -218,7 +220,7 @@ export default function SpeechSettings({ uaManager }) {
                                 value={rate}
                                 valueLabelDisplay="on"
                                 onChange={handleRateChange}
-                                sx={{ mt: 20, width: "200px" }}
+                                sx={{ mt: 10, width: "200px" }}
                             />
                             <Typography gutterBottom>Rate</Typography>
                         </Stack>
@@ -235,19 +237,24 @@ export default function SpeechSettings({ uaManager }) {
                                 value={pitch}
                                 valueLabelDisplay="on"
                                 onChange={handlePitchChange}
-                                sx={{ mt: 20, width: "200px" }}
+                                sx={{ mt: 10, width: "200px" }}
                             />
                             <Typography gutterBottom>Pitch</Typography>
                         </Stack>
                     </Stack>
-                    <Button
-                        variant="outlined"
-                        onClick={() =>
-                            ttsSpeak("This is how the voice currently sounds")
-                        }
-                    >
-                        Test
-                    </Button>
+                    <Stack spacing={10} direction="row" sx={{ mt: 20 }}>
+                        <Button
+                            variant="outlined"
+                            onClick={() =>
+                                ttsSpeak(
+                                    "This is how the voice currently sounds"
+                                )
+                            }
+                            sx={{ mt: 15 }}
+                        >
+                            Test
+                        </Button>
+                    </Stack>
                 </Stack>
             </Grid>
         </Paper>
