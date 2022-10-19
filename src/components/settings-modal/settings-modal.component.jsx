@@ -14,6 +14,8 @@ export default function SettingsModal({ open, uaManager, closeCallback }) {
         setTabIndex(newTabIndex);
     };
 
+    console.log("in settings modal");
+
     return (
         <Modal
             open={open}

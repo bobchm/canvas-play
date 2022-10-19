@@ -117,8 +117,10 @@ const Dashboard = () => {
     }
 
     function handleOpenSettings() {
+        console.log("in open settings");
         applicationManager.getUserActivityManager().openSettingsChange();
         setIsSettingsOpen(true);
+        console.log("lleaving open setyings");
     }
 
     function settingsCloseCallback() {
