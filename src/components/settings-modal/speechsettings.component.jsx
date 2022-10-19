@@ -22,6 +22,7 @@ import {
 } from "../../utils/textToSpeech";
 
 const getLanguages = (voices) => {
+    console.log(voices);
     var langList = [];
     voices.forEach((voice) => {
         if (!langList.includes(voice.lang)) {
