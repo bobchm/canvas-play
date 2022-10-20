@@ -2,6 +2,12 @@ import TTSService from "./tts-service";
 import { mapRange } from "./app-utils";
 
 const serviceName = "Web Speech API";
+const lowPitch = 0;
+const hiPitch = 2;
+const lowRate = 0.1;
+const hiRate = 4;
+const lowVolume = 0;
+const hiVolume = 1;
 
 class WebSpeechTTSService extends TTSService {
     #voices;
@@ -22,10 +28,7 @@ class WebSpeechTTSService extends TTSService {
                 this.#voices = window.speechSynthesis.getVoices();
 
                 // did our preferred voice just arrive?
-                if (
-                    this.#voiceFallenBackFrom &&
-                    this.fullVoiceFromName(this.#voiceFallenBackFrom)
-                ) {
+                if (this.#voiceFallenBackFrom) {
                     this.setVoice(this.#voiceFallenBackFrom);
                 }
             };
@@ -76,36 +79,40 @@ class WebSpeechTTSService extends TTSService {
     }
 
     getVolume() {
-        return Math.round(mapRange(this.#speech.volume, 0, 1, 0, 100));
+        return Math.round(
+            mapRange(this.#speech.volume, lowVolume, hiVolume, 0, 100)
+        );
     }
 
     setVolume(ivol) {
-        var vol = mapRange(ivol, 0, 100, 0, 1);
-        if (vol < 0 || vol > 1) {
+        var vol = mapRange(ivol, 0, 100, lowVolume, hiVolume);
+        if (vol < lowVolume || vol > hiVolume) {
             throw new Error("Invalid volume for ttsSetVolume");
         }
         this.#speech.volume = vol;
     }
 
     getRate() {
-        return Math.round(mapRange(this.#speech.rate, 0.1, 10, 0, 100));
+        return Math.round(mapRange(this.#speech.rate, lowRate, hiRate, 0, 100));
     }
 
     setRate(irate) {
-        var rate = mapRange(irate, 0, 100, 0.1, 10);
-        if (rate < 0.1 || rate > 10) {
+        var rate = mapRange(irate, 0, 100, lowRate, hiRate);
+        if (rate < lowRate || rate > hiRate) {
             throw new Error("Invalid rate for ttsSetRate");
         }
         this.#speech.rate = rate;
     }
 
     getPitch() {
-        return Math.round(mapRange(this.#speech.pitch, 0, 2, 0, 100));
+        return Math.round(
+            mapRange(this.#speech.pitch, lowPitch, hiPitch, 0, 100)
+        );
     }
 
     setPitch(ipitch) {
-        var pitch = mapRange(ipitch, 0, 100, 0, 2);
-        if (pitch < 0 || pitch > 2) {
+        var pitch = mapRange(ipitch, 0, 100, lowPitch, hiPitch);
+        if (pitch < lowPitch || pitch > hiPitch) {
             throw new Error("Invalid pitch for ttsSetPitch");
         }
         this.#speech.pitch = pitch;
