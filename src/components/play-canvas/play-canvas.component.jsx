@@ -9,7 +9,11 @@ const PlayCanvas = ({ spec, appManager }) => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-    return <canvas id={spec.id} />;
+    return (
+        <>
+            <canvas id={spec.id} />
+        </>
+    );
 };
 
 export default PlayCanvas;

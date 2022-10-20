@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
 import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
@@ -37,7 +38,8 @@ const Editor = () => {
     const [pageList, setPageList] = useState([]);
     const [pagePickerCallback, setPagePickerCallback] = useState(null);
     const [isAddPageOpen, setIsAddPageOpen] = useState(false);
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [isLoaded, setIsLoaded] = useState(false);
+    const [searchParams] = useSearchParams();
     const navigate = useNavigate();
 
     const canvasSpec = {
@@ -46,7 +48,7 @@ const Editor = () => {
         top: 0,
         width: window.innerWidth - (drawerWidth + propsWidth),
         height: window.innerHeight - aboveCanvasHeight,
-        backgroundColor: "azure",
+        backgroundColor: "aliceblue",
         doSelection: true,
     };
 
@@ -81,18 +83,21 @@ const Editor = () => {
         initAppForNow(
             appManager,
             searchParams.get("userName"),
-            searchParams.get("activityName")
+            searchParams.get("activityName"),
+            searchParams.get("startPage")
         );
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    function initAppForNow(appMgr, userName, activityName) {
+    function initAppForNow(appMgr, userName, activityName, startPage) {
         var userMgr = appManager.getUserActivityManager();
         appMgr.setUser(userName).then((response) => {
             userMgr.setActivity(activityName).then((resp) => {
                 var scrMgr = appManager.getScreenManager();
 
-                var page = userMgr.getHomePage();
+                var page = startPage
+                    ? userMgr.getUserPage(startPage)
+                    : userMgr.getHomePage();
                 if (page === null) {
                     page = userMgr.getNthPage(0);
                 }
@@ -104,6 +109,7 @@ const Editor = () => {
                 scrMgr.setModifiedCallback(() => markChanged(true));
                 handleSelectionChange([]);
                 markChanged(false);
+                setIsLoaded(true);
             });
         });
     }
@@ -331,9 +337,13 @@ const Editor = () => {
                     modeCallback={handleUserModeChange}
                     mode={appMode}
                 />
+
+                {!isLoaded && <CircularProgress />}
+
                 <div style={{ margin: "auto" }}>
                     <PlayCanvas spec={canvasSpec} appManager={appManager} />
                 </div>
+
                 <PropertyPalette
                     top={0}
                     left={window.innerWidth - propsWidth}

@@ -87,7 +87,9 @@ const Dashboard = () => {
     }
 
     function editActivity(activity) {
-        navigate(`/edit?userName=${userName}&activityName=${activity}`);
+        navigate(
+            `/edit?userName=${userName}&activityName=${activity}&startPage=${"Page 2"}`
+        );
     }
 
     function activityIdFromName(name) {
