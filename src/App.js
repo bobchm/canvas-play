@@ -6,6 +6,7 @@ import { Route, Routes } from "react-router-dom";
 // We import all the components we need in our app
 import Dashboard from "./routes/dashboard/dashboard.route";
 import Editor from "./routes/editor/editor.route";
+import Player from "./routes/player/player.route";
 
 const App = () => {
     return (
@@ -13,6 +14,7 @@ const App = () => {
             <Routes>
                 <Route exact path="/" element={<Dashboard />} />
                 <Route path="edit" element={<Editor />} />
+                <Route path="play" element={<Player />} />
             </Routes>
         </div>
     );

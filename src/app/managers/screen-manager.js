@@ -190,7 +190,7 @@ class ScreenManager {
             height,
             backgroundColor,
             doSelection,
-            true,
+            false,
             this.setModified
         );
         this.#aspectRatio = width / height;

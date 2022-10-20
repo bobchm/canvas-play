@@ -82,14 +82,11 @@ const Dashboard = () => {
     }
 
     function playActivity(activity) {
-        console.log("Play: ", activity);
-        ttsSpeak("We're about to play!");
+        navigate(`/play?userName=${userName}&activityName=${activity}`);
     }
 
     function editActivity(activity) {
-        navigate(
-            `/edit?userName=${userName}&activityName=${activity}&startPage=${"Page 2"}`
-        );
+        navigate(`/edit?userName=${userName}&activityName=${activity}`);
     }
 
     function activityIdFromName(name) {

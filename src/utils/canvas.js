@@ -202,13 +202,6 @@ function setBackgroundImageStyle(cnv, bkgStyle) {
     }
 }
 
-function finishObjectAdd(cnv, obj) {
-    obj.id = getObjectId();
-    obj.selectable = cnv.selection;
-    obj.hoverCursor = cnv.selection ? "move" : "default";
-    cnv.add(obj);
-}
-
 function refresh(cnv) {
     cnv.renderAll();
 }
@@ -227,6 +220,27 @@ function resizeCanvas(cnv, width, height) {
     containerHeight = height;
 }
 
+function finishObjectAdd(cnv, obj) {
+    obj.id = getObjectId();
+    obj.selectable = cnv.selection;
+    obj.hoverCursor = cnv.selection ? "move" : "default";
+    obj.on({
+        mousedown: function (options) {
+            console.log(options);
+        },
+        mouseup: function (options) {
+            console.log(options);
+        },
+        mouseover: function (options) {
+            console.log(options);
+        },
+        mouseout: function (options) {
+            console.log(options);
+        },
+    });
+    cnv.add(obj);
+}
+
 const addRect = (cnv, spec) => {
     const rect = new fabric.Rect(spec);
     finishObjectAdd(cnv, rect);
@@ -241,23 +255,20 @@ const addCircle = (cnv, spec) => {
 
 const addTriangle = (cnv, spec) => {
     const triangle = new fabric.Triangle(spec);
-    cnv.add(triangle);
-    triangle.id = getObjectId();
+    finishObjectAdd(cnv, triangle);
     return triangle;
 };
 
 const addText = (cnv, text, spec) => {
     const textObj = new fabric.IText(text, spec);
-    cnv.add(textObj);
-    textObj.id = getObjectId();
+    finishObjectAdd(cnv, textObj);
     return textObj;
 };
 
 const addImage = (cnv, spec) => {
     const imageObj = new fabric.Image("");
     imageObj.set(spec);
-    cnv.add(imageObj);
-    imageObj.id = getObjectId();
+    finishObjectAdd(cnv, imageObj);
     return imageObj;
 };
 
@@ -355,7 +366,7 @@ const addImageFromURL = (cnv, url, left, top, width, height, callbk) => {
         img.id = getObjectId();
         img.scaleToHeight(height);
         img.scaleToWidth(width);
-        cnv.add(img);
+        finishObjectAdd(cnv, img);
         if (callbk) {
             callbk(img);
         }

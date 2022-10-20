@@ -33,7 +33,7 @@ const Player = () => {
         width: window.innerWidth,
         height: window.innerHeight - aboveCanvasHeight,
         backgroundColor: "aliceblue",
-        doSelection: true,
+        doSelection: false,
     };
 
     const accountMenuItems = [
