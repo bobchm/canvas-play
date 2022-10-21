@@ -45,6 +45,10 @@ class ApplicationManager {
     setSetting(settingName, value) {
         return this.#userActivityManager().setSetting(settingName, value);
     }
+
+    getCanvas() {
+        return this.#screenManager.getCanvas();
+    }
 }
 
 export default ApplicationManager;

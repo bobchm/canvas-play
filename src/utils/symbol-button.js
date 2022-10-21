@@ -405,6 +405,24 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         // for properties that it knows will need to force a rerender, this gets set automatically
         this.set("dirty", true);
     },
+
+    highlightShrink(cnv) {
+        this.set({
+            scaleY: 0.7,
+            scaleX: 0.7,
+            originX: "center",
+            originY: "center",
+        });
+    },
+
+    highlightUnshrink(cnv) {
+        this.set({
+            scaleY: 1,
+            scaleX: 1,
+            originX: "center",
+            originY: "center",
+        });
+    },
 });
 
 export { SymbolButton };

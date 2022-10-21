@@ -4,6 +4,7 @@ import CircleScreenObject from "../screen-objects/circle-screen-object";
 import TextScreenObject from "../screen-objects/text-screen-object";
 import ImageScreenObject from "../screen-objects/image-screen-object";
 import SymbolButtonScreenObject from "../screen-objects/symbol-button-screen-object";
+import AccessManager from "./access-manager";
 
 import {
     initCanvas,
@@ -46,6 +47,7 @@ class ScreenManager {
     #aspectRatio = null;
     #screenRegion;
     #handleInputEvents = false;
+    #accessManager = null;
 
     constructor() {
         this.addObjectOnMousedown = this.addObjectOnMousedown.bind(this);
@@ -186,12 +188,12 @@ class ScreenManager {
     }
 
     inputCallback(eventType, eventData, scrObj) {
-        // console.log(eventType);
-        // console.log(eventData);
-        // console.log(scrObj);
+        if (this.#accessManager) {
+            this.#accessManager.handleInput(eventType, eventData, scrObj);
+        }
     }
 
-    createCanvas(screenSpec) {
+    createCanvas(appManager, screenSpec) {
         const {
             id,
             top,
@@ -215,7 +217,16 @@ class ScreenManager {
             this.setModified,
             doObjectEvents ? this.inputCallback : null
         );
-        this.#handleInputEvents = doObjectEvents;
+        if (doObjectEvents) {
+            this.#handleInputEvents = true;
+            this.#accessManager = new AccessManager(appManager);
+            this.#accessManager.setMethod(
+                appManager.getSetting("selectionMethod")
+            );
+        } else {
+            this.#handleInputEvents = false;
+            this.#accessManager = null;
+        }
         this.#aspectRatio = width / height;
         this.#screenRegion = {
             left: left,

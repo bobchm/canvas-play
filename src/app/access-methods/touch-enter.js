@@ -22,13 +22,14 @@ class TouchEnter extends AccessMethod {
                 var appManager = this.getAppManager();
                 var t_o = appManager.getSetting("touchEnterHoldTime");
                 if (t_o <= 0) {
-                    this.doSelection(scrObj, false);
+                    this.doSelection(appManager, scrObj, false);
                 }
                 scrObj.highlight(
+                    appManager,
                     appManager.getSetting("touchEnterHighlightType")
                 );
                 this.#currentTimeout = setTimeout(
-                    () => this.doSelection(scrObj, true),
+                    () => this.doSelection(appManager, scrObj, true),
                     t_o
                 );
                 break;
@@ -39,7 +40,8 @@ class TouchEnter extends AccessMethod {
                     this.#currentTimeout = null;
                 }
                 scrObj.unhighlight(
-                    this.getAppManager().getSetting("touchEnterHighlightType")
+                    appManager,
+                    appManager.getSetting("touchEnterHighlightType")
                 );
                 break;
             default: // ignore the rest
@@ -47,14 +49,15 @@ class TouchEnter extends AccessMethod {
         return;
     }
 
-    doSelection(scrObj, doUnhighlight) {
+    doSelection(appManager, scrObj, doUnhighlight) {
         this.#currentTimeout = null;
         if (doUnhighlight) {
             scrObj.unhighlight(
-                this.getAppManager().getSetting("touchEnterHighlightType")
+                appManager,
+                appManager.getSetting("touchEnterHighlightType")
             );
         }
-        scrObj.select();
+        scrObj.select(appManager);
     }
 }
 

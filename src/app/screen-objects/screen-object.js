@@ -62,11 +62,11 @@ class ScreenObject {
         }
     }
 
-    highlight(highlightType) {
+    highlight(appManager, highlightType) {
         return;
     }
 
-    unhighlight(highlightType) {
+    unhighlight(appManager, highlightType) {
         return;
     }
 
@@ -74,7 +74,7 @@ class ScreenObject {
         return false;
     }
 
-    select() {
+    select(appManager) {
         return;
     }
 }

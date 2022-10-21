@@ -17,11 +17,15 @@ class TouchExit extends AccessMethod {
     highlightObject(scrObj) {
         if (scrObj && scrObj.isSelectable()) {
             var appManager = this.getAppManager();
-            scrObj.highlight(appManager.getSetting("touchExitHighlightType"));
+            scrObj.highlight(
+                appManager,
+                appManager.getSetting("touchExitHighlightType")
+            );
         }
     }
 
     handleInput(eventType, eventData, scrObj) {
+        var appManager = this.getAppManager();
         switch (eventType) {
             case InputEvent.ObjectMouseEnter:
                 if (this.#isMouseDown) {
@@ -34,15 +38,14 @@ class TouchExit extends AccessMethod {
             case InputEvent.ObjectMouseExit:
                 if (this.#isMouseDown && scrObj && scrObj.isSelectable()) {
                     scrObj.unhighlight(
-                        this.getAppManager().getSetting(
-                            "touchExitHighlightType"
-                        )
+                        appManager,
+                        appManager.getSetting("touchExitHighlightType")
                     );
                 }
                 break;
             case InputEvent.ObjectMouseUp:
                 if (scrObj && scrObj.isSelectable()) {
-                    this.doSelection(scrObj);
+                    this.doSelection(appManager, scrObj);
                 }
                 break;
 
@@ -58,11 +61,12 @@ class TouchExit extends AccessMethod {
         return;
     }
 
-    doSelection(scrObj) {
+    doSelection(appManager, scrObj) {
         scrObj.unhighlight(
-            this.getAppManager().getSetting("touchExitHighlightType")
+            appManager,
+            appManager.getSetting("touchExitHighlightType")
         );
-        scrObj.select();
+        scrObj.select(appManager);
     }
 }
 

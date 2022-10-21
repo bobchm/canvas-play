@@ -5,7 +5,9 @@ const PlayCanvas = ({ spec, appManager }) => {
 
     useEffect(() => {
         if (appManager && appManager.getScreenManager()) {
-            canvas.current = appManager.getScreenManager().createCanvas(spec);
+            canvas.current = appManager
+                .getScreenManager()
+                .createCanvas(appManager, spec);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);

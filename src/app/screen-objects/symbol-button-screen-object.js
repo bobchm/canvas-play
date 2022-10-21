@@ -2,6 +2,7 @@ import { PropertyType } from "../constants/property-types";
 import ScreenObject from "./screen-object";
 import { refresh } from "../../utils/canvas";
 import { ScreenObjectType } from "../constants/screen-object-types";
+import { ttsSpeak } from "../../utils/textToSpeech";
 
 class SymbolButtonScreenObject extends ScreenObject {
     #label;
@@ -135,6 +136,24 @@ class SymbolButtonScreenObject extends ScreenObject {
                 break;
             default:
                 super.setEditProperty(screenMgr, type, value);
+        }
+    }
+
+    highlight(appManager, highlightType) {
+        this.getCanvasObj().highlightShrink(appManager.getCanvas());
+    }
+
+    unhighlight(appManager, highlightType) {
+        this.getCanvasObj().highlightUnshrink(appManager.getCanvas());
+    }
+
+    isSelectable() {
+        return true;
+    }
+
+    select(appManager) {
+        if (this.#label && this.#label.length > 0) {
+            ttsSpeak(this.#label);
         }
     }
 }

@@ -21,10 +21,11 @@ class MousePause extends AccessMethod {
             case InputEvent.ObjectMouseEnter:
                 var appManager = this.getAppManager();
                 scrObj.highlight(
+                    appManager,
                     appManager.getSetting("mousePauseHighlightType")
                 );
                 this.#currentTimeout = setTimeout(
-                    () => this.doSelection(scrObj),
+                    () => this.doSelection(appManager, scrObj),
                     appManager.getSetting("mousePauseHoldTime")
                 );
                 break;
@@ -34,7 +35,8 @@ class MousePause extends AccessMethod {
                     this.#currentTimeout = null;
                 }
                 scrObj.unhighlight(
-                    this.getAppManager().getSetting("mousePauseHighlightType")
+                    appManager,
+                    appManager.getSetting("mousePauseHighlightType")
                 );
                 break;
             default: // ignore the rest
@@ -42,12 +44,13 @@ class MousePause extends AccessMethod {
         return;
     }
 
-    doSelection(scrObj) {
+    doSelection(appManager, scrObj) {
         this.#currentTimeout = null;
         scrObj.unhighlight(
-            this.getAppManager().getSetting("mousePauseHighlightType")
+            appManager,
+            appManager.getSetting("mousePauseHighlightType")
         );
-        scrObj.select();
+        scrObj.select(appManager);
     }
 }
 
