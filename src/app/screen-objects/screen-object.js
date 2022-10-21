@@ -61,6 +61,22 @@ class ScreenObject {
             this.#id = value;
         }
     }
+
+    highlight(highlightType) {
+        return;
+    }
+
+    unhighlight(highlightType) {
+        return;
+    }
+
+    isSelectable() {
+        return false;
+    }
+
+    select() {
+        return;
+    }
 }
 
 export default ScreenObject;

@@ -2,6 +2,7 @@ import { fabric } from "fabric";
 import { SymbolButton } from "./symbol-button";
 import { colorCloserToBlack } from "./colors";
 import { defaultImageData, errorImageData } from "./image-defaults";
+import { InputEvent } from "./input-events";
 import FileSaver from "file-saver";
 
 var objIdCtr = 0;
@@ -11,15 +12,6 @@ export const BackgroundImageStyle = {
     Center: "center",
     Stretch: "stretch",
     Tile: "tile", // not implemented yet - need to create the tiled image and then assign that
-};
-
-export const InputEvent = {
-    ObjectMouseDown: "objectmousedown",
-    ObjectMouseUp: "objectmouseup",
-    ObjectMouseEnter: "objectmouseenter",
-    ObjectMouseExit: "objectmouseexit",
-    MouseDown: "mousedown",
-    MouseUp: "mouseup",
 };
 
 function initCanvas(
