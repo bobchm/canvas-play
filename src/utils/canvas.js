@@ -13,6 +13,15 @@ export const BackgroundImageStyle = {
     Tile: "tile", // not implemented yet - need to create the tiled image and then assign that
 };
 
+export const InputEvent = {
+    ObjectMouseDown: "objectmousedown",
+    ObjectMouseUp: "objectmouseup",
+    ObjectMouseEnter: "objectmouseenter",
+    ObjectMouseExit: "objectmouseexit",
+    MouseDown: "mousedown",
+    MouseUp: "mouseup",
+};
+
 function initCanvas(
     _id,
     _left,
@@ -22,7 +31,8 @@ function initCanvas(
     _bkgColor,
     _doSelection,
     _allowZoom,
-    _modifiedCallback
+    _modifiedCallback,
+    _inputCallback
 ) {
     var cnv = new fabric.Canvas(_id, {
         left: _left,
@@ -40,6 +50,14 @@ function initCanvas(
         cnv.on({
             "object:moved": _modifiedCallback,
             "object:modified": _modifiedCallback,
+        });
+    }
+
+    if (_inputCallback) {
+        cnv.on({
+            "mouse:up": function (opt) {
+                handleInputEvent(InputEvent.MouseUp, opt, _inputCallback, null);
+            },
         });
     }
 
@@ -66,6 +84,22 @@ function initCanvas(
 
     setSelectionColor(cnv);
     return cnv;
+}
+
+function handleInputEvent(eventType, eventData, callback, scrObj) {
+    var data;
+    switch (eventType) {
+        case InputEvent.MouseDown:
+        case InputEvent.MouseUp:
+            data = {
+                x: eventData.pointer.x,
+                y: eventData.pointer.y,
+            };
+            break;
+        default:
+            data = {};
+    }
+    callback(eventType, data, scrObj);
 }
 
 function setSelectionColor(cnv) {
@@ -220,61 +254,83 @@ function resizeCanvas(cnv, width, height) {
     containerHeight = height;
 }
 
-function finishObjectAdd(cnv, obj) {
+function finishObjectAdd(cnv, obj, scrObj, inputCallback) {
     obj.id = getObjectId();
     obj.selectable = cnv.selection;
     obj.hoverCursor = cnv.selection ? "move" : "default";
-    obj.on({
-        mousedown: function (options) {
-            console.log(options);
-        },
-        mouseup: function (options) {
-            console.log(options);
-        },
-        mouseover: function (options) {
-            console.log(options);
-        },
-        mouseout: function (options) {
-            console.log(options);
-        },
-    });
+    if (inputCallback) {
+        obj.on({
+            mousedown: function (opt) {
+                handleInputEvent(
+                    InputEvent.ObjectMouseDown,
+                    opt,
+                    inputCallback,
+                    scrObj
+                );
+            },
+            mouseup: function (opt) {
+                handleInputEvent(
+                    InputEvent.ObjectMouseUp,
+                    opt,
+                    inputCallback,
+                    scrObj
+                );
+            },
+            mouseover: function (opt) {
+                handleInputEvent(
+                    InputEvent.ObjectMouseEnter,
+                    opt,
+                    inputCallback,
+                    scrObj
+                );
+            },
+            mouseout: function (opt) {
+                handleInputEvent(
+                    InputEvent.ObjectMouseExit,
+                    opt,
+                    inputCallback,
+                    scrObj
+                );
+            },
+        });
+    }
     cnv.add(obj);
 }
 
-const addRect = (cnv, spec) => {
+const addRect = (cnv, spec, scrObj, inputCallback) => {
     const rect = new fabric.Rect(spec);
-    finishObjectAdd(cnv, rect);
+    finishObjectAdd(cnv, rect, scrObj, inputCallback);
     return rect;
 };
 
-const addCircle = (cnv, spec) => {
+const addCircle = (cnv, spec, scrObj, inputCallback) => {
     const circle = new fabric.Circle(spec);
-    finishObjectAdd(cnv, circle);
+    finishObjectAdd(cnv, circle, scrObj, inputCallback);
     return circle;
 };
 
-const addTriangle = (cnv, spec) => {
+const addTriangle = (cnv, spec, scrObj, inputCallback) => {
     const triangle = new fabric.Triangle(spec);
-    finishObjectAdd(cnv, triangle);
+    finishObjectAdd(cnv, triangle, scrObj, inputCallback);
     return triangle;
 };
 
-const addText = (cnv, text, spec) => {
+const addText = (cnv, text, spec, scrObj, inputCallback) => {
     const textObj = new fabric.IText(text, spec);
-    finishObjectAdd(cnv, textObj);
+    finishObjectAdd(cnv, textObj, scrObj, inputCallback);
     return textObj;
 };
 
-const addImage = (cnv, spec) => {
+const addImage = (cnv, spec, scrObj, inputCallback) => {
     const imageObj = new fabric.Image("");
     imageObj.set(spec);
-    finishObjectAdd(cnv, imageObj);
+    finishObjectAdd(cnv, imageObj, scrObj, inputCallback);
     return imageObj;
 };
 
-const addSymbolButton = (cnv, label, spec) => {
+const addSymbolButton = (cnv, label, spec, scrObj, inputCallback) => {
     const symBtn = new SymbolButton(label, spec, () => refresh(cnv));
-    finishObjectAdd(cnv, symBtn);
+    finishObjectAdd(cnv, symBtn, scrObj, inputCallback);
     return symBtn;
 };
 
@@ -356,23 +412,6 @@ async function setImageSourceA(cnv, image, src) {
     await setImageSource(cnv, image, src);
 }
 
-const addImageFromURL = (cnv, url, left, top, width, height, callbk) => {
-    fabric.Image.fromURL(url, (img) => {
-        img.set({
-            left: left,
-            top: top,
-            // Scale image to fit width / height ?
-        });
-        img.id = getObjectId();
-        img.scaleToHeight(height);
-        img.scaleToWidth(width);
-        finishObjectAdd(cnv, img);
-        if (callbk) {
-            callbk(img);
-        }
-    });
-};
-
 function removeObject(cnv, obj) {
     cnv.remove(obj);
 }
@@ -447,7 +486,6 @@ export {
     addTriangle,
     addText,
     addImage,
-    addImageFromURL,
     addSymbolButton,
     getImageSource,
     setImageSource,

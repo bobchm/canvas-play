@@ -1,6 +1,6 @@
 import { PropertyType } from "../constants/property-types";
 import ScreenObject from "./screen-object";
-import { addSymbolButton, refresh } from "../../utils/canvas";
+import { refresh } from "../../utils/canvas";
 import { ScreenObjectType } from "../constants/screen-object-types";
 
 class SymbolButtonScreenObject extends ScreenObject {
@@ -10,7 +10,7 @@ class SymbolButtonScreenObject extends ScreenObject {
         super(_screenMgr, _parent, _spec);
         this.#label = _label;
         this.setCanvasObj(
-            addSymbolButton(_screenMgr.getCanvas(), _label, _spec.shapeSpec)
+            _screenMgr.addSymbolButton(this, _label, _spec.shapeSpec)
         );
     }
 

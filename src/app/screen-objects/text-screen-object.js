@@ -1,6 +1,5 @@
 import { PropertyType } from "../constants/property-types";
 import ScreenObject from "./screen-object";
-import { addText } from "../../utils/canvas";
 import { ScreenObjectType } from "../constants/screen-object-types";
 
 class TextScreenObject extends ScreenObject {
@@ -9,9 +8,7 @@ class TextScreenObject extends ScreenObject {
     constructor(_screenMgr, _parent, _text, _spec) {
         super(_screenMgr, _parent, _spec);
         this.#text = _text;
-        this.setCanvasObj(
-            addText(_screenMgr.getCanvas(), _text, _spec.shapeSpec)
-        );
+        this.setCanvasObj(_screenMgr.addText(this, _text, _spec.shapeSpec));
     }
 
     toJSON() {

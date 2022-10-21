@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
-import CircularProgress from "@mui/material/CircularProgress";
 import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
@@ -50,6 +49,7 @@ const Editor = () => {
         height: window.innerHeight - aboveCanvasHeight,
         backgroundColor: "aliceblue",
         doSelection: true,
+        doObjectEvents: false,
     };
 
     const appBarMenuItems = [
@@ -317,7 +317,11 @@ const Editor = () => {
 
     return (
         <div>
-            <CanvasAppBar menuActions={appBarMenuItems} title={title} />
+            <CanvasAppBar
+                isLoaded={isLoaded}
+                menuActions={appBarMenuItems}
+                title={title}
+            />
             <ButtonBar
                 top="0px"
                 height={buttonBarHeight}
@@ -337,13 +341,9 @@ const Editor = () => {
                     modeCallback={handleUserModeChange}
                     mode={appMode}
                 />
-
-                {!isLoaded && <CircularProgress />}
-
                 <div style={{ margin: "auto" }}>
                     <PlayCanvas spec={canvasSpec} appManager={appManager} />
                 </div>
-
                 <PropertyPalette
                     top={0}
                     left={window.innerWidth - propsWidth}

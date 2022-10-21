@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
+import CircularProgress from "@mui/material/CircularProgress";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -12,6 +13,7 @@ import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 
 export default function CanvasAppBar({
     title,
+    isLoaded = true,
     menuActions = [],
     accountActions = [],
 }) {
@@ -83,6 +85,7 @@ export default function CanvasAppBar({
                 >
                     {title}
                 </Typography>
+                {!isLoaded && <CircularProgress style={{ color: "white" }} />}
                 {accountActions.length > 0 && (
                     <>
                         <IconButton

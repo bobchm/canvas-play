@@ -1,12 +1,11 @@
 import { PropertyType } from "../constants/property-types";
 import ScreenObject from "./screen-object";
-import { addRect } from "../../utils/canvas";
 import { ScreenObjectType } from "../constants/screen-object-types";
 
 class RectScreenObject extends ScreenObject {
     constructor(_screenMgr, _parent, _spec) {
         super(_screenMgr, _parent, _spec);
-        this.setCanvasObj(addRect(_screenMgr.getCanvas(), _spec.shapeSpec));
+        this.setCanvasObj(_screenMgr.addRect(this, _spec.shapeSpec));
     }
 
     toJSON() {

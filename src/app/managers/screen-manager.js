@@ -24,6 +24,11 @@ import {
     resizeCanvas,
     clearCanvas,
     saveToFile,
+    addRect,
+    addCircle,
+    addImage,
+    addSymbolButton,
+    addText,
 } from "../../utils/canvas";
 
 import { defaultImageData } from "../../utils/image-defaults";
@@ -40,11 +45,13 @@ class ScreenManager {
     #selectedObjects = null;
     #aspectRatio = null;
     #screenRegion;
+    #handleInputEvents = false;
 
     constructor() {
         this.addObjectOnMousedown = this.addObjectOnMousedown.bind(this);
         this.scrMgrSelectionCallback = this.scrMgrSelectionCallback.bind(this);
         this.setModified = this.setModified.bind(this);
+        this.inputCallback = this.inputCallback.bind(this);
     }
 
     getCanvas() {
@@ -178,9 +185,23 @@ class ScreenManager {
         }
     }
 
+    inputCallback(eventType, eventData, scrObj) {
+        // console.log(eventType);
+        // console.log(eventData);
+        // console.log(scrObj);
+    }
+
     createCanvas(screenSpec) {
-        const { id, top, left, width, height, backgroundColor, doSelection } =
-            screenSpec;
+        const {
+            id,
+            top,
+            left,
+            width,
+            height,
+            backgroundColor,
+            doSelection,
+            doObjectEvents,
+        } = screenSpec;
 
         this.#canvas = initCanvas(
             id,
@@ -191,8 +212,10 @@ class ScreenManager {
             backgroundColor,
             doSelection,
             false,
-            this.setModified
+            this.setModified,
+            doObjectEvents ? this.inputCallback : null
         );
+        this.#handleInputEvents = doObjectEvents;
         this.#aspectRatio = width / height;
         this.#screenRegion = {
             left: left,
@@ -388,6 +411,52 @@ class ScreenManager {
 
     screenToFile(filename) {
         saveToFile(this.#canvas, filename);
+    }
+
+    addRect(scrObj, spec) {
+        return addRect(
+            this.#canvas,
+            spec,
+            scrObj,
+            this.#handleInputEvents ? this.inputCallback : null
+        );
+    }
+
+    addCircle(scrObj, spec) {
+        return addCircle(
+            this.#canvas,
+            spec,
+            scrObj,
+            this.#handleInputEvents ? this.inputCallback : null
+        );
+    }
+
+    addImage(scrObj, spec) {
+        return addImage(
+            this.#canvas,
+            spec,
+            scrObj,
+            this.#handleInputEvents ? this.inputCallback : null
+        );
+    }
+
+    addSymbolButton(scrObj, label, spec) {
+        return addSymbolButton(
+            this.#canvas,
+            label,
+            spec,
+            scrObj,
+            this.#handleInputEvents ? this.inputCallback : null
+        );
+    }
+    addText(scrObj, text, spec) {
+        return addText(
+            this.#canvas,
+            text,
+            spec,
+            scrObj,
+            this.#handleInputEvents ? this.inputCallback : null
+        );
     }
 }
 

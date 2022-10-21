@@ -1,12 +1,11 @@
 import { PropertyType } from "../constants/property-types";
 import ScreenObject from "./screen-object";
-import { addCircle } from "../../utils/canvas";
 import { ScreenObjectType } from "../constants/screen-object-types";
 
 class CircleScreenObject extends ScreenObject {
     constructor(_screenMgr, _parent, _spec) {
         super(_screenMgr, _parent, _spec);
-        this.setCanvasObj(addCircle(_screenMgr.getCanvas(), _spec.shapeSpec));
+        this.setCanvasObj(_screenMgr.addCircle(this, _spec.shapeSpec));
     }
 
     toJSON() {

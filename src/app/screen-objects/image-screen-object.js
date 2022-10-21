@@ -1,7 +1,6 @@
 import { PropertyType } from "../constants/property-types";
 import ScreenObject from "./screen-object";
 import {
-    addImage,
     getImageSource,
     setImageSource,
     setImageSourceA,
@@ -13,7 +12,7 @@ import { ScreenObjectType } from "../constants/screen-object-types";
 class ImageScreenObject extends ScreenObject {
     constructor(_screenMgr, _parent, _spec) {
         super(_screenMgr, _parent, _spec);
-        this.setCanvasObj(addImage(_screenMgr.getCanvas(), _spec.shapeSpec));
+        this.setCanvasObj(_screenMgr.addImage(this, _spec.shapeSpec));
     }
 
     toJSON() {

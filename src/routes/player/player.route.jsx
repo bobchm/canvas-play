@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
-import CircularProgress from "@mui/material/CircularProgress";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 
 import PlayCanvas from "../../components/play-canvas/play-canvas.component";
@@ -34,6 +33,7 @@ const Player = () => {
         height: window.innerHeight - aboveCanvasHeight,
         backgroundColor: "aliceblue",
         doSelection: false,
+        doObjectEvents: true,
     };
 
     const accountMenuItems = [
@@ -103,7 +103,11 @@ const Player = () => {
 
     return (
         <div>
-            <CanvasAppBar accountActions={accountMenuItems} title={title} />
+            <CanvasAppBar
+                isLoaded={isLoaded}
+                accountActions={accountMenuItems}
+                title={title}
+            />
             <ButtonBar
                 top="0px"
                 height={buttonBarHeight}
@@ -116,8 +120,6 @@ const Player = () => {
                     backgroundColor: "aliceblue",
                 }}
             >
-                {!isLoaded && <CircularProgress />}
-
                 <div style={{ margin: "auto" }}>
                     <PlayCanvas spec={canvasSpec} appManager={appManager} />
                 </div>

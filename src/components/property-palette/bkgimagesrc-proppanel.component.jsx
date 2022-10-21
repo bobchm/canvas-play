@@ -13,8 +13,8 @@ const BackgroundSourcePropertyPanel = ({ propOption, propUpdateCallback }) => {
     };
 
     const handleChangeLocationFromSearch = (newSpec) => {
-        if (newSpec.url === ImageSearchNoImage) {
-            newSpec.url = null;
+        if (newSpec === ImageSearchNoImage) {
+            newSpec = null;
         }
         propUpdateCallback(propOption.type, newSpec);
         setIsSearchModalOpen(false);
