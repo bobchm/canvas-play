@@ -39,11 +39,11 @@ class ApplicationManager {
     }
 
     getSetting(settingName) {
-        return this.#userActivityManager().getSetting(settingName);
+        return this.#userActivityManager.getSetting(settingName);
     }
 
     setSetting(settingName, value) {
-        return this.#userActivityManager().setSetting(settingName, value);
+        return this.#userActivityManager.setSetting(settingName, value);
     }
 
     getCanvas() {

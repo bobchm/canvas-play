@@ -23,8 +23,7 @@ function initCanvas(
     _bkgColor,
     _doSelection,
     _allowZoom,
-    _modifiedCallback,
-    _inputCallback
+    _modifiedCallback
 ) {
     var cnv = new fabric.Canvas(_id, {
         left: _left,
@@ -42,14 +41,6 @@ function initCanvas(
         cnv.on({
             "object:moved": _modifiedCallback,
             "object:modified": _modifiedCallback,
-        });
-    }
-
-    if (_inputCallback) {
-        cnv.on({
-            "mouse:up": function (opt) {
-                handleInputEvent(InputEvent.MouseUp, opt, _inputCallback, null);
-            },
         });
     }
 
@@ -76,6 +67,28 @@ function initCanvas(
 
     setSelectionColor(cnv);
     return cnv;
+}
+
+function enableInputCallback(cnv, inputCallback) {
+    cnv.on({
+        "mouse:up": function (opt) {
+            handleInputEvent(InputEvent.MouseUp, opt, inputCallback, null);
+        },
+        "mouse:down": function (opt) {
+            handleInputEvent(InputEvent.MouseDown, opt, inputCallback, null);
+        },
+    });
+}
+
+function disableInputCallback(cnv, inputCallback) {
+    cnv.off({
+        "mouse:up": function (opt) {
+            handleInputEvent(InputEvent.MouseUp, opt, inputCallback, null);
+        },
+        "mouse:down": function (opt) {
+            handleInputEvent(InputEvent.MouseDown, opt, inputCallback, null);
+        },
+    });
 }
 
 function handleInputEvent(eventType, eventData, callback, scrObj) {
@@ -488,6 +501,8 @@ export {
     setMousedownCallback,
     disableSelection,
     enableSelection,
+    disableInputCallback,
+    enableInputCallback,
     getBackgroundColor,
     setBackgroundColor,
     getBackgroundImage,

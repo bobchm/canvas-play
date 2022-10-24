@@ -33,7 +33,6 @@ const Player = () => {
         height: window.innerHeight - aboveCanvasHeight,
         backgroundColor: "aliceblue",
         doSelection: false,
-        doObjectEvents: true,
     };
 
     const accountMenuItems = [
@@ -59,8 +58,12 @@ const Player = () => {
     }, []);
 
     function initAppForNow(appMgr, userName, activityName, startPage) {
-        var userMgr = appManager.getUserActivityManager();
-        appMgr.setUser(userName).then((response) => {
+        var userMgr = appMgr.getUserActivityManager();
+        var screenMgr = appMgr.getScreenManager();
+        appMgr.setUser(userName, true).then((response) => {
+            // establish access method since this is play mode - this is all too dependent on order
+            // we're doing it here so it happens after settings are set up but before any screen objects are added
+            screenMgr.enableAccessMethod(appMgr);
             userMgr.setActivity(activityName).then((resp) => {
                 var page = startPage
                     ? userMgr.getUserPage(startPage)

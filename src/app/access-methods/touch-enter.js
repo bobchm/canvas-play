@@ -17,9 +17,9 @@ class TouchEnter extends AccessMethod {
     handleInput(eventType, eventData, scrObj) {
         if (!scrObj || !scrObj.isSelectable()) return;
 
+        var appManager = this.getAppManager();
         switch (eventType) {
             case InputEvent.ObjectMouseDown:
-                var appManager = this.getAppManager();
                 var t_o = appManager.getSetting("touchEnterHoldTime");
                 if (t_o <= 0) {
                     this.doSelection(appManager, scrObj, false);

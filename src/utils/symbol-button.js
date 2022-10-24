@@ -407,21 +407,21 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
     },
 
     highlightShrink(cnv) {
-        this.set({
-            scaleY: 0.7,
-            scaleX: 0.7,
-            originX: "center",
-            originY: "center",
-        });
+        // this.set({
+        //     scaleY: 0.7,
+        //     scaleX: 0.7,
+        //     originX: "center",
+        //     originY: "center",
+        // });
     },
 
     highlightUnshrink(cnv) {
-        this.set({
-            scaleY: 1,
-            scaleX: 1,
-            originX: "center",
-            originY: "center",
-        });
+        // this.set({
+        //     scaleY: 1,
+        //     scaleX: 1,
+        //     originX: "center",
+        //     originY: "center",
+        // });
     },
 });
 

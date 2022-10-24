@@ -16,17 +16,18 @@ class MousePause extends AccessMethod {
 
     handleInput(eventType, eventData, scrObj) {
         if (!scrObj || !scrObj.isSelectable()) return;
+        var appManager = this.getAppManager();
 
         switch (eventType) {
             case InputEvent.ObjectMouseEnter:
-                var appManager = this.getAppManager();
+                var pauseTime = appManager.getSetting("mousePauseHoldTime");
                 scrObj.highlight(
                     appManager,
                     appManager.getSetting("mousePauseHighlightType")
                 );
                 this.#currentTimeout = setTimeout(
                     () => this.doSelection(appManager, scrObj),
-                    appManager.getSetting("mousePauseHoldTime")
+                    pauseTime
                 );
                 break;
             case InputEvent.ObjectMouseExit:

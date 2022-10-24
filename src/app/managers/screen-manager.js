@@ -19,6 +19,8 @@ import {
     setMousedownCallback,
     disableSelection,
     enableSelection,
+    disableInputCallback,
+    enableInputCallback,
     setSelectedObject,
     deleteSelectedObjects,
     refresh,
@@ -194,16 +196,8 @@ class ScreenManager {
     }
 
     createCanvas(appManager, screenSpec) {
-        const {
-            id,
-            top,
-            left,
-            width,
-            height,
-            backgroundColor,
-            doSelection,
-            doObjectEvents,
-        } = screenSpec;
+        const { id, top, left, width, height, backgroundColor, doSelection } =
+            screenSpec;
 
         this.#canvas = initCanvas(
             id,
@@ -214,19 +208,8 @@ class ScreenManager {
             backgroundColor,
             doSelection,
             false,
-            this.setModified,
-            doObjectEvents ? this.inputCallback : null
+            this.setModified
         );
-        if (doObjectEvents) {
-            this.#handleInputEvents = true;
-            this.#accessManager = new AccessManager(appManager);
-            this.#accessManager.setMethod(
-                appManager.getSetting("selectionMethod")
-            );
-        } else {
-            this.#handleInputEvents = false;
-            this.#accessManager = null;
-        }
         this.#aspectRatio = width / height;
         this.#screenRegion = {
             left: left,
@@ -235,6 +218,19 @@ class ScreenManager {
             height: height,
         };
         return this.#canvas;
+    }
+
+    disableAccessMethod() {
+        this.#canvas.disableInputCallback(this.#canvas, this.inputCallback);
+        this.#handleInputEvents = false;
+        this.#accessManager = null;
+    }
+
+    enableAccessMethod(appManager) {
+        this.#handleInputEvents = true;
+        enableInputCallback(this.#canvas, this.inputCallback);
+        this.#accessManager = new AccessManager(appManager);
+        this.#accessManager.setMethod(appManager.getSetting("selectionMethod"));
     }
 
     addObjectOnMousedown(options) {

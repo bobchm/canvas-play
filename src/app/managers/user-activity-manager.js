@@ -151,7 +151,8 @@ class UserActivityManager {
         }
     }
 
-    initServicesForUser() {
+    initServicesForUser(doAccess) {
+        // enable text-to-speech (other things will end up here)
         ttsInit(
             this.getSetting("ttsService"),
             this.getSetting("ttsVoice"),
