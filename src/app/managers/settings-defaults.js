@@ -4,10 +4,10 @@ export const settingsDefaults = {
     ttsVolume: 80,
     ttsRate: 50,
     ttsPitch: 50,
-    selectionMethod: "touchexit",
+    accessMethod: "touchexit",
     touchEnterHoldTime: 0,
     touchEnterHighlightType: "shrink",
     touchExitHighlightType: "shrink",
-    mousePauseHoldTime: 500,
+    mousePauseDwellTime: 500,
     mousePauseHighlightType: "shrink",
 };

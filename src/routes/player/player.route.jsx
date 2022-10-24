@@ -130,7 +130,7 @@ const Player = () => {
             <SettingsModal
                 open={isSettingsOpen}
                 closeCallback={settingsCloseCallback}
-                uaManager={appManager.getUserActivityManager()}
+                appManager={appManager}
             />
         </div>
     );

@@ -230,7 +230,7 @@ class ScreenManager {
         this.#handleInputEvents = true;
         enableInputCallback(this.#canvas, this.inputCallback);
         this.#accessManager = new AccessManager(appManager);
-        this.#accessManager.setMethod(appManager.getSetting("selectionMethod"));
+        this.#accessManager.setMethod(appManager.getSetting("accessMethod"));
     }
 
     addObjectOnMousedown(options) {
@@ -418,6 +418,16 @@ class ScreenManager {
 
     screenToFile(filename) {
         saveToFile(this.#canvas, filename);
+    }
+
+    getAccessMethod() {
+        return this.#accessManager ? this.#accessManager.getMethod() : null;
+    }
+
+    setAccessMethod(method) {
+        if (this.#accessManager) {
+            this.#accessManager.setMethod(method);
+        }
     }
 
     addRect(scrObj, spec) {

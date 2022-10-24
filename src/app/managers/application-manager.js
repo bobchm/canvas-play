@@ -49,6 +49,14 @@ class ApplicationManager {
     getCanvas() {
         return this.#screenManager.getCanvas();
     }
+
+    getAccessMethod() {
+        return this.#screenManager.getAccessMethod();
+    }
+
+    setAccessMethod(method) {
+        this.#screenManager.setAccessMethod(method);
+    }
 }
 
 export default ApplicationManager;

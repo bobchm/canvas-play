@@ -11,6 +11,10 @@ class AccessManager {
         this.#appManager = appManager;
     }
 
+    getMethod() {
+        return this.#currentMethod ? this.#currentMethod.getMethodType() : null;
+    }
+
     setMethod(method) {
         switch (method) {
             case AccessType.TouchEnter:

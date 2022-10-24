@@ -4,7 +4,7 @@ export const AccessType = {
     MousePause: "mousepause",
 };
 
-export const AccessHighlightTypes = {
+export const AccessHighlightType = {
     None: "none",
     Shrink: "shrink",
     Overlay: "overlay",

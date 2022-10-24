@@ -21,7 +21,7 @@ class MousePause extends AccessMethod {
 
         switch (eventType) {
             case InputEvent.ObjectMouseEnter:
-                var pauseTime = appManager.getSetting("mousePauseHoldTime");
+                var pauseTime = appManager.getSetting("mousePauseDwellTime");
                 scrObj.highlight(
                     appManager,
                     appManager.getSetting("mousePauseHighlightType")

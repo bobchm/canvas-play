@@ -413,7 +413,6 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
     },
 
     highlightShrink(cnv) {
-        console.log("shrink");
         this.svRgn.left = this.left;
         this.svRgn.top = this.top;
         this.svRgn.width = this.width;
@@ -437,7 +436,6 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
     },
 
     highlightUnshrink(cnv) {
-        console.log("unshrink");
         this.animate("left", this.svRgn.left, {
             onChange: cnv.renderAll.bind(cnv),
             duration: 100,

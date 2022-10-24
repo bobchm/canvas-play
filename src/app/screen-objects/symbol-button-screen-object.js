@@ -3,6 +3,7 @@ import ScreenObject from "./screen-object";
 import { refresh } from "../../utils/canvas";
 import { ScreenObjectType } from "../constants/screen-object-types";
 import { ttsSpeak } from "../../utils/textToSpeech";
+import { AccessHighlightType } from "../constants/access-types";
 
 class SymbolButtonScreenObject extends ScreenObject {
     #label;
@@ -140,11 +141,37 @@ class SymbolButtonScreenObject extends ScreenObject {
     }
 
     highlight(appManager, highlightType) {
-        this.getCanvasObj().highlightShrink(appManager.getCanvas());
+        switch (highlightType) {
+            case AccessHighlightType.None:
+                break;
+            case AccessHighlightType.Shrink:
+                this.getCanvasObj().highlightShrink(appManager.getCanvas());
+                break;
+            case AccessHighlightType.Overlay:
+                this.getCanvasObj().highlightShrink(appManager.getCanvas());
+                break;
+            case AccessHighlightType.ShrinkAndOverlay:
+                this.getCanvasObj().highlightShrink(appManager.getCanvas());
+                break;
+            default:
+        }
     }
 
     unhighlight(appManager, highlightType) {
-        this.getCanvasObj().highlightUnshrink(appManager.getCanvas());
+        switch (highlightType) {
+            case AccessHighlightType.None:
+                break;
+            case AccessHighlightType.Shrink:
+                this.getCanvasObj().highlightUnshrink(appManager.getCanvas());
+                break;
+            case AccessHighlightType.Overlay:
+                this.getCanvasObj().highlightUnshrink(appManager.getCanvas());
+                break;
+            case AccessHighlightType.ShrinkAndOverlay:
+                this.getCanvasObj().highlightUnshrink(appManager.getCanvas());
+                break;
+            default:
+        }
     }
 
     isSelectable() {

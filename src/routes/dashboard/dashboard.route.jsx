@@ -193,7 +193,7 @@ const Dashboard = () => {
                 <SettingsModal
                     open={isSettingsOpen}
                     closeCallback={settingsCloseCallback}
-                    uaManager={applicationManager.getUserActivityManager()}
+                    appManager={applicationManager}
                 />
             </Container>
         </div>

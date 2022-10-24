@@ -52,7 +52,7 @@ const getFullVoice = (voices, name, lang) => {
     return voices.find((voice) => voice.name === name && voice.lang === lang);
 };
 
-export default function SpeechSettings({ uaManager }) {
+export default function SpeechSettings({ appManager }) {
     const [volume, setVolume] = useState(ttsGetVolume());
     const [rate, setRate] = useState(ttsGetRate());
     const [pitch, setPitch] = useState(ttsGetPitch());
@@ -61,6 +61,7 @@ export default function SpeechSettings({ uaManager }) {
     const [voice, setVoice] = useState(ttsGetVoice().name);
     const [lang, setLang] = useState(getCurrentLanguage(voices, voice));
     const [langVoices, setLangVoices] = useState(voicesFromLang(voices, lang));
+    const [uaManager] = useState(appManager.getUserActivityManager());
 
     const handleVolumeChange = (event, newValue) => {
         setVolume(newValue);

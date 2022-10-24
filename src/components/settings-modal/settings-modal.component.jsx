@@ -7,7 +7,7 @@ import Paper from "@mui/material/Paper";
 import SpeechSettings from "./speechsettings.component";
 import AccessSettings from "./accesssettings.component";
 
-export default function SettingsModal({ open, uaManager, closeCallback }) {
+export default function SettingsModal({ open, appManager, closeCallback }) {
     const [tabIndex, setTabIndex] = useState(0);
 
     const handleTabChange = (event, newTabIndex) => {
@@ -35,8 +35,8 @@ export default function SettingsModal({ open, uaManager, closeCallback }) {
                     <Tab key={0} label="Speech" />
                     <Tab key={1} label="Access" />
                 </Tabs>
-                {tabIndex === 0 && <SpeechSettings uaManager={uaManager} />}
-                {tabIndex === 1 && <AccessSettings uaManager={uaManager} />}
+                {tabIndex === 0 && <SpeechSettings appManager={appManager} />}
+                {tabIndex === 1 && <AccessSettings appManager={appManager} />}
             </Paper>
         </Modal>
     );
