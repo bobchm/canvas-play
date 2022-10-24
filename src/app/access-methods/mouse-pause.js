@@ -4,6 +4,7 @@ import { InputEvent } from "../../utils/input-events";
 
 class MousePause extends AccessMethod {
     #currentTimeout = null;
+    #highlighted = false;
 
     constructor(appManager) {
         super(appManager);
@@ -25,6 +26,7 @@ class MousePause extends AccessMethod {
                     appManager,
                     appManager.getSetting("mousePauseHighlightType")
                 );
+                this.#highlighted = true;
                 this.#currentTimeout = setTimeout(
                     () => this.doSelection(appManager, scrObj),
                     pauseTime
@@ -35,10 +37,13 @@ class MousePause extends AccessMethod {
                     clearTimeout(this.#currentTimeout);
                     this.#currentTimeout = null;
                 }
-                scrObj.unhighlight(
-                    appManager,
-                    appManager.getSetting("mousePauseHighlightType")
-                );
+                if (this.#highlighted) {
+                    this.#highlighted = false;
+                    scrObj.unhighlight(
+                        appManager,
+                        appManager.getSetting("mousePauseHighlightType")
+                    );
+                }
                 break;
             default: // ignore the rest
         }
@@ -47,10 +52,13 @@ class MousePause extends AccessMethod {
 
     doSelection(appManager, scrObj) {
         this.#currentTimeout = null;
-        scrObj.unhighlight(
-            appManager,
-            appManager.getSetting("mousePauseHighlightType")
-        );
+        if (this.#highlighted) {
+            this.#highlighted = false;
+            scrObj.unhighlight(
+                appManager,
+                appManager.getSetting("mousePauseHighlightType")
+            );
+        }
         scrObj.select(appManager);
     }
 }

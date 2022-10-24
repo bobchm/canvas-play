@@ -118,6 +118,12 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
             this.image = null;
         }
         this.killScaling();
+        this.svRgn = {
+            left: this.left,
+            top: this.top,
+            width: this.width,
+            height: this.height,
+        };
     },
 
     setFont: function (spec) {
@@ -407,21 +413,47 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
     },
 
     highlightShrink(cnv) {
-        // this.set({
-        //     scaleY: 0.7,
-        //     scaleX: 0.7,
-        //     originX: "center",
-        //     originY: "center",
-        // });
+        console.log("shrink");
+        this.svRgn.left = this.left;
+        this.svRgn.top = this.top;
+        this.svRgn.width = this.width;
+        this.svRgn.height = this.height;
+        this.animate("left", "+=5", {
+            onChange: cnv.renderAll.bind(cnv),
+            duration: 100,
+        });
+        this.animate("width", "-=10", {
+            onChange: cnv.renderAll.bind(cnv),
+            duration: 100,
+        });
+        this.animate("top", "+=5", {
+            onChange: cnv.renderAll.bind(cnv),
+            duration: 100,
+        });
+        this.animate("height", "-=10", {
+            onChange: cnv.renderAll.bind(cnv),
+            duration: 100,
+        });
     },
 
     highlightUnshrink(cnv) {
-        // this.set({
-        //     scaleY: 1,
-        //     scaleX: 1,
-        //     originX: "center",
-        //     originY: "center",
-        // });
+        console.log("unshrink");
+        this.animate("left", this.svRgn.left, {
+            onChange: cnv.renderAll.bind(cnv),
+            duration: 100,
+        });
+        this.animate("width", this.svRgn.width, {
+            onChange: cnv.renderAll.bind(cnv),
+            duration: 100,
+        });
+        this.animate("top", this.svRgn.top, {
+            onChange: cnv.renderAll.bind(cnv),
+            duration: 100,
+        });
+        this.animate("height", this.svRgn.height, {
+            onChange: cnv.renderAll.bind(cnv),
+            duration: 100,
+        });
     },
 });
 
