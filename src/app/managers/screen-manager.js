@@ -37,6 +37,7 @@ import {
 import { defaultImageData } from "../../utils/image-defaults";
 
 import { ScreenObjectType } from "../constants/screen-object-types";
+import { SymBtnShape } from "../../utils/symbol-button";
 
 class ScreenManager {
     #canvas = null;
@@ -311,6 +312,7 @@ class ScreenManager {
                         this,
                         this.#currentPage,
                         "Label",
+                        SymBtnShape.RoundedRect,
                         {
                             type: ScreenObjectType.SymbolButton,
                             shapeSpec: {
@@ -409,6 +411,7 @@ class ScreenManager {
                     this,
                     parent,
                     spec.label,
+                    spec.shape || SymBtnShape.RoundedRect,
                     spec
                 );
             default:
@@ -457,10 +460,11 @@ class ScreenManager {
         );
     }
 
-    addSymbolButton(scrObj, label, spec) {
+    addSymbolButton(scrObj, label, shape, spec) {
         return addSymbolButton(
             this.#canvas,
             label,
+            shape,
             spec,
             scrObj,
             this.#handleInputEvents ? this.inputCallback : null

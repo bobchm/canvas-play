@@ -7,12 +7,14 @@ import { AccessHighlightType } from "../constants/access-types";
 
 class SymbolButtonScreenObject extends ScreenObject {
     #label;
+    #shape;
 
-    constructor(_screenMgr, _parent, _label, _spec) {
+    constructor(_screenMgr, _parent, _label, _shape, _spec) {
         super(_screenMgr, _parent, _spec);
         this.#label = _label;
+        this.#shape = _shape;
         this.setCanvasObj(
-            _screenMgr.addSymbolButton(this, _label, _spec.shapeSpec)
+            _screenMgr.addSymbolButton(this, _label, _shape, _spec.shapeSpec)
         );
     }
 
@@ -22,6 +24,7 @@ class SymbolButtonScreenObject extends ScreenObject {
         var spec = {
             type: ScreenObjectType.SymbolButton,
             label: this.#label,
+            shape: this.#shape,
             shapeSpec: cobj.toJSON(),
         };
         return { ...superSpec, ...spec };
@@ -129,6 +132,7 @@ class SymbolButtonScreenObject extends ScreenObject {
                 this.getCanvasObj().embedImage(screenMgr.getCanvas());
                 break;
             case PropertyType.ButtonShape:
+                this.#shape = value;
                 this.getCanvasObj().setShape(value);
                 break;
             case PropertyType.Opacity:

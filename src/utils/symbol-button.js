@@ -1,7 +1,7 @@
 import { fabric } from "fabric";
 import { errorImageData } from "./image-defaults";
 
-const SymBtnShape = {
+export const SymBtnShape = {
     Rectangle: "rectangle",
     RoundedRect: "rounded ",
     Folder: "folder",
@@ -102,11 +102,11 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
     type: "symbolButton",
     // initialize can be of type function(options) or function(property, options), like for text.
     // no other signatures allowed.
-    initialize: function (label, options, callback) {
+    initialize: function (label, shape, options, callback) {
         options || (options = {});
 
         this.embedImage = this.embedImage.bind(this);
-        this.shape = options.shape || SymBtnShape.RoundedRect;
+        this.shape = shape || SymBtnShape.RoundedRect;
         this.callSuper("initialize", options);
         this.set("label", label || "");
         this.setFont(options);

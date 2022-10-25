@@ -333,8 +333,8 @@ const addImage = (cnv, spec, scrObj, inputCallback) => {
     return imageObj;
 };
 
-const addSymbolButton = (cnv, label, spec, scrObj, inputCallback) => {
-    const symBtn = new SymbolButton(label, spec, () => refresh(cnv));
+const addSymbolButton = (cnv, label, shape, spec, scrObj, inputCallback) => {
+    const symBtn = new SymbolButton(label, shape, spec, () => refresh(cnv));
     finishObjectAdd(cnv, symBtn, scrObj, inputCallback);
     return symBtn;
 };
