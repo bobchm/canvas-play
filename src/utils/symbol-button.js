@@ -124,6 +124,7 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
             width: this.width,
             height: this.height,
         };
+        this.overlay = false;
     },
 
     setFont: function (spec) {
@@ -353,6 +354,22 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         }
     },
 
+    drawOverlay: function (ctx) {
+        var svFill = this.fill;
+        this.set("fill", "rgba(211, 211, 211, 0.8)");
+        switch (this.shape) {
+            case SymBtnShape.RoundedRect:
+                this.drawRoundRectShape(ctx);
+                break;
+            case SymBtnShape.Folder:
+                this.drawFolderShape(ctx);
+                break;
+            default:
+                this.callSuper("_render", ctx);
+        }
+        this.set("fill", svFill);
+    },
+
     labelYOffset: function (shape, buttonHgt, hasSymbol) {
         var shapeOffset = 0;
         if (shape === SymBtnShape.Folder) {
@@ -400,6 +417,9 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
 
             this.drawImageScaled(ctx, x, y, width, height);
         }
+        if (this.overlay) {
+            this.drawOverlay(ctx);
+        }
     },
 
     setLabel(cnv, label) {
@@ -413,6 +433,7 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
     },
 
     highlightShrink(cnv) {
+        this.overlay = true;
         this.svRgn.left = this.left;
         this.svRgn.top = this.top;
         this.svRgn.width = this.width;
@@ -436,6 +457,7 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
     },
 
     highlightUnshrink(cnv) {
+        this.overlay = false;
         this.animate("left", this.svRgn.left, {
             onChange: cnv.renderAll.bind(cnv),
             duration: 100,
