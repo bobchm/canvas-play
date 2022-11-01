@@ -89,6 +89,25 @@ class PageScreenObject extends ContainerScreenObject {
         }
     }
 
+    getProperty(type) {
+        switch (type) {
+            case PropertyType.Name:
+                return this.#name;
+            case PropertyType.BackgroundColor:
+                return this.#backgroundColor;
+            case PropertyType.BackgroundImageSource:
+                return this.#backgroundImage;
+            case PropertyType.BackgroundImageStyle:
+                return this.#backgroundImageStyle;
+            default:
+                return super.getProperty(type);
+        }
+    }
+
+    async setProperty(screenMgr, type, value) {
+        this.setEditProperty(screenMgr, type, value);
+    }
+
     getName() {
         return this.#name;
     }

@@ -39,5 +39,7 @@ export class BhvrBase {
         return this.#owner;
     }
 
+    toJSON() {}
+
     execute() {}
 }

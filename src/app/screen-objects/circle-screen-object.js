@@ -53,6 +53,23 @@ class CircleScreenObject extends ScreenObject {
                 super.setEditProperty(screenMgr, type, value);
         }
     }
+
+    getProperty(type) {
+        switch (type) {
+            case PropertyType.FillColor:
+                return this.getCanvasObj().fill;
+            case PropertyType.LineColor:
+                return this.getCanvasObj().stroke;
+            case PropertyType.Opacity:
+                return this.getCanvasObj().opacity * 100;
+            default:
+                return super.getProperty(type);
+        }
+    }
+
+    async setProperty(screenMgr, type, value) {
+        this.setEditProperty(screenMgr, type, value);
+    }
 }
 
 export default CircleScreenObject;

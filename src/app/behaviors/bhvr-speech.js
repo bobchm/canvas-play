@@ -20,6 +20,8 @@ class SpeakLabel extends BhvrBase {
         super(owner, SpeakLabel);
     }
 
+    toJSON() {}
+
     execute() {
         var owner = this.getOwner();
         if (owner) {

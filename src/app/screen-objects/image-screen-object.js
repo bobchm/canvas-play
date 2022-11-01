@@ -65,6 +65,23 @@ class ImageScreenObject extends ScreenObject {
         }
     }
 
+    getProperty(type) {
+        switch (type) {
+            case PropertyType.ImageSource:
+                return this.getSource();
+            case PropertyType.EmbedImage:
+                return isImageEmbedded(this.getCanvasObj());
+            case PropertyType.Opacity:
+                return this.getCanvasObj().opacity * 100;
+            default:
+                return super.getProperty(type);
+        }
+    }
+
+    async setProperty(screenMgr, type, value) {
+        this.setEditProperty(screenMgr, type, value);
+    }
+
     getSource() {
         return getImageSource(this.getCanvasObj());
     }

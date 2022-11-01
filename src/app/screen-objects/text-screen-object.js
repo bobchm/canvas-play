@@ -66,7 +66,7 @@ class TextScreenObject extends ScreenObject {
             },
             {
                 type: PropertyType.BackgroundColor,
-                current: this.getCanvasObj().textBacgroundColor,
+                current: this.getCanvasObj().textBackgroundColor,
             },
             {
                 type: PropertyType.TextStyle,
@@ -99,6 +99,27 @@ class TextScreenObject extends ScreenObject {
             default:
                 super.setEditProperty(screenMgr, type, value);
         }
+    }
+
+    getProperty(type) {
+        switch (type) {
+            case PropertyType.ButtonLabel:
+                return this.#text;
+            case PropertyType.BackgroundColor:
+                return this.getCanvasObj().textBackgroundColor;
+            case PropertyType.TextColor:
+                return this.getCanvasObj().fill;
+            case PropertyType.TextStyle:
+                return this.getTextStyle();
+            case PropertyType.Opacity:
+                return this.getCanvasObj().opacity * 100;
+            default:
+                return super.getProperty(type);
+        }
+    }
+
+    async setProperty(screenMgr, type, value) {
+        this.setEditProperty(screenMgr, type, value);
     }
 }
 
