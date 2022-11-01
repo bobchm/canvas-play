@@ -124,7 +124,7 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
             width: this.width,
             height: this.height,
         };
-        this.overlay = false;
+        this.hasOverlay = false;
     },
 
     setFont: function (spec) {
@@ -417,7 +417,7 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
 
             this.drawImageScaled(ctx, x, y, width, height);
         }
-        if (this.overlay) {
+        if (this.hasOverlay) {
             this.drawOverlay(ctx);
         }
     },
@@ -432,8 +432,19 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         this.set("dirty", true);
     },
 
-    highlightShrink(cnv) {
-        this.overlay = true;
+    overlay(cnv) {
+        this.hasOverlay = true;
+        this.makeDirty();
+        cnv.renderAll();
+    },
+
+    unOverlay(cnv) {
+        this.hasOverlay = false;
+        this.makeDirty();
+        cnv.renderAll();
+    },
+
+    shrink(cnv) {
         this.svRgn.left = this.left;
         this.svRgn.top = this.top;
         this.svRgn.width = this.width;
@@ -456,8 +467,7 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         });
     },
 
-    highlightUnshrink(cnv) {
-        this.overlay = false;
+    unShrink(cnv) {
         this.animate("left", this.svRgn.left, {
             onChange: cnv.renderAll.bind(cnv),
             duration: 100,
@@ -474,6 +484,16 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
             onChange: cnv.renderAll.bind(cnv),
             duration: 100,
         });
+    },
+
+    overlayShrink(cnv) {
+        this.overlay(cnv);
+        this.shrink(cnv);
+    },
+
+    unOverlayUnShrink(cnv) {
+        this.unOverlay(cnv);
+        this.unShrink(cnv);
     },
 });
 

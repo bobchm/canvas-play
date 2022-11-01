@@ -149,13 +149,13 @@ class SymbolButtonScreenObject extends ScreenObject {
             case AccessHighlightType.None:
                 break;
             case AccessHighlightType.Shrink:
-                this.getCanvasObj().highlightShrink(appManager.getCanvas());
+                this.getCanvasObj().shrink(appManager.getCanvas());
                 break;
             case AccessHighlightType.Overlay:
-                this.getCanvasObj().highlightShrink(appManager.getCanvas());
+                this.getCanvasObj().overlay(appManager.getCanvas());
                 break;
             case AccessHighlightType.ShrinkAndOverlay:
-                this.getCanvasObj().highlightShrink(appManager.getCanvas());
+                this.getCanvasObj().overlayShrink(appManager.getCanvas());
                 break;
             default:
         }
@@ -166,13 +166,13 @@ class SymbolButtonScreenObject extends ScreenObject {
             case AccessHighlightType.None:
                 break;
             case AccessHighlightType.Shrink:
-                this.getCanvasObj().highlightUnshrink(appManager.getCanvas());
+                this.getCanvasObj().unShrink(appManager.getCanvas());
                 break;
             case AccessHighlightType.Overlay:
-                this.getCanvasObj().highlightUnshrink(appManager.getCanvas());
+                this.getCanvasObj().unOverlay(appManager.getCanvas());
                 break;
             case AccessHighlightType.ShrinkAndOverlay:
-                this.getCanvasObj().highlightUnshrink(appManager.getCanvas());
+                this.getCanvasObj().unOverlayUnShrink(appManager.getCanvas());
                 break;
             default:
         }
