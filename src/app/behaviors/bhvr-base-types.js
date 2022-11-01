@@ -10,3 +10,34 @@ export const BhvrDataType = {
     FontFamily: "font-family",
     Image: "image",
 };
+
+export const BhvrCategory = {
+    Navigation: "navigation",
+    Speech: "speech",
+};
+
+export class BhvrBase {
+    static id;
+    static category;
+    static name;
+    static description;
+    static argSpecs;
+    static rvalue;
+    #cls;
+    #owner;
+
+    constructor(owner, cls) {
+        this.#cls = cls;
+        this.#owner = owner;
+    }
+
+    getClass() {
+        return this.#cls;
+    }
+
+    getOwner() {
+        return this.#owner;
+    }
+
+    execute() {}
+}

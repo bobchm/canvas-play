@@ -77,6 +77,14 @@ class ScreenObject {
     select(appManager) {
         return;
     }
+
+    getProperty(property) {
+        return null;
+    }
+
+    async setProperty(screenMgr, property, value) {
+        return;
+    }
 }
 
 export default ScreenObject;

@@ -1,24 +1,29 @@
-import { BhvrDataType } from "./bhvr-base-types";
+export class BehaviorManager {
+    static bhvrClasses = {};
 
-export class Behavior {
-    #returnType;
-    #arguments;
-    #description;
+    static initialize() {}
 
-    getReturnType() {
-        return this.#returnType;
+    static addBehavior(cls) {
+        var key = cls.id;
+        if (!cls.id) {
+            throw new Error("Missing behavior class key");
+        }
+        if (this.bhvrClasses.hasOwnProperty(key)) {
+            throw new Error("Duplicate behavior class: " + key);
+        }
+        this.bhvrClasses[key] = cls;
     }
 
-    getArguments() {
-        return this.#arguments;
-    }
-
-    getDescription() {
-        return this.#description;
-    }
-
-    execute(args) {
-        return;
+    static behaviorsForCategory(category) {
+        var catClasses = [];
+        var classKeys = Object.keys(this.bhvrClasses);
+        classKeys.forEach((key) => {
+            var cls = this.bhvrClasses[key];
+            if (cls.category === category) {
+                catClasses.push(cls);
+            }
+        });
+        return catClasses;
     }
 }
 

@@ -144,6 +144,35 @@ class SymbolButtonScreenObject extends ScreenObject {
         }
     }
 
+    getProperty(type) {
+        switch (type) {
+            case PropertyType.ButtonLabel:
+                return this.#label;
+            case PropertyType.FillColor:
+                return this.getCanvasObj().fill;
+            case PropertyType.LineColor:
+                return this.getCanvasObj().stroke;
+            case PropertyType.TextColor:
+                return this.getCanvasObj().textColor;
+            case PropertyType.TextStyle:
+                return this.getTextStyle();
+            case PropertyType.SymbolButtonImageSource:
+                return this.getCanvasObj().getImageSource();
+            case PropertyType.EmbedImage:
+                return this.getCanvasObj().isImageEmbedded();
+            case PropertyType.ButtonShape:
+                return this.getCanvasObj().getShape();
+            case PropertyType.Opacity:
+                return this.getCanvasObj().opacity * 100;
+            default:
+                return super.getProperty(type);
+        }
+    }
+
+    async setProperty(screenMgr, type, value) {
+        this.setEditProperty(screenMgr, type, value);
+    }
+
     highlight(appManager, highlightType) {
         switch (highlightType) {
             case AccessHighlightType.None:
