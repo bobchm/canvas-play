@@ -1,5 +1,6 @@
 import UserActivityManager from "./user-activity-manager";
 import ScreenManager from "./screen-manager";
+import { BehaviorManager } from "../behaviors/behavior-behaviors";
 
 class ApplicationManager {
     #userActivityManager;
@@ -8,6 +9,7 @@ class ApplicationManager {
     constructor(userName, screenSpec) {
         this.#userActivityManager = new UserActivityManager();
         this.#screenManager = new ScreenManager(screenSpec);
+        BehaviorManager.initialize();
     }
 
     async setUser(userName) {

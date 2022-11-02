@@ -9,6 +9,7 @@ export const PropertyValueType = {
     BackgroundImageStyle: "backgroundimagestyle",
     EmbedImage: "embedimage",
     ButtonShape: "buttonshape",
+    Page: "page",
 };
 
 export const PropertyType = {

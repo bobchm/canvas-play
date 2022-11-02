@@ -4,15 +4,18 @@ import { refresh } from "../../utils/canvas";
 import { ScreenObjectType } from "../constants/screen-object-types";
 import { ttsSpeak } from "../../utils/textToSpeech";
 import { AccessHighlightType } from "../constants/access-types";
+import { BehaviorManager } from "../behaviors/behavior-behaviors";
 
 class SymbolButtonScreenObject extends ScreenObject {
     #label;
     #shape;
+    #behaviors;
 
-    constructor(_screenMgr, _parent, _label, _shape, _spec) {
+    constructor(_screenMgr, _parent, _label, _shape, _behaviors, _spec) {
         super(_screenMgr, _parent, _spec);
         this.#label = _label;
         this.#shape = _shape;
+        this.#behaviors = BehaviorManager.instantiate(this, _behaviors);
         this.setCanvasObj(
             _screenMgr.addSymbolButton(this, _label, _shape, _spec.shapeSpec)
         );
@@ -26,6 +29,7 @@ class SymbolButtonScreenObject extends ScreenObject {
             label: this.#label,
             shape: this.#shape,
             shapeSpec: cobj.toJSON(),
+            behaviors: BehaviorManager.toJSON(this.#behaviors),
         };
         return { ...superSpec, ...spec };
     }

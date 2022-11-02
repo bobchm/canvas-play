@@ -19,7 +19,6 @@ import {
     setMousedownCallback,
     disableSelection,
     enableSelection,
-    disableInputCallback,
     enableInputCallback,
     setSelectedObject,
     deleteSelectedObjects,
@@ -313,6 +312,7 @@ class ScreenManager {
                         this.#currentPage,
                         "Label",
                         SymBtnShape.RoundedRect,
+                        [],
                         {
                             type: ScreenObjectType.SymbolButton,
                             shapeSpec: {
@@ -412,6 +412,7 @@ class ScreenManager {
                     parent,
                     spec.label,
                     spec.shape || SymBtnShape.RoundedRect,
+                    spec.behaviors || [],
                     spec
                 );
             default:

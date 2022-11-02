@@ -39,7 +39,9 @@ export class BhvrBase {
         return this.#owner;
     }
 
-    toJSON() {}
+    toJSON() {
+        return { id: this.id };
+    }
 
-    execute() {}
+    execute(appManager) {}
 }
