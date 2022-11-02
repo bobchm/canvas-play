@@ -10,6 +10,7 @@ export const PropertyValueType = {
     EmbedImage: "embedimage",
     ButtonShape: "buttonshape",
     Page: "page",
+    BehaviorList: "bhvrList",
 };
 
 export const PropertyType = {
@@ -82,6 +83,11 @@ export const PropertyType = {
     ButtonShape: {
         name: "Shape",
         valueType: PropertyValueType.ButtonShape,
+        forceReset: false,
+    },
+    SelectionBehaviors: {
+        name: "Selection",
+        valueType: PropertyValueType.BehaviorList,
         forceReset: false,
     },
 };

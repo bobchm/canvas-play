@@ -18,7 +18,7 @@ const appName = "Canvas Play";
 
 const Player = () => {
     const [title, setTitle] = useState(appName);
-    const [appManager] = useState(new ApplicationManager());
+    const [appManager] = useState(() => new ApplicationManager());
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
     const [isLoaded, setIsLoaded] = useState(false);

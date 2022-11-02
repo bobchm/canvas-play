@@ -11,11 +11,97 @@ import BackgroundSourcePropertyPanel from "./bkgimagesrc-proppanel.component";
 import EmbedImagePropertyPanel from "./embedimage-proppanel-component";
 import ButtonShapePropertyPanel from "./button-shape.component";
 import BackgroundImageStylePropertyPanel from "./bkgimagestyle-proppanel.component";
+import BehaviorListPropertyPanel from "./bhvrlist-proppanel.component";
 
 import "./property-palette.styles.scss";
 import { PropertyValueType } from "../../app/constants/property-types";
 
 var ctr = 0;
+
+export const selectPropertyPanel = (option, propUpdateCallback) => {
+    switch (option.type.valueType) {
+        case PropertyValueType.Text:
+            return (
+                <TextPropertyPanel
+                    propOption={option}
+                    propUpdateCallback={propUpdateCallback}
+                />
+            );
+        case PropertyValueType.Color:
+            return (
+                <ColorPropertyPanel
+                    propOption={option}
+                    propUpdateCallback={propUpdateCallback}
+                />
+            );
+        case PropertyValueType.Percent:
+            return (
+                <PercentPropertyPanel
+                    propOption={option}
+                    propUpdateCallback={propUpdateCallback}
+                />
+            );
+        case PropertyValueType.TextStyle:
+            return (
+                <TextStylePropertyPanel
+                    propOption={option}
+                    propUpdateCallback={propUpdateCallback}
+                />
+            );
+        case PropertyValueType.ImageSource:
+            return (
+                <ImageSourcePropertyPanel
+                    propOption={option}
+                    propUpdateCallback={propUpdateCallback}
+                />
+            );
+        case PropertyValueType.SymBtnImageSource:
+            return (
+                <SymbolSourcePropertyPanel
+                    propOption={option}
+                    propUpdateCallback={propUpdateCallback}
+                />
+            );
+        case PropertyValueType.BackgroundImageSource:
+            return (
+                <BackgroundSourcePropertyPanel
+                    propOption={option}
+                    propUpdateCallback={propUpdateCallback}
+                />
+            );
+        case PropertyValueType.EmbedImage:
+            return (
+                <EmbedImagePropertyPanel
+                    propOption={option}
+                    propUpdateCallback={propUpdateCallback}
+                />
+            );
+        case PropertyValueType.ButtonShape:
+            return (
+                <ButtonShapePropertyPanel
+                    propOption={option}
+                    propUpdateCallback={propUpdateCallback}
+                />
+            );
+        case PropertyValueType.BackgroundImageStyle:
+            return (
+                <BackgroundImageStylePropertyPanel
+                    propOption={option}
+                    propUpdateCallback={propUpdateCallback}
+                />
+            );
+        case PropertyValueType.BehaviorList:
+            return (
+                <BehaviorListPropertyPanel
+                    propOption={option}
+                    propUpdateCallback={propUpdateCallback}
+                />
+            );
+
+        default:
+            return <h1>No Matching Panel Element</h1>;
+    }
+};
 
 const PropertyPalette = ({
     top,
@@ -25,84 +111,6 @@ const PropertyPalette = ({
     options,
     propUpdateCallback,
 }) => {
-    const selectPanel = (option, propUpdateCallback) => {
-        switch (option.type.valueType) {
-            case PropertyValueType.Text:
-                return (
-                    <TextPropertyPanel
-                        propOption={option}
-                        propUpdateCallback={propUpdateCallback}
-                    />
-                );
-            case PropertyValueType.Color:
-                return (
-                    <ColorPropertyPanel
-                        propOption={option}
-                        propUpdateCallback={propUpdateCallback}
-                    />
-                );
-            case PropertyValueType.Percent:
-                return (
-                    <PercentPropertyPanel
-                        propOption={option}
-                        propUpdateCallback={propUpdateCallback}
-                    />
-                );
-            case PropertyValueType.TextStyle:
-                return (
-                    <TextStylePropertyPanel
-                        propOption={option}
-                        propUpdateCallback={propUpdateCallback}
-                    />
-                );
-            case PropertyValueType.ImageSource:
-                return (
-                    <ImageSourcePropertyPanel
-                        propOption={option}
-                        propUpdateCallback={propUpdateCallback}
-                    />
-                );
-            case PropertyValueType.SymBtnImageSource:
-                return (
-                    <SymbolSourcePropertyPanel
-                        propOption={option}
-                        propUpdateCallback={propUpdateCallback}
-                    />
-                );
-            case PropertyValueType.BackgroundImageSource:
-                return (
-                    <BackgroundSourcePropertyPanel
-                        propOption={option}
-                        propUpdateCallback={propUpdateCallback}
-                    />
-                );
-            case PropertyValueType.EmbedImage:
-                return (
-                    <EmbedImagePropertyPanel
-                        propOption={option}
-                        propUpdateCallback={propUpdateCallback}
-                    />
-                );
-            case PropertyValueType.ButtonShape:
-                return (
-                    <ButtonShapePropertyPanel
-                        propOption={option}
-                        propUpdateCallback={propUpdateCallback}
-                    />
-                );
-            case PropertyValueType.BackgroundImageStyle:
-                return (
-                    <BackgroundImageStylePropertyPanel
-                        propOption={option}
-                        propUpdateCallback={propUpdateCallback}
-                    />
-                );
-
-            default:
-                return <h1>No Matching Panel Element</h1>;
-        }
-    };
-
     return (
         <Box
             sx={{
@@ -123,7 +131,7 @@ const PropertyPalette = ({
         >
             {options.map((option, idx) => (
                 <div key={ctr++} className="prop-panel-item">
-                    {selectPanel(option, propUpdateCallback)}
+                    {selectPropertyPanel(option, propUpdateCallback)}
                 </div>
             ))}
         </Box>

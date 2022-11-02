@@ -21,6 +21,10 @@ export class SpeakLabel extends BhvrBase {
         super(owner, SpeakLabel);
     }
 
+    getDisplay() {
+        return "speakLabel()";
+    }
+
     execute(appManager) {
         var owner = this.getOwner();
         if (owner) {
@@ -59,6 +63,12 @@ export class SpeakText extends BhvrBase {
             text: this.#text,
         };
         return { ...superSpec, ...spec };
+    }
+
+    getDisplay() {
+        var text = this.#text;
+        if (!text) text = "";
+        return "speakText(" + text + ")";
     }
 
     execute(appManager) {

@@ -24,7 +24,7 @@ var height = window.innerHeight - 64;
 const Dashboard = () => {
     const [userName, setUserName] = useState(initUserName);
     const [applicationManager, setApplicationManager] = useState(
-        new ApplicationManager()
+        () => new ApplicationManager()
     );
     const [activities, setActivities] = useState([]);
     const [isActivityCreateOpen, setIsActivityCreateOpen] = useState(false);

@@ -15,7 +15,12 @@ class SymbolButtonScreenObject extends ScreenObject {
         super(_screenMgr, _parent, _spec);
         this.#label = _label;
         this.#shape = _shape;
-        this.#behaviors = BehaviorManager.instantiate(this, _behaviors);
+        //        this.#behaviors = BehaviorManager.instantiate(this, _behaviors);
+        this.#behaviors = BehaviorManager.instantiate(this, [
+            { id: "BhvrSpeakText", text: "one" },
+            { id: "BhvrSpeakText", text: "two" },
+            { id: "BhvrSpeakText", text: "three" },
+        ]);
         this.setCanvasObj(
             _screenMgr.addSymbolButton(this, _label, _shape, _spec.shapeSpec)
         );
@@ -104,6 +109,10 @@ class SymbolButtonScreenObject extends ScreenObject {
                 type: PropertyType.Opacity,
                 current: this.getCanvasObj().opacity * 100,
             },
+            {
+                type: PropertyType.SelectionBehaviors,
+                current: this.#behaviors,
+            },
         ];
         return superProps.concat(thisProps);
     }
@@ -139,6 +148,9 @@ class SymbolButtonScreenObject extends ScreenObject {
                 this.#shape = value;
                 this.getCanvasObj().setShape(value);
                 break;
+            case PropertyType.SelectionBehaviors:
+                this.#behaviors = value;
+                break;
             case PropertyType.Opacity:
                 var newValue = value / 100;
                 this.getCanvasObj().set("opacity", newValue);
@@ -168,6 +180,8 @@ class SymbolButtonScreenObject extends ScreenObject {
                 return this.getCanvasObj().getShape();
             case PropertyType.Opacity:
                 return this.getCanvasObj().opacity * 100;
+            case PropertyType.SelectionBehaviors:
+                return this.#behaviors;
             default:
                 return super.getProperty(type);
         }

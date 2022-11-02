@@ -39,6 +39,10 @@ export class BhvrBase {
         return this.#owner;
     }
 
+    getDisplay() {
+        return this.name;
+    }
+
     toJSON() {
         return { id: this.id };
     }

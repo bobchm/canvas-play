@@ -35,6 +35,12 @@ export class OpenPage extends BhvrBase {
         return { ...superSpec, ...spec };
     }
 
+    getDisplay() {
+        var pgName = this.#page;
+        if (!pgName) pgName = "";
+        return "openPage(" + pgName + ")";
+    }
+
     execute(appManager) {
         if (this.#page) {
             appManager.openPage(this.#page);

@@ -29,7 +29,7 @@ const appName = "Canvas Play";
 
 const Editor = () => {
     const [title, setTitle] = useState(appName);
-    const [appManager] = useState(new ApplicationManager());
+    const [appManager] = useState(() => new ApplicationManager());
     const [appMode, setAppMode] = useState(EditMode.Select);
     const [editProperties, setEditProperties] = useState([]);
     const [isModified, setIsModified] = useState(false);
