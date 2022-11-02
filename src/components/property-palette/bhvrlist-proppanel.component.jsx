@@ -1,3 +1,4 @@
+import "./bhvrlist-styles.css";
 import React, { useState } from "react";
 import Paper from "@mui/material/Paper";
 import { BehaviorListItem } from "./bhvritem-proppanel.component";
@@ -33,22 +34,13 @@ const BehaviorListPropertyPanel = ({ propOption, propUpdateCallback }) => {
         <Paper
             variant="outlined"
             sx={{
-                backgroundColor: "azure",
+                backgroundColor: "red",
                 border: 1,
                 boderColor: "black",
+                display: "flex",
             }}
         >
-            <Reorder.Group
-                axis="y"
-                onReorder={handleReorder}
-                values={items}
-                style={{
-                    height: 250,
-                    border: "1px solid black",
-                    overflowY: "auto",
-                }}
-                layoutScroll
-            >
+            <Reorder.Group axis="y" onReorder={setItems} values={items}>
                 {items.map((item) => (
                     <BehaviorListItem key={item} item={item} />
                 ))}

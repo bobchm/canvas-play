@@ -5,6 +5,7 @@ export class BehaviorManager {
     static bhvrClasses = {};
 
     static initialize() {
+        this.bhvrClasses = [];
         initSpeechBehaviors();
         initNavigationBehaviors();
     }
