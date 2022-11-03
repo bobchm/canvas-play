@@ -18,13 +18,14 @@ import { PropertyValueType } from "../../app/constants/property-types";
 
 var ctr = 0;
 
-export const selectPropertyPanel = (option, propUpdateCallback) => {
+export const selectPropertyPanel = (option, propUpdateCallback, objects) => {
     switch (option.type.valueType) {
         case PropertyValueType.Text:
             return (
                 <TextPropertyPanel
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
+                    objects={objects}
                 />
             );
         case PropertyValueType.Color:
@@ -32,6 +33,7 @@ export const selectPropertyPanel = (option, propUpdateCallback) => {
                 <ColorPropertyPanel
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
+                    objects={objects}
                 />
             );
         case PropertyValueType.Percent:
@@ -39,6 +41,7 @@ export const selectPropertyPanel = (option, propUpdateCallback) => {
                 <PercentPropertyPanel
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
+                    objects={objects}
                 />
             );
         case PropertyValueType.TextStyle:
@@ -46,6 +49,7 @@ export const selectPropertyPanel = (option, propUpdateCallback) => {
                 <TextStylePropertyPanel
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
+                    objects={objects}
                 />
             );
         case PropertyValueType.ImageSource:
@@ -53,6 +57,7 @@ export const selectPropertyPanel = (option, propUpdateCallback) => {
                 <ImageSourcePropertyPanel
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
+                    objects={objects}
                 />
             );
         case PropertyValueType.SymBtnImageSource:
@@ -60,6 +65,7 @@ export const selectPropertyPanel = (option, propUpdateCallback) => {
                 <SymbolSourcePropertyPanel
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
+                    objects={objects}
                 />
             );
         case PropertyValueType.BackgroundImageSource:
@@ -67,6 +73,7 @@ export const selectPropertyPanel = (option, propUpdateCallback) => {
                 <BackgroundSourcePropertyPanel
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
+                    objects={objects}
                 />
             );
         case PropertyValueType.EmbedImage:
@@ -74,6 +81,7 @@ export const selectPropertyPanel = (option, propUpdateCallback) => {
                 <EmbedImagePropertyPanel
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
+                    objects={objects}
                 />
             );
         case PropertyValueType.ButtonShape:
@@ -81,6 +89,7 @@ export const selectPropertyPanel = (option, propUpdateCallback) => {
                 <ButtonShapePropertyPanel
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
+                    objects={objects}
                 />
             );
         case PropertyValueType.BackgroundImageStyle:
@@ -88,6 +97,7 @@ export const selectPropertyPanel = (option, propUpdateCallback) => {
                 <BackgroundImageStylePropertyPanel
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
+                    objects={objects}
                 />
             );
         case PropertyValueType.BehaviorList:
@@ -95,6 +105,7 @@ export const selectPropertyPanel = (option, propUpdateCallback) => {
                 <BehaviorListPropertyPanel
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
+                    objects={objects}
                 />
             );
 

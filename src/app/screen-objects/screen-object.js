@@ -47,7 +47,7 @@ class ScreenObject {
         return [];
     }
 
-    getEditProperties() {
+    getEditProperties(selectedObjects) {
         return [
             {
                 type: PropertyType.Id,

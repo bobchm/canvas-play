@@ -70,8 +70,8 @@ class SymbolButtonScreenObject extends ScreenObject {
         });
     }
 
-    getEditProperties() {
-        var superProps = super.getEditProperties();
+    getEditProperties(selectedObjects) {
+        var superProps = super.getEditProperties(selectedObjects);
         var thisProps = [
             {
                 type: PropertyType.ButtonLabel,
@@ -109,11 +109,13 @@ class SymbolButtonScreenObject extends ScreenObject {
                 type: PropertyType.Opacity,
                 current: this.getCanvasObj().opacity * 100,
             },
-            {
+        ];
+        if (selectedObjects.length === 1) {
+            thisProps.push({
                 type: PropertyType.SelectionBehaviors,
                 current: this.#behaviors,
-            },
-        ];
+            });
+        }
         return superProps.concat(thisProps);
     }
 

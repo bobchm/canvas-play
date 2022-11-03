@@ -3,6 +3,7 @@ import { initNavigationBehaviors } from "./bhvr-navigation";
 
 export class BehaviorManager {
     static bhvrClasses = {};
+    static bhvrNames = [];
 
     static initialize() {
         this.bhvrClasses = [];
@@ -31,6 +32,28 @@ export class BehaviorManager {
             }
         });
         return catClasses;
+    }
+
+    static allBehaviorNames() {
+        if (this.bhvrNames.length === 0) {
+            var classKeys = Object.keys(this.bhvrClasses);
+            classKeys.forEach((key) => {
+                var cls = this.bhvrClasses[key];
+                this.bhvrNames.push(cls.name);
+            });
+        }
+        return this.bhvrNames;
+    }
+
+    static behaviorFromName(name) {
+        var classKeys = Object.keys(this.bhvrClasses);
+        classKeys.forEach((key) => {
+            var cls = this.bhvrClasses[key];
+            if (cls.name === name) {
+                return cls;
+            }
+        });
+        return null;
     }
 
     static toJSON(inBhvrs) {

@@ -57,8 +57,8 @@ class TextScreenObject extends ScreenObject {
         cobj.set("fontFamily", style.fontFamily);
     }
 
-    getEditProperties() {
-        var superProps = super.getEditProperties();
+    getEditProperties(selectedObjects) {
+        var superProps = super.getEditProperties(selectedObjects);
         var thisProps = [
             {
                 type: PropertyType.TextColor,

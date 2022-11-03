@@ -44,8 +44,8 @@ class PageScreenObject extends ContainerScreenObject {
         return { ...superSpec, ...spec };
     }
 
-    getEditProperties() {
-        var superProps = super.getEditProperties();
+    getEditProperties(selectedObjects) {
+        var superProps = super.getEditProperties(selectedObjects);
         var thisProps = [
             {
                 type: PropertyType.Name,

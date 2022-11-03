@@ -20,7 +20,7 @@ import { EditMode } from "./edit-modes";
 import { combineProperties } from "../../app/constants/property-types";
 
 const drawerWidth = 100;
-const propsWidth = 200;
+const propsWidth = 300;
 const appBarHeight = 64;
 const buttonBarHeight = 30;
 const aboveCanvasHeight = appBarHeight + buttonBarHeight;
@@ -134,7 +134,7 @@ const Editor = () => {
         }
         if (objs && objs.length > 0) {
             for (let i = 0; i < objs.length; i++) {
-                var objProps = objs[i].getEditProperties();
+                var objProps = objs[i].getEditProperties(objs);
                 for (let j = 0; j < objProps.length; j++) {
                     addToEditProperties(props, objProps[j]);
                 }
@@ -351,6 +351,7 @@ const Editor = () => {
                     height={canvasSpec.height}
                     options={editProperties}
                     propUpdateCallback={handlePropValueChange}
+                    objects={appManager.getScreenManager().getSelectedObjects()}
                 />
                 <ListModal
                     title="Select Page"

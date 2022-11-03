@@ -24,7 +24,7 @@ export class OpenPage extends BhvrBase {
 
     constructor(owner, args) {
         super(owner, OpenPage);
-        this.#page = args.page;
+        this.#page = args.page || "";
     }
 
     toJSON() {
@@ -38,7 +38,7 @@ export class OpenPage extends BhvrBase {
     getDisplay() {
         var pgName = this.#page;
         if (!pgName) pgName = "";
-        return "openPage(" + pgName + ")";
+        return 'openPage("' + pgName + '")';
     }
 
     execute(appManager) {

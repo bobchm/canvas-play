@@ -54,7 +54,7 @@ export class SpeakText extends BhvrBase {
 
     constructor(owner, args) {
         super(owner, SpeakText);
-        this.#text = args.text;
+        this.#text = args.text || "";
     }
 
     toJSON() {
@@ -68,7 +68,7 @@ export class SpeakText extends BhvrBase {
     getDisplay() {
         var text = this.#text;
         if (!text) text = "";
-        return "speakText(" + text + ")";
+        return 'speakText("' + text + '")';
     }
 
     execute(appManager) {

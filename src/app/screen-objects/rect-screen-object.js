@@ -18,8 +18,8 @@ class RectScreenObject extends ScreenObject {
         return { ...superSpec, ...spec };
     }
 
-    getEditProperties() {
-        var superProps = super.getEditProperties();
+    getEditProperties(selectedObjects) {
+        var superProps = super.getEditProperties(selectedObjects);
         var thisProps = [
             {
                 type: PropertyType.FillColor,
