@@ -47,12 +47,12 @@ export class BehaviorManager {
 
     static behaviorFromName(name) {
         var classKeys = Object.keys(this.bhvrClasses);
-        classKeys.forEach((key) => {
-            var cls = this.bhvrClasses[key];
+        for (let i = 0; i < classKeys.length; i++) {
+            var cls = this.bhvrClasses[classKeys[i]];
             if (cls.name === name) {
                 return cls;
             }
-        });
+        }
         return null;
     }
 
@@ -64,13 +64,14 @@ export class BehaviorManager {
         return outBhvrs;
     }
 
-    static instantiate(owner, bhvrSpecs) {
+    static instantiateBehaviors(owner, bhvrSpecs) {
         var outBhvrs = [];
         for (let i = 0; i < bhvrSpecs.length; i++) {
             var spec = bhvrSpecs[i];
             var cls = this.bhvrClasses[spec.id];
             if (cls) {
                 var instance = new cls(owner, spec);
+                instance.cls = cls;
                 if (instance) {
                     outBhvrs.push(instance);
                 }

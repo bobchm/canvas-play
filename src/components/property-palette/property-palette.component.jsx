@@ -121,6 +121,7 @@ const PropertyPalette = ({
     height,
     options,
     propUpdateCallback,
+    objects,
 }) => {
     return (
         <Box
@@ -142,7 +143,7 @@ const PropertyPalette = ({
         >
             {options.map((option, idx) => (
                 <div key={ctr++} className="prop-panel-item">
-                    {selectPropertyPanel(option, propUpdateCallback)}
+                    {selectPropertyPanel(option, propUpdateCallback, objects)}
                 </div>
             ))}
         </Box>

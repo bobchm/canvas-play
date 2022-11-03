@@ -44,7 +44,7 @@ export class BhvrBase {
     }
 
     toJSON() {
-        return { id: this.id };
+        return { id: this.cls.id };
     }
 
     execute(appManager) {}

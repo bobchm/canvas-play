@@ -22,6 +22,7 @@ const BehaviorListPropertyPanel = ({
     const [bhvrs, setBhvrs] = useState(propOption.current || []);
     const [items, setItems] = useState(itemsFromBehaviors(bhvrs));
     const [isBhvrPickerOpen, setIsBhvrPickerOpen] = useState(false);
+    const [editObject] = useState(objects[0]);
 
     function handleDragEnd(fromIndex, toIndex) {
         console.log(`${fromIndex} ==> ${toIndex}`);
@@ -31,6 +32,7 @@ const BehaviorListPropertyPanel = ({
             oldBhvrs.splice(toIndex, 0, ...removed);
             setBhvrs(oldBhvrs);
             setItems(itemsFromBehaviors(oldBhvrs));
+            propUpdateCallback(propOption.type, oldBhvrs);
         }
     }
 
@@ -39,6 +41,7 @@ const BehaviorListPropertyPanel = ({
         oldBhvrs.splice(idx, 1);
         setBhvrs(oldBhvrs);
         setItems(itemsFromBehaviors(oldBhvrs));
+        propUpdateCallback(propOption.type, oldBhvrs);
     }
 
     function handleAddBehavior() {
@@ -50,12 +53,18 @@ const BehaviorListPropertyPanel = ({
         if (bhvrName && bhvrName.length > 0) {
             var cls = BehaviorManager.behaviorFromName(bhvrName);
             if (cls) {
-                var bhvr = BehaviorManager.instantiate(objects[0], {
-                    id: cls.id,
-                });
-                var newBhvrs = [...bhvrs, bhvr];
+                var instBhvrs = BehaviorManager.instantiateBehaviors(
+                    editObject,
+                    [
+                        {
+                            id: cls.id,
+                        },
+                    ]
+                );
+                var newBhvrs = [...bhvrs, instBhvrs[0]];
                 setBhvrs(newBhvrs);
                 setItems(itemsFromBehaviors(newBhvrs));
+                propUpdateCallback(propOption.type, newBhvrs);
             }
         }
     }
