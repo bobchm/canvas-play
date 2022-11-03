@@ -69,6 +69,10 @@ const BehaviorListPropertyPanel = ({
         }
     }
 
+    function handleBehaviorSelect(idx) {
+        console.log("behavior select");
+    }
+
     return (
         <div className="behavior-container">
             <Stack
@@ -89,7 +93,10 @@ const BehaviorListPropertyPanel = ({
                     style={{ width: "280px" }}
                 >
                     {items.map((item, idx) => (
-                        <li key={idx}>
+                        <li
+                            key={idx}
+                            onClick={(e) => handleBehaviorSelect(idx)}
+                        >
                             <IconButton onClick={(e) => handleDelete(idx)}>
                                 <DeleteRoundedIcon />
                             </IconButton>
