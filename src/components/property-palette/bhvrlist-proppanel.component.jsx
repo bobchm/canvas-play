@@ -2,7 +2,7 @@ import "./bhvrlist-styles.css";
 import React, { useState } from "react";
 import Paper from "@mui/material/Paper";
 import { BehaviorListItem } from "./bhvritem-proppanel.component";
-import { Reorder } from "framer-motion";
+import ReactDragListView from "react-drag-listview";
 
 function itemsFromBehaviors(bhvrs) {
     return bhvrs.map((bhvr) => bhvr.getDisplay());
@@ -30,6 +30,17 @@ const BehaviorListPropertyPanel = ({ propOption, propUpdateCallback }) => {
         setItems(itemsFromBehaviors(newItems));
     }
 
+    function handleDragEnd(fromIndex, toIndex) {
+        console.log(`${fromIndex} ==> ${toIndex}`);
+        if (fromIndex >= 0 && toIndex >= 0) {
+            var oldBhvrs = bhvrs;
+            var removed = oldBhvrs.splice(fromIndex, 1);
+            oldBhvrs.splice(toIndex, 0, ...removed);
+            setBhvrs(oldBhvrs);
+            setItems(itemsFromBehaviors(oldBhvrs));
+        }
+    }
+
     return (
         <Paper
             variant="outlined"
@@ -40,11 +51,18 @@ const BehaviorListPropertyPanel = ({ propOption, propUpdateCallback }) => {
                 display: "flex",
             }}
         >
-            <Reorder.Group axis="y" onReorder={setItems} values={items}>
-                {items.map((item) => (
-                    <BehaviorListItem key={item} item={item} />
+            <ReactDragListView
+                onDragEnd={handleDragEnd}
+                nodeSelector="li"
+                handleSelector="a"
+            >
+                {items.map((item, idx) => (
+                    <li key={idx}>
+                        {item}
+                        <a href="#">Drag</a>
+                    </li>
                 ))}
-            </Reorder.Group>
+            </ReactDragListView>
         </Paper>
     );
 };
