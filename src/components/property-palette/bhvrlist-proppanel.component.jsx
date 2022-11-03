@@ -2,7 +2,7 @@ import "./bhvrlist-styles.css";
 import React, { useState } from "react";
 import ReactDragListView from "react-drag-listview";
 import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
@@ -71,7 +71,14 @@ const BehaviorListPropertyPanel = ({
 
     return (
         <div className="behavior-container">
-            <Grid container justifyContent="Center">
+            <Stack
+                className="container"
+                direction="column"
+                alignItems="center"
+                justifyContent="flex-start"
+                spacing={2}
+                sx={{ paddingBottom: "5px" }}
+            >
                 <Typography display="block" variant="button" mt={0} mb={0}>
                     Behaviors
                 </Typography>
@@ -93,10 +100,17 @@ const BehaviorListPropertyPanel = ({
                         </li>
                     ))}
                 </ReactDragListView>
-                <Button variant="outlined" onClick={handleAddBehavior}>
+                <Button
+                    variant="outlined"
+                    sx={{
+                        color: "black",
+                        borderColor: "black",
+                    }}
+                    onClick={handleAddBehavior}
+                >
                     Add Behavior
                 </Button>
-            </Grid>
+            </Stack>
             <ListModal
                 title="Select Behavior"
                 elements={BehaviorManager.allBehaviorNames()}
