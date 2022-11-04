@@ -97,7 +97,7 @@ export const selectPropertyPanel = (
                     propUpdateCallback={propUpdateCallback}
                     objects={objects}
                     items={SymbolButtonShapes}
-                    label={"Shape"}
+                    title={"Shape"}
                 />
             );
         case PropertyValueType.BackgroundImageStyle:
@@ -124,7 +124,7 @@ export const selectPropertyPanel = (
                     propUpdateCallback={propUpdateCallback}
                     objects={objects}
                     items={makePageItems(appManager)}
-                    label={"Page"}
+                    title={"Page"}
                 />
             );
         default:

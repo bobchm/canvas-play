@@ -46,9 +46,12 @@ const BhvrEditModal = ({ bhvrArgs, appManager, closeCallback, objects }) => {
                 closeCallback(null);
             }}
             style={{
-                left: "10%",
                 alignItems: "center",
                 justifyContent: "center",
+                left: "35%",
+                top: "20%",
+                width: "30%",
+                height: "fit-content",
             }}
         >
             <Paper sx={{ width: "80%", height: "80%" }}>
@@ -60,6 +63,9 @@ const BhvrEditModal = ({ bhvrArgs, appManager, closeCallback, objects }) => {
                     spacing={2}
                     sx={{ paddingBottom: "5px" }}
                 >
+                    <Typography variant="button" noWrap={true}>
+                        Behavior Arguments
+                    </Typography>
                     {bArgs.map((arg, idx) => (
                         <Stack
                             className="container"
@@ -70,14 +76,6 @@ const BhvrEditModal = ({ bhvrArgs, appManager, closeCallback, objects }) => {
                             sx={{ paddingBottom: "5px" }}
                             key={idx}
                         >
-                            <Typography
-                                display="block"
-                                variant="button"
-                                mt={0}
-                                mb={0}
-                            >
-                                {arg.name + " - " + arg.description}
-                            </Typography>
                             <div className="prop-panel-item">
                                 {selectPropertyPanel(
                                     argToOption(arg),
@@ -86,6 +84,15 @@ const BhvrEditModal = ({ bhvrArgs, appManager, closeCallback, objects }) => {
                                     appManager
                                 )}
                             </div>
+                            <Typography
+                                display="block"
+                                variant="body1"
+                                mt={0}
+                                mb={0}
+                                noWrap={true}
+                            >
+                                {arg.name + ": " + arg.description}
+                            </Typography>
                         </Stack>
                     ))}
                     <Stack

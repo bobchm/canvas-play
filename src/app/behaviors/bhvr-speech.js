@@ -13,7 +13,7 @@ export class SpeakLabel extends BhvrBase {
     static id = "BhvrSpeakLabel";
     static category = BhvrCategory.Speech;
     static name = "Speak Label";
-    static description = "Speak the label of this screen object.";
+    static description = "Dpeak the label of this screen object.";
     static argSpecs = [];
     static rvalue = BhvrDataType.Boolean;
 
@@ -46,7 +46,7 @@ export class SpeakText extends BhvrBase {
             name: "text",
             key: "text",
             type: PropertyValueType.Text,
-            description: "The text to be spoken.",
+            description: "the text to be spoken",
         },
     ];
     static rvalue = BhvrDataType.Boolean;

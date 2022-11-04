@@ -17,7 +17,7 @@ export class OpenPage extends BhvrBase {
             name: "page",
             key: "page",
             type: PropertyValueType.Page,
-            description: "The page to be open.",
+            description: "the page to be opened",
         },
     ];
     static rvalue = BhvrDataType.Boolean;

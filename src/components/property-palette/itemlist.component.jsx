@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
+import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
+import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
-import Typography from "@mui/material/Typography";
 
 const ItemListPropertyPanel = ({
     propOption,
@@ -29,31 +30,39 @@ const ItemListPropertyPanel = ({
                 boderColor: "black",
             }}
         >
-            <Grid container justifyContent="Center">
-                <Typography variant="button" mt={0} mb={0}>
-                    {title}
-                </Typography>
-                <Select
-                    aria-label="font-family"
-                    id={title}
-                    value={value}
-                    label={title}
-                    sx={{
-                        minWidth: "90%",
-                        fontSize: 13,
-                        height: 40,
-                        mt: elementSpacing,
-                        mb: elementSpacing,
-                    }}
-                    onChange={(e, child) => updateValue(e.target.value)}
-                >
-                    {items.map((item, idx) => (
-                        <MenuItem key={idx} value={item.value}>
-                            {item.name}
-                        </MenuItem>
-                    ))}
-                </Select>
-            </Grid>
+            <Stack
+                className="container"
+                direction="column"
+                alignItems="center"
+                justifyContent="flex-start"
+                spacing={2}
+                sx={{ paddingBottom: "5px", paddingTop: "10px" }}
+            >
+                <FormControl style={{ minWidth: 120 }}>
+                    <InputLabel htmlFor="selected-language">{title}</InputLabel>
+                    <Select
+                        aria-label="font-family"
+                        id={title}
+                        value={value}
+                        label={title}
+                        sx={{
+                            fontSize: 13,
+                            height: 40,
+                            mt: elementSpacing,
+                            mb: elementSpacing,
+                            ml: elementSpacing,
+                            mr: elementSpacing,
+                        }}
+                        onChange={(e, child) => updateValue(e.target.value)}
+                    >
+                        {items.map((item, idx) => (
+                            <MenuItem key={idx} value={item.value}>
+                                {item.name}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            </Stack>
         </Paper>
     );
 };
