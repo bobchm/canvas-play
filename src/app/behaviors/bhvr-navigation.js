@@ -15,47 +15,28 @@ export class OpenPage extends BhvrBase {
     static argSpecs = [
         {
             name: "page",
+            key: "page",
             type: PropertyValueType.Page,
             description: "The page to be open.",
         },
     ];
     static rvalue = BhvrDataType.Boolean;
-    #page = null;
+    page = null;
 
     constructor(owner, args) {
         super(owner, OpenPage);
-        this.#page = args.page || "";
-    }
-
-    toJSON() {
-        var superSpec = super.toJSON();
-        var spec = {
-            page: this.#page,
-        };
-        return { ...superSpec, ...spec };
+        this.page = args.page || "";
     }
 
     getDisplay() {
-        var pgName = this.#page;
+        var pgName = this.page;
         if (!pgName) pgName = "";
         return 'openPage("' + pgName + '")';
     }
 
-    getArguments() {
-        this.makeArguments({ page: this.#page });
-    }
-
-    hasArguments() {
-        return true;
-    }
-
-    setArguments(args) {
-        this.#page = args["page"];
-    }
-
     execute(appManager) {
-        if (this.#page) {
-            appManager.openPage(this.#page);
+        if (this.page) {
+            appManager.openPage(this.page);
         }
     }
 }

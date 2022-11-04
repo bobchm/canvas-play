@@ -44,48 +44,29 @@ export class SpeakText extends BhvrBase {
     static argSpecs = [
         {
             name: "text",
+            key: "text",
             type: PropertyValueType.Text,
             description: "The text to be spoken.",
         },
     ];
     static rvalue = BhvrDataType.Boolean;
 
-    #text = null;
+    text = null; // can't make this private because of Javascript's access rules
 
     constructor(owner, args) {
         super(owner, SpeakText);
-        this.#text = args.text || "";
-    }
-
-    toJSON() {
-        var superSpec = super.toJSON();
-        var spec = {
-            text: this.#text,
-        };
-        return { ...superSpec, ...spec };
+        this.text = args.text || "";
     }
 
     getDisplay() {
-        var text = this.#text;
+        var text = this.text;
         if (!text) text = "";
         return 'speakText("' + text + '")';
     }
 
-    getArguments() {
-        this.makeArguments({ text: this.#text });
-    }
-
-    hasArguments() {
-        return true;
-    }
-
-    setArguments(args) {
-        this.#text = args["text"];
-    }
-
     execute(appManager) {
-        if (this.#text) {
-            ttsSpeak(this.#text);
+        if (this.text) {
+            ttsSpeak(this.text);
         }
     }
 }

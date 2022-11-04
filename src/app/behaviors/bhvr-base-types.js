@@ -21,7 +21,7 @@ export class BhvrBase {
     static category;
     static name;
     static description;
-    static argSpecs;
+    static argSpecs = null;
     static rvalue;
     #cls;
     #owner;
@@ -43,33 +43,42 @@ export class BhvrBase {
         return this.name;
     }
 
-    getArguments() {
-        return null;
-    }
-
     hasArguments() {
-        return false;
+        return this.cls.argSpecs != null;
     }
 
-    makeArguments(values) {
+    getArguments() {
+        if (!this.hasArguments()) return null;
+
         // deep copy argument descriptor
-        var args = JSON.parse(JSON.stringify(this.argSpecs));
-        var keys = Object.keys(values);
-        for (let i = 0; i < keys.length; i++) {
-            var key = keys[i];
-            for (let j = 0; j < args.length; j++) {
-                var arg = args[j];
-                if (key === arg.name) {
-                    arg["value"] = values[key];
-                    break;
-                }
-            }
+        var args = JSON.parse(JSON.stringify(this.cls.argSpecs));
+        for (let i = 0; i < args.length; i++) {
+            var arg = args[i];
+            arg["value"] = this[arg.key];
         }
         return args;
     }
 
+    setArguments(args) {
+        if (this.hasArguments()) {
+            var argSpecs = this.cls.argSpecs;
+            for (let i = 0; i < argSpecs.length; i++) {
+                var argSpec = argSpecs[i];
+                this[argSpec.key] = args[argSpec.name];
+            }
+        }
+    }
+
     toJSON() {
-        return { id: this.cls.id };
+        var json = { id: this.cls.id };
+        if (this.hasArguments()) {
+            var argSpecs = this.cls.argSpecs;
+            for (let i = 0; i < argSpecs.length; i++) {
+                var argSpec = argSpecs[i];
+                json[argSpec.name] = this[argSpec.key];
+            }
+        }
+        return json;
     }
 
     execute(appManager) {}
