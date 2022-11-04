@@ -53,7 +53,11 @@ const ColorPropertyPanel = ({ propOption, propUpdateCallback }) => {
                 variant="outlined"
                 startIcon={
                     <SquareRoundedIcon
-                        style={{ fontSize: "50px", color: color }}
+                        style={{
+                            marginRight: "80px",
+                            fontSize: "50px",
+                            color: color,
+                        }}
                     />
                 }
             >

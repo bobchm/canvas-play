@@ -39,6 +39,10 @@ li {
     user-select: none;
 }
 
+.bhvr-icons {
+    float: right;
+}
+
 .background {
     position: absolute;
     top: 0;

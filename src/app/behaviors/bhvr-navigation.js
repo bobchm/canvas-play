@@ -41,6 +41,18 @@ export class OpenPage extends BhvrBase {
         return 'openPage("' + pgName + '")';
     }
 
+    getArguments() {
+        this.makeArguments({ page: this.#page });
+    }
+
+    hasArguments() {
+        return true;
+    }
+
+    setArguments(args) {
+        this.#page = args["page"];
+    }
+
     execute(appManager) {
         if (this.#page) {
             appManager.openPage(this.#page);

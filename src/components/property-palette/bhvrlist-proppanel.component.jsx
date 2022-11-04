@@ -7,6 +7,7 @@ import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
+import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import ListModal from "../list-modal/list-modal.component";
 import { BehaviorManager } from "../../app/behaviors/behavior-behaviors";
 
@@ -23,9 +24,11 @@ const BehaviorListPropertyPanel = ({
     const [items, setItems] = useState(itemsFromBehaviors(bhvrs));
     const [isBhvrPickerOpen, setIsBhvrPickerOpen] = useState(false);
     const [editObject] = useState(objects[0]);
+    const [editedBhvr, setEditedBhvr] = useState(null);
+    const [editedArgs, setEditedArgs] = useState(null);
+    const [areArgumentsOpen, setAreArgumentsOpen] = useState(false);
 
     function handleDragEnd(fromIndex, toIndex) {
-        console.log(`${fromIndex} ==> ${toIndex}`);
         if (fromIndex >= 0 && toIndex >= 0) {
             var oldBhvrs = bhvrs;
             var removed = oldBhvrs.splice(fromIndex, 1);
@@ -69,8 +72,23 @@ const BehaviorListPropertyPanel = ({
         }
     }
 
-    function handleBehaviorSelect(idx) {
-        console.log("behavior select");
+    function handleEdit(idx) {
+        var bhvr = bhvrs[idx];
+        var args = bhvr.getArguments();
+        if (args) {
+            setEditedBhvr(bhvr);
+            setEditedArgs(args);
+            setAreArgumentsOpen(true);
+        }
+    }
+
+    function handleEditCompleted(args) {
+        setAreArgumentsOpen(false);
+        editedBhvr.setArguments(args);
+        setEditedBhvr(null);
+        setEditedArgs(null);
+        setItems(itemsFromBehaviors(bhvrs));
+        propUpdateCallback(propOption.type, bhvrs);
     }
 
     return (
@@ -93,17 +111,25 @@ const BehaviorListPropertyPanel = ({
                     style={{ width: "280px" }}
                 >
                     {items.map((item, idx) => (
-                        <li
-                            key={idx}
-                            onClick={(e) => handleBehaviorSelect(idx)}
-                        >
-                            <IconButton onClick={(e) => handleDelete(idx)}>
-                                <DeleteRoundedIcon />
-                            </IconButton>
-                            {item}
+                        <li key={idx}>
                             <a href="#" style={{ color: "#000000" }}>
                                 <MenuRoundedIcon />
                             </a>
+                            {item}
+                            <span className="bhvr-icons">
+                                <IconButton
+                                    style={{ padding: "1px" }}
+                                    onClick={(e) => handleDelete(idx)}
+                                >
+                                    <DeleteRoundedIcon />
+                                </IconButton>
+                                <IconButton
+                                    style={{ padding: "1px" }}
+                                    onClick={(e) => handleEdit(idx)}
+                                >
+                                    <EditRoundedIcon />
+                                </IconButton>
+                            </span>
                         </li>
                     ))}
                 </ReactDragListView>

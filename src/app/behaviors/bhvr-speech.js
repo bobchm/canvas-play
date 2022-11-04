@@ -71,6 +71,18 @@ export class SpeakText extends BhvrBase {
         return 'speakText("' + text + '")';
     }
 
+    getArguments() {
+        this.makeArguments({ text: this.#text });
+    }
+
+    hasArguments() {
+        return true;
+    }
+
+    setArguments(args) {
+        this.#text = args["text"];
+    }
+
     execute(appManager) {
         if (this.#text) {
             ttsSpeak(this.#text);
