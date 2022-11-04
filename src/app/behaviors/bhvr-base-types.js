@@ -1,3 +1,5 @@
+import { jsonDeepCopy } from "../../utils/app-utils";
+
 export const BhvrDataType = {
     Function: "function",
     Boolean: "boolean",
@@ -21,7 +23,7 @@ export class BhvrBase {
     static category;
     static name;
     static description;
-    static argSpecs = null;
+    static argSpecs = [];
     static rvalue;
     #cls;
     #owner;
@@ -44,14 +46,14 @@ export class BhvrBase {
     }
 
     hasArguments() {
-        return this.cls.argSpecs != null;
+        return this.cls.argSpecs && this.cls.argSpecs.length;
     }
 
     getArguments() {
         if (!this.hasArguments()) return null;
 
         // deep copy argument descriptor
-        var args = JSON.parse(JSON.stringify(this.cls.argSpecs));
+        var args = jsonDeepCopy(this.cls.argSpecs);
         for (let i = 0; i < args.length; i++) {
             var arg = args[i];
             arg["value"] = this[arg.key];
@@ -64,7 +66,7 @@ export class BhvrBase {
             var argSpecs = this.cls.argSpecs;
             for (let i = 0; i < argSpecs.length; i++) {
                 var argSpec = argSpecs[i];
-                this[argSpec.key] = args[argSpec.name];
+                this[argSpec.key] = args[argSpec.key];
             }
         }
     }

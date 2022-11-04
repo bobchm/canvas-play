@@ -352,6 +352,7 @@ const Editor = () => {
                     options={editProperties}
                     propUpdateCallback={handlePropValueChange}
                     objects={appManager.getScreenManager().getSelectedObjects()}
+                    appManager={appManager}
                 />
                 <ListModal
                     title="Select Page"

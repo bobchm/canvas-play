@@ -8,7 +8,9 @@ import Button from "@mui/material/Button";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
+
 import ListModal from "../list-modal/list-modal.component";
+import BhvrEditModal from "./bhvredit-proppanel.component";
 import { BehaviorManager } from "../../app/behaviors/behavior-behaviors";
 
 function itemsFromBehaviors(bhvrs) {
@@ -19,13 +21,14 @@ const BehaviorListPropertyPanel = ({
     propOption,
     propUpdateCallback,
     objects,
+    appManager,
 }) => {
     const [bhvrs, setBhvrs] = useState(propOption.current || []);
     const [items, setItems] = useState(itemsFromBehaviors(bhvrs));
     const [isBhvrPickerOpen, setIsBhvrPickerOpen] = useState(false);
     const [editObject] = useState(objects[0]);
     const [editedBhvr, setEditedBhvr] = useState(null);
-    const [editedArgs, setEditedArgs] = useState(null);
+    const [editedArgs, setEditedArgs] = useState([]);
     const [areArgumentsOpen, setAreArgumentsOpen] = useState(false);
 
     function handleDragEnd(fromIndex, toIndex) {
@@ -84,11 +87,13 @@ const BehaviorListPropertyPanel = ({
 
     function handleEditCompleted(args) {
         setAreArgumentsOpen(false);
-        editedBhvr.setArguments(args);
-        setEditedBhvr(null);
-        setEditedArgs(null);
-        setItems(itemsFromBehaviors(bhvrs));
-        propUpdateCallback(propOption.type, bhvrs);
+        if (args) {
+            editedBhvr.setArguments(args);
+            setEditedBhvr(null);
+            setEditedArgs(null);
+            setItems(itemsFromBehaviors(bhvrs));
+            propUpdateCallback(propOption.type, bhvrs);
+        }
     }
 
     return (
@@ -117,17 +122,21 @@ const BehaviorListPropertyPanel = ({
                             </a>
                             {item}
                             <span className="bhvr-icons">
+                                {bhvrs[idx].hasArguments() ? (
+                                    <IconButton
+                                        style={{ padding: "1px" }}
+                                        onClick={(e) => handleEdit(idx)}
+                                    >
+                                        <EditRoundedIcon />
+                                    </IconButton>
+                                ) : (
+                                    ""
+                                )}
                                 <IconButton
                                     style={{ padding: "1px" }}
                                     onClick={(e) => handleDelete(idx)}
                                 >
                                     <DeleteRoundedIcon />
-                                </IconButton>
-                                <IconButton
-                                    style={{ padding: "1px" }}
-                                    onClick={(e) => handleEdit(idx)}
-                                >
-                                    <EditRoundedIcon />
                                 </IconButton>
                             </span>
                         </li>
@@ -150,6 +159,14 @@ const BehaviorListPropertyPanel = ({
                 onClose={handleCloseBhvrPicker}
                 open={isBhvrPickerOpen}
             />
+            {areArgumentsOpen && (
+                <BhvrEditModal
+                    bhvrArgs={editedArgs}
+                    appManager={appManager}
+                    closeCallback={handleEditCompleted}
+                    object={objects}
+                />
+            )}
         </div>
     );
 };

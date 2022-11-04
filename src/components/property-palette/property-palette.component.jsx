@@ -9,16 +9,22 @@ import ImageSourcePropertyPanel from "./imagesrc-proppanel.component";
 import SymbolSourcePropertyPanel from "./symbolsrc-proppanel.component";
 import BackgroundSourcePropertyPanel from "./bkgimagesrc-proppanel.component";
 import EmbedImagePropertyPanel from "./embedimage-proppanel-component";
-import ButtonShapePropertyPanel from "./button-shape.component";
+import ItemListPropertyPanel from "./itemlist.component";
 import BackgroundImageStylePropertyPanel from "./bkgimagestyle-proppanel.component";
 import BehaviorListPropertyPanel from "./bhvrlist-proppanel.component";
 
 import "./property-palette.styles.scss";
 import { PropertyValueType } from "../../app/constants/property-types";
+import { SymbolButtonShapes } from "../../utils/symbol-button";
 
 var ctr = 0;
 
-export const selectPropertyPanel = (option, propUpdateCallback, objects) => {
+export const selectPropertyPanel = (
+    option,
+    propUpdateCallback,
+    objects,
+    appManager
+) => {
     switch (option.type.valueType) {
         case PropertyValueType.Text:
             return (
@@ -86,10 +92,12 @@ export const selectPropertyPanel = (option, propUpdateCallback, objects) => {
             );
         case PropertyValueType.ButtonShape:
             return (
-                <ButtonShapePropertyPanel
+                <ItemListPropertyPanel
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
                     objects={objects}
+                    items={SymbolButtonShapes}
+                    label={"Shape"}
                 />
             );
         case PropertyValueType.BackgroundImageStyle:
@@ -106,13 +114,34 @@ export const selectPropertyPanel = (option, propUpdateCallback, objects) => {
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
                     objects={objects}
+                    appManager={appManager}
                 />
             );
-
+        case PropertyValueType.Page:
+            return (
+                <ItemListPropertyPanel
+                    propOption={option}
+                    propUpdateCallback={propUpdateCallback}
+                    objects={objects}
+                    items={makePageItems(appManager)}
+                    label={"Page"}
+                />
+            );
         default:
             return <h1>No Matching Panel Element</h1>;
     }
 };
+
+function makePageItems(appManager) {
+    let uam = appManager.getUserActivityManager();
+    let pageItems = [];
+    let nPages = uam.getNumPages();
+    for (let n = 0; n < nPages; n++) {
+        let page = uam.getNthPage(n);
+        pageItems.push({ name: page.name, value: page.name });
+    }
+    return pageItems;
+}
 
 const PropertyPalette = ({
     top,
@@ -122,6 +151,7 @@ const PropertyPalette = ({
     options,
     propUpdateCallback,
     objects,
+    appManager,
 }) => {
     return (
         <Box
@@ -143,7 +173,12 @@ const PropertyPalette = ({
         >
             {options.map((option, idx) => (
                 <div key={ctr++} className="prop-panel-item">
-                    {selectPropertyPanel(option, propUpdateCallback, objects)}
+                    {selectPropertyPanel(
+                        option,
+                        propUpdateCallback,
+                        objects,
+                        appManager
+                    )}
                 </div>
             ))}
         </Box>

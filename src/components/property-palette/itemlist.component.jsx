@@ -4,16 +4,20 @@ import Grid from "@mui/material/Grid";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
-import { SymbolButtonShapes } from "../../utils/symbol-button";
 
-const ButtonShapePropertyPanel = ({ propOption, propUpdateCallback }) => {
-    const [shape, setShape] = useState(propOption.current);
+const ItemListPropertyPanel = ({
+    propOption,
+    propUpdateCallback,
+    items,
+    title,
+}) => {
+    const [value, setValue] = useState(propOption.current);
 
     const elementSpacing = 1;
 
-    function updateShape(newValue) {
+    function updateValue(newValue) {
         propUpdateCallback(propOption.type, newValue);
-        setShape(newValue);
+        setValue(newValue);
     }
 
     return (
@@ -27,25 +31,25 @@ const ButtonShapePropertyPanel = ({ propOption, propUpdateCallback }) => {
         >
             <Grid container justifyContent="Center">
                 <Typography variant="button" mt={0} mb={0}>
-                    Shape
+                    {title}
                 </Typography>
                 <Select
                     aria-label="font-family"
-                    id="shape"
-                    value={shape}
-                    label="Shape"
+                    id={title}
+                    value={value}
+                    label={title}
                     sx={{
-                        width: "90%",
+                        minWidth: "90%",
                         fontSize: 13,
                         height: 40,
                         mt: elementSpacing,
                         mb: elementSpacing,
                     }}
-                    onChange={(e, child) => updateShape(e.target.value)}
+                    onChange={(e, child) => updateValue(e.target.value)}
                 >
-                    {SymbolButtonShapes.map((shape, idx) => (
-                        <MenuItem key={idx} value={shape.value}>
-                            {shape.name}
+                    {items.map((item, idx) => (
+                        <MenuItem key={idx} value={item.value}>
+                            {item.name}
                         </MenuItem>
                     ))}
                 </Select>
@@ -54,4 +58,4 @@ const ButtonShapePropertyPanel = ({ propOption, propUpdateCallback }) => {
     );
 };
 
-export default ButtonShapePropertyPanel;
+export default ItemListPropertyPanel;
