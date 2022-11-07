@@ -120,7 +120,7 @@ const BehaviorListPropertyPanel = ({
                             <a href="#" style={{ color: "#000000" }}>
                                 <MenuRoundedIcon />
                             </a>
-                            {item}
+                            <span className="bhvr-text">{item}</span>
                             <span className="bhvr-icons">
                                 {bhvrs[idx].hasArguments() ? (
                                     <IconButton

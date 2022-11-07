@@ -43,6 +43,12 @@ li {
     float: right;
 }
 
+.bvhr-text {
+    margin-left: 2px;
+    float: left;
+    text-align: left;
+}
+
 .background {
     position: absolute;
     top: 0;
