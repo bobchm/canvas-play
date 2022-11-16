@@ -12,6 +12,7 @@
         "fabric": "^5.2.1",
         "file-saver": "^2.0.5",
         "lz-string": "^1.4.4",
+        "nearley": "^2.20.1",
         "react": "^18.2.0",
         "react-color": "^2.19.3",
         "react-confirm-box": "^1.2.0",

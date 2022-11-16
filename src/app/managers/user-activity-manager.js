@@ -37,12 +37,19 @@ class UserActivityManager {
 
     async getCurrentUserInfo() {
         if (!this.#currentUserName)
-            throw new Error("getCurrentUserInfo: no curren user");
+            throw new Error("getCurrentUserInfo: no current user");
         return await getUser(this.#currentUserName);
     }
 
     async setUser(userName) {
-        var user = await getUser(userName);
+        // doing retries here as this is typically the first access of the database and it needs to spin up sometimes
+        var nRetries = 5;
+        var user = null;
+        while (nRetries-- > 0) {
+            user = await getUser(userName);
+            if (user) break;
+            console.log("retrying ...");
+        }
         if (!user) {
             throw new Error(`Unknown user: ${userName}`);
         }
