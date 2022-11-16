@@ -11,7 +11,7 @@ import BackgroundSourcePropertyPanel from "./bkgimagesrc-proppanel.component";
 import EmbedImagePropertyPanel from "./embedimage-proppanel-component";
 import ItemListPropertyPanel from "./itemlist.component";
 import BackgroundImageStylePropertyPanel from "./bkgimagestyle-proppanel.component";
-import BehaviorListPropertyPanel from "./bhvrlist-proppanel.component";
+import BehaviorPropertyPanel from "./behavior-proppanel.component";
 
 import "./property-palette.styles.scss";
 import { PropertyValueType } from "../../app/constants/property-types";
@@ -108,9 +108,9 @@ export const selectPropertyPanel = (
                     objects={objects}
                 />
             );
-        case PropertyValueType.BehaviorList:
+        case PropertyValueType.Behavior:
             return (
-                <BehaviorListPropertyPanel
+                <BehaviorPropertyPanel
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
                     objects={objects}

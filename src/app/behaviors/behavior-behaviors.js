@@ -63,22 +63,4 @@ export class BehaviorManager {
         }
         return outBhvrs;
     }
-
-    static instantiateBehaviors(owner, bhvrSpecs) {
-        var outBhvrs = [];
-        for (let i = 0; i < bhvrSpecs.length; i++) {
-            var spec = bhvrSpecs[i];
-            var cls = this.bhvrClasses[spec.id];
-            if (cls) {
-                var instance = new cls(owner, spec);
-                instance.cls = cls;
-                if (instance) {
-                    outBhvrs.push(instance);
-                }
-            }
-        }
-        return outBhvrs;
-    }
 }
-
-export class BhvrOperator {}

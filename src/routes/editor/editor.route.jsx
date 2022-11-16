@@ -297,7 +297,7 @@ const Editor = () => {
             var page = appManager.getScreenManager().getCurrentPage();
             if (page) {
                 var content = page.toJSON();
-                testCompression(content);
+                // testCompression(content);
                 var spec = appManager
                     .getUserActivityManager()
                     .getUserPage(page.getName());

@@ -15,15 +15,7 @@ class SymbolButtonScreenObject extends ScreenObject {
         super(_screenMgr, _parent, _spec);
         this.#label = _label;
         this.#shape = _shape;
-        this.#behaviors = BehaviorManager.instantiateBehaviors(
-            this,
-            _behaviors
-        );
-        // this.#behaviors = BehaviorManager.instantiateBehaviors(this, [
-        //     { id: "BhvrSpeakText", text: "one" },
-        //     { id: "BhvrSpeakText", text: "two" },
-        //     { id: "BhvrSpeakText", text: "three" },
-        // ]);
+        this.#behaviors = _behaviors;
         this.setCanvasObj(
             _screenMgr.addSymbolButton(this, _label, _shape, _spec.shapeSpec)
         );
