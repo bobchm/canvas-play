@@ -2,6 +2,8 @@
 // http://github.com/Hardmath123/nearley
 import moo from "moo";
 
+let comment, number_literal, identifier, string_literal, description, category;
+
 function id(x) {
     return x[0];
 }
@@ -129,18 +131,18 @@ var grammar = {
         },
         {
             name: "top_level_statement",
-            symbols: ["function_definition"],
-            postprocess: id,
+            symbols: ["_", "function_definition"],
+            postprocess: (d) => d[1],
         },
         {
             name: "top_level_statement",
-            symbols: ["executable_statement"],
-            postprocess: id,
+            symbols: ["_", "executable_statement"],
+            postprocess: (d) => d[1],
         },
         {
             name: "top_level_statement",
-            symbols: ["line_comment"],
-            postprocess: id,
+            symbols: ["_", "line_comment"],
+            postprocess: (d) => d[1],
         },
         {
             name: "function_definition",
@@ -834,15 +836,12 @@ var grammar = {
             },
         },
         { name: "_ml", symbols: ["_ml$ebnf$1"] },
-        {
-            name: "multi_line_ws_char",
-            symbols: [lexer.has("ws") ? { type: "ws" } : ws],
-        },
+        { name: "multi_line_ws_char", symbols: [/[ \t]/] },
         { name: "multi_line_ws_char", symbols: [{ literal: "\n" }] },
-        { name: "__$ebnf$1", symbols: [lexer.has("ws") ? { type: "ws" } : ws] },
+        { name: "__$ebnf$1", symbols: [/[ \t]/] },
         {
             name: "__$ebnf$1",
-            symbols: ["__$ebnf$1", lexer.has("ws") ? { type: "ws" } : ws],
+            symbols: ["__$ebnf$1", /[ \t]/],
             postprocess: function arrpush(d) {
                 return d[0].concat([d[1]]);
             },
@@ -851,7 +850,7 @@ var grammar = {
         { name: "_$ebnf$1", symbols: [] },
         {
             name: "_$ebnf$1",
-            symbols: ["_$ebnf$1", lexer.has("ws") ? { type: "ws" } : ws],
+            symbols: ["_$ebnf$1", /[ \t]/],
             postprocess: function arrpush(d) {
                 return d[0].concat([d[1]]);
             },

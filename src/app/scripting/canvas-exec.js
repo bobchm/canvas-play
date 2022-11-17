@@ -31,7 +31,7 @@ function simplify(ast) {
 
 function execute(ast) {
     var svStack = stackTop();
-    pushStackFrame("_execute_", [], []);
+    pushStackFrame("_execute_");
 
     // ast should be a list of executable records
     for (let i = 0; i < ast.length; i++) {
@@ -104,13 +104,18 @@ function executeStatement(node) {
 }
 
 function executeAssignment(node) {
-    setVariable(node.var_name.value, evaluateExpression(node.value), node);
+    setVariable(node.var_name.value, evaluateExpression(node.value));
 }
 
 function executeFnCall(node) {
     // get function definition
     var fnName = node.fn_name.value;
     var fnDef = getFunctionDef(fnName, node);
+
+    // make sure the function exists
+    if (!fnDef) {
+        throw executionError(`Undefined function: (${fnName})`, node);
+    }
 
     // make sure the number of function parameters match the number of expresions we have
     if (fnDef.params.length !== node.arguments.length) {
@@ -136,7 +141,7 @@ function executeFnCall(node) {
     }
 
     // push new frame and set parameter values
-    pushStackFrame(fnName, [], []);
+    pushStackFrame(fnName);
     for (let i = 0; i < fnDef.params.length; i++) {
         setVariable(fnDef.params[i].name, values[i]);
     }
@@ -176,7 +181,7 @@ function executeForLoop(node) {
         executionError("Invalid list in 'for' loop", node);
     }
     for (let i = 0; i < list.length; i++) {
-        setVariable(loopVar, list[i], node);
+        setVariable(loopVar, list[i]);
         executeCodeBlock(body);
         if (stackTop().returnFlag) break;
     }
@@ -288,14 +293,11 @@ function evaluateBinaryOp(op, left, right, node) {
     }
 }
 
-function pushStackFrame(name, fns, vars) {
-    if (!Array.isArray(fns) || !Array.isArray(vars)) {
-        throw executionError("Non-array arguments to pushStackFrame", null);
-    }
+function pushStackFrame(name) {
     globalStack.push({
         name: name,
-        fns: fns,
-        vars: vars,
+        fns: [],
+        vars: [],
         returnFlag: false,
         returnValue: null,
     });
@@ -340,7 +342,7 @@ function hasVariableValue(name) {
     return false;
 }
 
-function setVariable(name, value, node) {
+function setVariable(name, value) {
     for (let i = globalStack.length - 1; i >= 0; i--) {
         if (globalStack[i].vars.hasOwnProperty(name)) {
             globalStack[i].vars[name] = value;
@@ -475,6 +477,7 @@ export {
     allFunctionNames,
     functionsForCategory,
     getVariableValue,
+    setVariable,
     hasVariableValue,
     parse,
     simplify,

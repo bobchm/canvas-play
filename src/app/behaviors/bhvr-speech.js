@@ -10,12 +10,25 @@ function initSpeechBehaviors() {
         category: "speech",
         description: "Speak the specified text.",
     });
+
+    BehaviorManager.runSource(localFunctionDefinitions());
 }
 
 function behaviorSpeakText(text) {
     if (text && text.length) {
         ttsSpeak(text);
     }
+}
+
+function localFunctionDefinitions() {
+    return `
+    function speakLabel() {
+        label = getProperty(self, "label")
+        if (label) {
+            speakText(label)
+        }
+    }
+    `;
 }
 
 export { initSpeechBehaviors };

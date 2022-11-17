@@ -15,6 +15,7 @@ import {
     functionsForCategory,
     getVariableValue,
     hasVariableValue,
+    setVariable,
 } from "../scripting/canvas-exec";
 
 export const blankBehavior = { source: "", compiled: null };
@@ -25,7 +26,7 @@ export class BehaviorManager {
 
         // set up the execution environment
         initializeExecution();
-        pushStackFrame("_base_", [], []);
+        pushStackFrame("_base_");
 
         // initialize the different categories of behaviors
         initSystemBehaviors();
@@ -50,18 +51,19 @@ export class BehaviorManager {
         return simplify(parse(source));
     }
 
-    static async loadSource(fileName) {
-        var r = await fetch(fileName);
-        var source = await r.text();
-
+    static runSource(source) {
         var ast = null;
         try {
             ast = simplify(parse(source));
         } catch (err) {
-            alert(`Error loading behavior source file: ${fileName}`);
+            alert(`Error parsing in runSource: ${err}`);
         }
 
-        execute(ast);
+        try {
+            execute(ast);
+        } catch (err) {
+            alert(`Execution error in runSource: ${err}`);
+        }
     }
 
     static addBuiltInFunction(fnDef) {
@@ -70,7 +72,8 @@ export class BehaviorManager {
 
     static executeFromObject(obj, behavior) {
         if (behavior && behavior.compiled) {
-            pushStackFrame("executeFromObject", [], { self: obj });
+            pushStackFrame("executeFromObject");
+            setVariable("self", obj);
             execute(behavior.compiled);
             popStackFrame();
         }

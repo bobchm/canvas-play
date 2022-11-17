@@ -158,25 +158,23 @@ class SymbolButtonScreenObject extends ScreenObject {
 
     getProperty(type) {
         switch (type) {
-            case PropertyType.ButtonLabel:
+            case "label":
                 return this.#label;
-            case PropertyType.FillColor:
+            case "fillColor":
                 return this.getCanvasObj().fill;
-            case PropertyType.LineColor:
+            case "borderColor":
                 return this.getCanvasObj().stroke;
-            case PropertyType.TextColor:
+            case "textColor":
                 return this.getCanvasObj().textColor;
-            case PropertyType.TextStyle:
+            case "textStyle":
                 return this.getTextStyle();
-            case PropertyType.SymbolButtonImageSource:
+            case "imageSource":
                 return this.getCanvasObj().getImageSource();
-            case PropertyType.EmbedImage:
-                return this.getCanvasObj().isImageEmbedded();
-            case PropertyType.ButtonShape:
+            case "buttonShape":
                 return this.getCanvasObj().getShape();
-            case PropertyType.Opacity:
+            case "opacity":
                 return this.getCanvasObj().opacity * 100;
-            case PropertyType.SelectionBehavior:
+            case "behavior":
                 return this.#behavior;
             default:
                 return super.getProperty(type);
@@ -184,7 +182,53 @@ class SymbolButtonScreenObject extends ScreenObject {
     }
 
     async setProperty(screenMgr, type, value) {
-        this.setEditProperty(screenMgr, type, value);
+        switch (type) {
+            case "label":
+                this.setEditProperty(
+                    screenMgr,
+                    PropertyType.ButtonLabel,
+                    value
+                );
+                break;
+            case "fillColor":
+                this.setEditProperty(screenMgr, PropertyType.FillColor, value);
+                break;
+            case "borderColor":
+                this.setEditProperty(screenMgr, PropertyType.LineColor, value);
+                break;
+            case "textColor":
+                this.setEditProperty(screenMgr, PropertyType.TextColor, value);
+                break;
+            case "textStyle":
+                this.setEditProperty(screenMgr, PropertyType.TextStyle, value);
+                break;
+            case "imageSource":
+                this.setEditProperty(
+                    screenMgr,
+                    PropertyType.SymbolButtonImageSource,
+                    value
+                );
+                break;
+            case "buttonShape":
+                this.setEditProperty(
+                    screenMgr,
+                    PropertyType.ButtonShape,
+                    value
+                );
+                break;
+            case "opacity":
+                this.setEditProperty(screenMgr, PropertyType.Opacity, value);
+                break;
+            case "behavior":
+                this.setEditProperty(
+                    screenMgr,
+                    PropertyType.SelectionBehavior,
+                    value
+                );
+                break;
+            default:
+                super.setProperty(screenMgr, type, value);
+        }
     }
 
     highlight(appManager, highlightType) {

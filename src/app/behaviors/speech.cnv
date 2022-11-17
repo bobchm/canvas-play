@@ -1,0 +1,9 @@
+function speakLabel() {
+    @category speech
+    @description Speak the label of the selected screen object
+
+    label = getProperty(self, "label")
+    if (label) {
+        speakText(label)
+    }
+}
