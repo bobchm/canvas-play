@@ -9,7 +9,7 @@ class ApplicationManager {
     constructor(userName, screenSpec) {
         this.#userActivityManager = new UserActivityManager();
         this.#screenManager = new ScreenManager(screenSpec);
-        BehaviorManager.initialize();
+        BehaviorManager.initialize(this);
     }
 
     async setUser(userName) {

@@ -138,7 +138,7 @@ function executeFnCall(node) {
     // push new frame and set parameter values
     pushStackFrame(fnName, [], []);
     for (let i = 0; i < fnDef.params.length; i++) {
-        setVariable(fnDef.params[i].value, values[i]);
+        setVariable(fnDef.params[i].name, values[i]);
     }
 
     // run the code of the function definition
@@ -333,6 +333,13 @@ function getVariableValue(name, node) {
     throw executionError(`Undefined variable: ${name}`, node);
 }
 
+function hasVariableValue(name) {
+    for (let i = globalStack.length - 1; i >= 0; i--) {
+        if (globalStack[i].vars.hasOwnProperty(name)) return true;
+    }
+    return false;
+}
+
 function setVariable(name, value, node) {
     for (let i = globalStack.length - 1; i >= 0; i--) {
         if (globalStack[i].vars.hasOwnProperty(name)) {
@@ -376,13 +383,13 @@ function allFunctionNames() {
 }
 
 function functionsForCategory(category) {
-    var fns = [];
+    var catFns = [];
     for (let i = globalStack.length - 1; i >= 0; i--) {
         var fns = globalStack[i].fns;
         for (const fnName in fns) {
             var fn = fns[fnName];
             if (fn.category === category) {
-                fns.push(fn);
+                catFns.push(fn);
             }
         }
     }
@@ -467,6 +474,8 @@ export {
     functionFromName,
     allFunctionNames,
     functionsForCategory,
+    getVariableValue,
+    hasVariableValue,
     parse,
     simplify,
     execute,

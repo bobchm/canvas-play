@@ -1,4 +1,5 @@
 export const PropertyValueType = {
+    None: "none",
     Color: "color",
     Text: "text",
     Percent: "percent",
@@ -10,7 +11,8 @@ export const PropertyValueType = {
     EmbedImage: "embedimage",
     ButtonShape: "buttonshape",
     Page: "page",
-    BehaviorList: "bhvrList",
+    Behavior: "behavior",
+    ScreenObject: "screenobject",
 };
 
 export const PropertyType = {
@@ -85,9 +87,9 @@ export const PropertyType = {
         valueType: PropertyValueType.ButtonShape,
         forceReset: false,
     },
-    SelectionBehaviors: {
+    SelectionBehavior: {
         name: "Selection",
-        valueType: PropertyValueType.BehaviorList,
+        valueType: PropertyValueType.Behavior,
         forceReset: false,
     },
 };

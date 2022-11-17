@@ -47,6 +47,31 @@ class ScreenObject {
         return [];
     }
 
+    getPage() {
+        var obj = this;
+        while (obj) {
+            if (obj.constructor.name === "PageScreenObject") {
+                return obj;
+            }
+            obj = obj.getParent();
+        }
+        return null;
+    }
+
+    getChildFromId(id, doRecur) {
+        if (!this.hasChildren()) return null;
+        var children = this.getChildren();
+        for (let i = 0; i < children.length; i++) {
+            var child = children[i];
+            if (child.getId() === id) return child;
+            if (doRecur) {
+                child = child.getChildFromId(id, true);
+                if (child) return child;
+            }
+        }
+        return null;
+    }
+
     getEditProperties(selectedObjects) {
         return [
             {
@@ -74,7 +99,7 @@ class ScreenObject {
         return false;
     }
 
-    select(appManager) {
+    select() {
         return;
     }
 

@@ -59,7 +59,7 @@ class MousePause extends AccessMethod {
                 appManager.getSetting("mousePauseHighlightType")
             );
         }
-        scrObj.select(appManager);
+        scrObj.select();
     }
 }
 

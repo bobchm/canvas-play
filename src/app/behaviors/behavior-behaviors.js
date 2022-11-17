@@ -1,3 +1,5 @@
+import { initSystemBehaviors } from "./bhvr-system";
+import { initScreenObjectBehaviors } from "./bhvr-screen-object";
 import { initSpeechBehaviors } from "./bhvr-speech";
 import { initNavigationBehaviors } from "./bhvr-navigation";
 import {
@@ -11,6 +13,8 @@ import {
     functionFromName,
     allFunctionNames,
     functionsForCategory,
+    getVariableValue,
+    hasVariableValue,
 } from "../scripting/canvas-exec";
 
 export const blankBehavior = { source: "", compiled: null };
@@ -24,6 +28,8 @@ export class BehaviorManager {
         pushStackFrame("_base_", [], []);
 
         // initialize the different categories of behaviors
+        initSystemBehaviors();
+        initScreenObjectBehaviors();
         initSpeechBehaviors();
         initNavigationBehaviors();
     }
@@ -62,9 +68,18 @@ export class BehaviorManager {
         addBuiltInFunction(fnDef);
     }
 
-    static executeFromObject(obj, ast) {
-        pushStackFrame("executeFromObject", [], { self: obj });
-        execute(ast);
-        popStackFrame();
+    static executeFromObject(obj, behavior) {
+        if (behavior && behavior.compiled) {
+            pushStackFrame("executeFromObject", [], { self: obj });
+            execute(behavior.compiled);
+            popStackFrame();
+        }
+    }
+
+    static getSelf() {
+        if (hasVariableValue("self")) {
+            return getVariableValue("self", null);
+        }
+        return null;
     }
 }

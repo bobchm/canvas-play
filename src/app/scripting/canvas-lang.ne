@@ -151,14 +151,14 @@ parameter
     -> identifier   
         {% 
             d => ({
-                value: d[0].value,
+                name: d[0].value,
                 type: "none"
             })
         %}
     |  identifier _ ":" _ identifier
         {%
             d => ({
-                value: d[0].value,
+                name: d[0].value,
                 type: d[4].value
             })
         %}

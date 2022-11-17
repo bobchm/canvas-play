@@ -37,7 +37,7 @@ const BehaviorListPropertyPanel = ({
                 sx={{ paddingBottom: "5px" }}
             >
                 <Typography display="block" variant="button" mt={0} mb={0}>
-                    Behaviors
+                    Behavior
                 </Typography>
                 <div className="behavior-label">{behavior.source}</div>
                 <Button

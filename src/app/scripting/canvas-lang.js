@@ -187,7 +187,7 @@ var grammar = {
             name: "parameter",
             symbols: ["identifier"],
             postprocess: (d) => ({
-                value: d[0].value,
+                name: d[0].value,
                 type: "none",
             }),
         },
@@ -195,7 +195,7 @@ var grammar = {
             name: "parameter",
             symbols: ["identifier", "_", { literal: ":" }, "_", "identifier"],
             postprocess: (d) => ({
-                value: d[0].value,
+                name: d[0].value,
                 type: d[4].value,
             }),
         },

@@ -412,7 +412,7 @@ class ScreenManager {
                     parent,
                     spec.label,
                     spec.shape || SymBtnShape.RoundedRect,
-                    spec.behaviors || blankBehavior,
+                    spec.behavior || blankBehavior,
                     spec
                 );
             default:

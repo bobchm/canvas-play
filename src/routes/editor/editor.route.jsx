@@ -19,7 +19,7 @@ import { defaultPageSpec } from "../../utils/app-utils";
 import { EditMode } from "./edit-modes";
 import { combineProperties } from "../../app/constants/property-types";
 
-import { compress, decompress } from "lz-string";
+// import { compress, decompress } from "lz-string";
 
 const drawerWidth = 100;
 const propsWidth = 300;
@@ -278,19 +278,19 @@ const Editor = () => {
         navigate("/");
     }
 
-    function testCompression(pgJSON) {
-        var uncompressed = JSON.stringify(pgJSON);
-        var uncLength = uncompressed.length;
-        var compressed = compress(uncompressed);
-        var cmpLength = compressed.length;
-        var newuncompressed = decompress(compressed);
-        if (uncompressed === newuncompressed) {
-            console.log("same");
-        } else {
-            console.log("different");
-        }
-        console.log(`uncompressed: ${uncLength}, compressed: ${cmpLength}`);
-    }
+    // function testCompression(pgJSON) {
+    //     var uncompressed = JSON.stringify(pgJSON);
+    //     var uncLength = uncompressed.length;
+    //     var compressed = compress(uncompressed);
+    //     var cmpLength = compressed.length;
+    //     var newuncompressed = decompress(compressed);
+    //     if (uncompressed === newuncompressed) {
+    //         console.log("same");
+    //     } else {
+    //         console.log("different");
+    //     }
+    //     console.log(`uncompressed: ${uncLength}, compressed: ${cmpLength}`);
+    // }
 
     function handleSavePage() {
         if (isModified) {

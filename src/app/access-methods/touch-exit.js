@@ -66,7 +66,7 @@ class TouchExit extends AccessMethod {
             appManager,
             appManager.getSetting("touchExitHighlightType")
         );
-        scrObj.select(appManager);
+        scrObj.select();
     }
 }
 

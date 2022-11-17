@@ -2,20 +2,19 @@ import { PropertyType } from "../constants/property-types";
 import ScreenObject from "./screen-object";
 import { refresh } from "../../utils/canvas";
 import { ScreenObjectType } from "../constants/screen-object-types";
-import { ttsSpeak } from "../../utils/textToSpeech";
 import { AccessHighlightType } from "../constants/access-types";
 import { BehaviorManager } from "../behaviors/behavior-behaviors";
 
 class SymbolButtonScreenObject extends ScreenObject {
     #label;
     #shape;
-    #behaviors;
+    #behavior;
 
-    constructor(_screenMgr, _parent, _label, _shape, _behaviors, _spec) {
+    constructor(_screenMgr, _parent, _label, _shape, _behavior, _spec) {
         super(_screenMgr, _parent, _spec);
         this.#label = _label;
         this.#shape = _shape;
-        this.#behaviors = _behaviors;
+        this.#behavior = _behavior;
         this.setCanvasObj(
             _screenMgr.addSymbolButton(this, _label, _shape, _spec.shapeSpec)
         );
@@ -29,7 +28,7 @@ class SymbolButtonScreenObject extends ScreenObject {
             label: this.#label,
             shape: this.#shape,
             shapeSpec: cobj.toJSON(),
-            behaviors: this.#behaviors,
+            behavior: this.#behavior,
         };
         return { ...superSpec, ...spec };
     }
@@ -107,8 +106,8 @@ class SymbolButtonScreenObject extends ScreenObject {
         ];
         if (selectedObjects.length === 1) {
             thisProps.push({
-                type: PropertyType.SelectionBehaviors,
-                current: this.#behaviors,
+                type: PropertyType.Selection,
+                current: this.#behavior,
             });
         }
         return superProps.concat(thisProps);
@@ -145,8 +144,8 @@ class SymbolButtonScreenObject extends ScreenObject {
                 this.#shape = value;
                 this.getCanvasObj().setShape(value);
                 break;
-            case PropertyType.SelectionBehaviors:
-                this.#behaviors = value;
+            case PropertyType.SelectionBehavior:
+                this.#behavior = value;
                 break;
             case PropertyType.Opacity:
                 var newValue = value / 100;
@@ -177,8 +176,8 @@ class SymbolButtonScreenObject extends ScreenObject {
                 return this.getCanvasObj().getShape();
             case PropertyType.Opacity:
                 return this.getCanvasObj().opacity * 100;
-            case PropertyType.SelectionBehaviors:
-                return this.#behaviors;
+            case PropertyType.SelectionBehavior:
+                return this.#behavior;
             default:
                 return super.getProperty(type);
         }
@@ -226,9 +225,9 @@ class SymbolButtonScreenObject extends ScreenObject {
         return true;
     }
 
-    select(appManager) {
-        if (this.#label && this.#label.length > 0) {
-            ttsSpeak(this.#label);
+    select() {
+        if (this.#behavior) {
+            BehaviorManager.executeFromObject(this, this.#behavior);
         }
     }
 }

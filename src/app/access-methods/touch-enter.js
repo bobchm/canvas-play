@@ -57,7 +57,7 @@ class TouchEnter extends AccessMethod {
                 appManager.getSetting("touchEnterHighlightType")
             );
         }
-        scrObj.select(appManager);
+        scrObj.select();
     }
 }
 
