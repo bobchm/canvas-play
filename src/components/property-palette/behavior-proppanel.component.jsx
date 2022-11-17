@@ -4,6 +4,8 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 
+import ScriptEditor from "../script-editor/script-editor.component";
+
 const BehaviorListPropertyPanel = ({
     propOption,
     propUpdateCallback,

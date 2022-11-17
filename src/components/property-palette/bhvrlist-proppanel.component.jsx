@@ -57,7 +57,7 @@ const BehaviorListPropertyPanel = ({
     function handleCloseBhvrPicker(bhvrName) {
         setIsBhvrPickerOpen(false);
         if (bhvrName && bhvrName.length > 0) {
-            var cls = BehaviorManager.behaviorFromName(bhvrName);
+            var cls = BehaviorManager.functionFromName(bhvrName);
             if (cls) {
                 var instBhvrs = BehaviorManager.instantiateBehaviors(
                     editObject,

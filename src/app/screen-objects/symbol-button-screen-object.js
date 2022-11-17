@@ -29,7 +29,7 @@ class SymbolButtonScreenObject extends ScreenObject {
             label: this.#label,
             shape: this.#shape,
             shapeSpec: cobj.toJSON(),
-            behaviors: BehaviorManager.toJSON(this.#behaviors),
+            behaviors: this.#behaviors,
         };
         return { ...superSpec, ...spec };
     }

@@ -3,6 +3,10 @@ import grammar from "./canvas-lang";
 
 var globalStack = [];
 
+function initializeExecution() {
+    globalStack = [];
+}
+
 function parse(source) {
     var ast = null;
     try {
@@ -349,6 +353,42 @@ function getFunctionDef(name, node) {
     throw executionError(`Unknown variable: ${name}`, node);
 }
 
+function functionFromName(name) {
+    for (let i = globalStack.length - 1; i >= 0; i--) {
+        var fn = globalStack[i].fns[name];
+        if (fn) {
+            return fn;
+        }
+    }
+    return null;
+}
+
+function allFunctionNames() {
+    var fnNames = [];
+    for (let i = globalStack.length - 1; i >= 0; i--) {
+        for (const fnName in globalStack[i].fns) {
+            if (!fnNames.includes(fnName)) {
+                fnNames.push(fnName);
+            }
+        }
+    }
+    return fnNames;
+}
+
+function functionsForCategory(category) {
+    var fns = [];
+    for (let i = globalStack.length - 1; i >= 0; i--) {
+        var fns = globalStack[i].fns;
+        for (const fnName in fns) {
+            var fn = fns[fnName];
+            if (fn.category === category) {
+                fns.push(fn);
+            }
+        }
+    }
+    return fns;
+}
+
 function findFunctionAnnotation(body, atype) {
     if (body.type === "code_block") {
         for (let i = 0; i < body.statements.length; i++) {
@@ -419,9 +459,14 @@ function addFnDefToStackFrame(
 }
 
 export {
+    initializeExecution,
     pushStackFrame,
+    popStackFrame,
     addStackFrame,
     addBuiltInFunction,
+    functionFromName,
+    allFunctionNames,
+    functionsForCategory,
     parse,
     simplify,
     execute,

@@ -6,7 +6,7 @@ import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 
-import { parse, simplify } from "../../app/scripting/canvas-exec";
+import { BehaviorManager } from "../../app/behaviors/behavior-behaviors";
 
 export default function ScriptEditor({ open, appManager, behavior, onClose }) {
     const [bhvr, setBhvr] = useState(behavior);
@@ -20,7 +20,7 @@ export default function ScriptEditor({ open, appManager, behavior, onClose }) {
 
         // attempt to parse
         try {
-            var ast = simplify(parse(bhvr.source));
+            var ast = BehaviorManager.parseSource(bhvr.source);
             onClose({ source: bhvr.source, compiled: ast });
         } catch (err) {
             alert(err);

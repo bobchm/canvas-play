@@ -5,6 +5,7 @@ import TextScreenObject from "../screen-objects/text-screen-object";
 import ImageScreenObject from "../screen-objects/image-screen-object";
 import SymbolButtonScreenObject from "../screen-objects/symbol-button-screen-object";
 import AccessManager from "./access-manager";
+import { blankBehavior } from "../behaviors/behavior-behaviors";
 
 import {
     initCanvas,
@@ -34,7 +35,6 @@ import {
 } from "../../utils/canvas";
 
 import { defaultImageData } from "../../utils/image-defaults";
-
 import { ScreenObjectType } from "../constants/screen-object-types";
 import { SymBtnShape } from "../../utils/symbol-button";
 
@@ -312,7 +312,7 @@ class ScreenManager {
                         this.#currentPage,
                         "Label",
                         SymBtnShape.RoundedRect,
-                        [],
+                        blankBehavior,
                         {
                             type: ScreenObjectType.SymbolButton,
                             shapeSpec: {
@@ -412,7 +412,7 @@ class ScreenManager {
                     parent,
                     spec.label,
                     spec.shape || SymBtnShape.RoundedRect,
-                    spec.behaviors || [],
+                    spec.behaviors || blankBehavior,
                     spec
                 );
             default:

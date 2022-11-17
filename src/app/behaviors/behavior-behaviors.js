@@ -1,66 +1,70 @@
 import { initSpeechBehaviors } from "./bhvr-speech";
 import { initNavigationBehaviors } from "./bhvr-navigation";
+import {
+    initializeExecution,
+    pushStackFrame,
+    addBuiltInFunction,
+    parse,
+    simplify,
+    execute,
+    popStackFrame,
+    functionFromName,
+    allFunctionNames,
+    functionsForCategory,
+} from "../scripting/canvas-exec";
 
+export const blankBehavior = { source: "", compiled: null };
 export class BehaviorManager {
-    static bhvrClasses = {};
-    static bhvrNames = [];
+    static appManager;
+    static initialize(appManager) {
+        this.appManager = appManager;
 
-    static initialize() {
-        this.bhvrClasses = [];
+        // set up the execution environment
+        initializeExecution();
+        pushStackFrame("_base_", [], []);
+
+        // initialize the different categories of behaviors
         initSpeechBehaviors();
         initNavigationBehaviors();
     }
 
-    static addBehavior(cls) {
-        var key = cls.id;
-        if (!cls.id) {
-            throw new Error("Missing behavior class key");
-        }
-        if (this.bhvrClasses.hasOwnProperty(key)) {
-            throw new Error("Duplicate behavior class: " + key);
-        }
-        this.bhvrClasses[key] = cls;
+    static functionsForCategory(category) {
+        return functionsForCategory(category);
     }
 
-    static behaviorsForCategory(category) {
-        var catClasses = [];
-        var classKeys = Object.keys(this.bhvrClasses);
-        classKeys.forEach((key) => {
-            var cls = this.bhvrClasses[key];
-            if (cls.category === category) {
-                catClasses.push(cls);
-            }
-        });
-        return catClasses;
+    static allFunctionNames() {
+        return allFunctionNames();
     }
 
-    static allBehaviorNames() {
-        if (this.bhvrNames.length === 0) {
-            var classKeys = Object.keys(this.bhvrClasses);
-            classKeys.forEach((key) => {
-                var cls = this.bhvrClasses[key];
-                this.bhvrNames.push(cls.name);
-            });
-        }
-        return this.bhvrNames;
+    static functionFromName(name) {
+        return functionFromName(name);
     }
 
-    static behaviorFromName(name) {
-        var classKeys = Object.keys(this.bhvrClasses);
-        for (let i = 0; i < classKeys.length; i++) {
-            var cls = this.bhvrClasses[classKeys[i]];
-            if (cls.name === name) {
-                return cls;
-            }
-        }
-        return null;
+    static parseSource(source) {
+        return simplify(parse(source));
     }
 
-    static toJSON(inBhvrs) {
-        var outBhvrs = [];
-        for (let i = 0; i < inBhvrs.length; i++) {
-            outBhvrs.push(inBhvrs[i].toJSON());
+    static async loadSource(fileName) {
+        var r = await fetch(fileName);
+        var source = await r.text();
+
+        var ast = null;
+        try {
+            ast = simplify(parse(source));
+        } catch (err) {
+            alert(`Error loading behavior source file: ${fileName}`);
         }
-        return outBhvrs;
+
+        execute(ast);
+    }
+
+    static addBuiltInFunction(fnDef) {
+        addBuiltInFunction(fnDef);
+    }
+
+    static executeFromObject(obj, ast) {
+        pushStackFrame("executeFromObject", [], { self: obj });
+        execute(ast);
+        popStackFrame();
     }
 }
