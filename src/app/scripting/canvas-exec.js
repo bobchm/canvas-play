@@ -20,7 +20,8 @@ function parse(source) {
         if (idx > 0) {
             msg = msg.slice(0, idx);
         }
-        throw new Error(msg);
+        err.message = msg;
+        throw err;
     }
     return ast;
 }

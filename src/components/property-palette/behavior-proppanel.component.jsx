@@ -1,12 +1,13 @@
 import "./behavior-styles.css";
 import React, { useState } from "react";
 import Typography from "@mui/material/Typography";
+import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 
 import ScriptEditor from "../script-editor/script-editor.component";
 
-const BehaviorListPropertyPanel = ({
+const BehaviorPropertyPanel = ({
     propOption,
     propUpdateCallback,
     appManager,
@@ -27,7 +28,14 @@ const BehaviorListPropertyPanel = ({
     }
 
     return (
-        <div className="behavior-container">
+        <Paper
+            variant="outlined"
+            sx={{
+                backgroundColor: "azure",
+                border: 1,
+                boderColor: "black",
+            }}
+        >
             <Stack
                 className="container"
                 direction="column"
@@ -51,14 +59,16 @@ const BehaviorListPropertyPanel = ({
                     Edit Behavior
                 </Button>
             </Stack>
-            <ScriptEditor
-                behavior={behavior}
-                onClose={handleCloseBhvrEditor}
-                open={isBhvrEditorOpen}
-                appManager={appManager}
-            />
-        </div>
+            {isBhvrEditorOpen && (
+                <ScriptEditor
+                    behavior={behavior}
+                    onClose={handleCloseBhvrEditor}
+                    open={isBhvrEditorOpen}
+                    appManager={appManager}
+                />
+            )}
+        </Paper>
     );
 };
 
-export default BehaviorListPropertyPanel;
+export default BehaviorPropertyPanel;

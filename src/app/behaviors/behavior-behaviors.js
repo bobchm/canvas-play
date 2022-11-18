@@ -19,6 +19,15 @@ import {
 } from "../scripting/canvas-exec";
 
 export const blankBehavior = { source: "", compiled: null };
+
+function getFnCatEntry(catList, cat) {
+    for (let i = 0; i < catList.length; i++) {
+        var entry = catList[i];
+        if (entry.name === cat) return entry;
+    }
+    return null;
+}
+
 export class BehaviorManager {
     static appManager;
     static initialize(appManager) {
@@ -45,6 +54,25 @@ export class BehaviorManager {
 
     static functionFromName(name) {
         return functionFromName(name);
+    }
+
+    static categorizedFunctionNames() {
+        var allNames = allFunctionNames();
+        var catNames = [];
+
+        for (let i = 0; i < allNames.length; i++) {
+            var fnName = allNames[i];
+            var fnSpec = functionFromName(fnName);
+            var fnCat = fnSpec.category || "none";
+            var entry = getFnCatEntry(catNames, fnCat);
+            if (!entry) {
+                entry = { name: fnCat, children: [fnName] };
+                catNames.push(entry);
+            } else {
+                entry.children.push(fnName);
+            }
+        }
+        return catNames;
     }
 
     static parseSource(source) {

@@ -23,6 +23,7 @@ function behaviorSpeakText(text) {
 function localFunctionDefinitions() {
     return `
     function speakLabel() {
+        @category speech
         label = getObjectProperty(self, "label")
         if (label) {
             speakText(label)

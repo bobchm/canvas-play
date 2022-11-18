@@ -5,12 +5,18 @@ import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
+import AccordionMenu from "../accordion-menu/accordion-menu.component";
 
 import { BehaviorManager } from "../../app/behaviors/behavior-behaviors";
 
 export default function ScriptEditor({ open, appManager, behavior, onClose }) {
     const [bhvr, setBhvr] = useState(behavior);
     const [isModified, setIsModified] = useState(false);
+    const [selectionStart, setSelectionStart] = React.useState();
+    const updateSelectionStart = () =>
+        setSelectionStart(inputRef.current.selectionStart);
+
+    const inputRef = React.useRef();
 
     function handleOK() {
         if (!isModified) {
@@ -24,7 +30,34 @@ export default function ScriptEditor({ open, appManager, behavior, onClose }) {
             onClose({ source: bhvr.source, compiled: ast });
         } catch (err) {
             alert(err);
+            inputRef.current.setSelectionRange(
+                err.token.offset,
+                err.token.offset
+            );
+            inputRef.current.focus();
         }
+    }
+
+    function onFunctionSelection(fnName) {
+        var fnSpec = BehaviorManager.functionFromName(fnName);
+        var insert = fnName + "(";
+        if (fnSpec.params) {
+            for (let i = 0; i < fnSpec.params.length; i++) {
+                var param = fnSpec.params[i];
+                if (i > 0) {
+                    insert += ", ";
+                }
+                insert += "<" + param.name + ">";
+            }
+        }
+        insert += ")";
+        var source = bhvr.source;
+        var newSource =
+            source.slice(0, selectionStart) +
+            insert +
+            source.slice(selectionStart);
+        setBhvr({ source: newSource, compiled: null });
+        inputRef.current.focus();
     }
 
     return (
@@ -39,7 +72,7 @@ export default function ScriptEditor({ open, appManager, behavior, onClose }) {
                 justifyContent: "center",
             }}
         >
-            <Paper sx={{ width: "80%", height: "95%", margin: "10px" }}>
+            <Paper sx={{ width: "50%", height: "auto", margin: "10px" }}>
                 <Stack
                     direction="column"
                     alignItems="center"
@@ -50,18 +83,37 @@ export default function ScriptEditor({ open, appManager, behavior, onClose }) {
                     <Typography variant="h3" align="center">
                         Script Editor
                     </Typography>
-                    <TextField
-                        value={bhvr.source}
-                        sx={{ height: "100%" }}
-                        onChange={(e) => {
-                            setIsModified(true);
-                            setBhvr({ source: e.target.value, compiled: null });
-                        }}
-                        label={"Script"}
-                        multiline
-                        fullWidth
-                        rows={5}
-                    />
+                    <Stack
+                        direction="row"
+                        alignItems="center"
+                        justifyContent="flex-start"
+                        spacing={2}
+                        sx={{ paddingBottom: "5px", width: "100%" }}
+                    >
+                        <AccordionMenu
+                            items={BehaviorManager.categorizedFunctionNames()}
+                            callback={onFunctionSelection}
+                        />
+                        <TextField
+                            value={bhvr.source}
+                            sx={{ height: "100%" }}
+                            onSelect={updateSelectionStart}
+                            onChange={(e) => {
+                                setIsModified(true);
+                                setBhvr({
+                                    source: e.target.value,
+                                    compiled: null,
+                                });
+                                updateSelectionStart();
+                            }}
+                            label={"Script"}
+                            multiline
+                            fullWidth
+                            minRows={10}
+                            maxRows={10}
+                            inputRef={inputRef}
+                        />
+                    </Stack>
                     <Stack
                         direction="row"
                         alignItems="center"
