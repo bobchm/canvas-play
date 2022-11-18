@@ -1,5 +1,10 @@
 import { BehaviorManager } from "./behavior-behaviors";
 import { PropertyValueType } from "../constants/property-types";
+import {
+    ttsSetPitch,
+    ttsSetRate,
+    ttsSetVolume,
+} from "../../utils/textToSpeech";
 
 function initSystemBehaviors() {
     BehaviorManager.addBuiltInFunction({
@@ -28,6 +33,24 @@ function behaviorGetSetting(setting) {
 
 function behaviorSetSetting(setting, value) {
     BehaviorManager.appManager.setSetting(setting, value);
+
+    // many settings need further action for them to take effect immediately
+    switch (setting) {
+        case "ttsVolume":
+            ttsSetVolume(value);
+            break;
+        case "ttsRate":
+            ttsSetRate(value);
+            break;
+        case "ttsPitch":
+            ttsSetPitch(value);
+            break;
+        case "accessMethod":
+            BehaviorManager.appManager.setAccessMethod(value);
+            break;
+
+        default:
+    }
 }
 
 export { initSystemBehaviors };

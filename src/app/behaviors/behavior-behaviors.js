@@ -28,6 +28,10 @@ function getFnCatEntry(catList, cat) {
     return null;
 }
 
+function stringCompare(a, b) {
+    return a > b ? 1 : b > a ? -1 : 0;
+}
+
 export class BehaviorManager {
     static appManager;
     static initialize(appManager) {
@@ -71,6 +75,11 @@ export class BehaviorManager {
             } else {
                 entry.children.push(fnName);
             }
+        }
+        catNames.sort((a, b) => stringCompare(a.name, b.name));
+        for (let i = 0; i < catNames.length; i++) {
+            var item = catNames[i];
+            item.children.sort((c1, c2) => stringCompare(c1, c2));
         }
         return catNames;
     }

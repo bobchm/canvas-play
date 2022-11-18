@@ -272,7 +272,7 @@ export default function AccessSettings({ appManager }) {
                                     </MenuItem>
                                 ))}
                             </Select>
-                            <Typography gutterBottom>Language</Typography>
+                            <Typography gutterBottom>Method</Typography>
                         </Stack>
                     </Stack>
                     {accessMethod === AccessType.TouchEnter &&
