@@ -30,19 +30,14 @@ function simplify(ast) {
 }
 
 function execute(ast) {
-    var svStack = stackTop();
-    pushStackFrame("_execute_");
-
     // ast should be a list of executable records
     for (let i = 0; i < ast.length; i++) {
         try {
             executeTopLevel(ast[i]);
         } catch (err) {
-            resetStack(svStack);
             throw err;
         }
     }
-    popStackFrame();
 }
 
 function executionError(err, node) {
@@ -359,7 +354,7 @@ function getFunctionDef(name, node) {
             return fn;
         }
     }
-    throw executionError(`Unknown variable: ${name}`, node);
+    throw executionError(`Unknown function: ${name}`, node);
 }
 
 function functionFromName(name) {

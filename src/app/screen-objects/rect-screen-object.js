@@ -56,11 +56,11 @@ class RectScreenObject extends ScreenObject {
 
     getProperty(type) {
         switch (type) {
-            case PropertyType.FillColor:
+            case "fillColor":
                 return this.getCanvasObj().fill;
-            case PropertyType.LineColor:
+            case "borderColor":
                 return this.getCanvasObj().stroke;
-            case PropertyType.Opacity:
+            case "opacity":
                 return this.getCanvasObj().opacity * 100;
             default:
                 return super.getProperty(type);
@@ -68,7 +68,19 @@ class RectScreenObject extends ScreenObject {
     }
 
     async setProperty(screenMgr, type, value) {
-        this.setEditProperty(screenMgr, type, value);
+        switch (type) {
+            case "fillColor":
+                this.setEditProperty(screenMgr, PropertyType.FillColor, value);
+                break;
+            case "borderColor":
+                this.setEditProperty(screenMgr, PropertyType.LineColor, value);
+                break;
+            case "opacity":
+                this.setEditProperty(screenMgr, PropertyType.Opacity, value);
+                break;
+            default:
+                super.setProperty(screenMgr, type, value);
+        }
     }
 }
 

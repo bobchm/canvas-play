@@ -74,7 +74,12 @@ export class BehaviorManager {
         if (behavior && behavior.compiled) {
             pushStackFrame("executeFromObject");
             setVariable("self", obj);
-            execute(behavior.compiled);
+
+            try {
+                execute(behavior.compiled);
+            } catch (err) {
+                alert(`Execution error in executeFromObject: ${err}`);
+            }
             popStackFrame();
         }
     }

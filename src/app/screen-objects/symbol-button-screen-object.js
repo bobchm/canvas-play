@@ -106,7 +106,7 @@ class SymbolButtonScreenObject extends ScreenObject {
         ];
         if (selectedObjects.length === 1) {
             thisProps.push({
-                type: PropertyType.Selection,
+                type: PropertyType.SelectionBehavior,
                 current: this.#behavior,
             });
         }

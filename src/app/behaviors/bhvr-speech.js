@@ -23,7 +23,7 @@ function behaviorSpeakText(text) {
 function localFunctionDefinitions() {
     return `
     function speakLabel() {
-        label = getProperty(self, "label")
+        label = getObjectProperty(self, "label")
         if (label) {
             speakText(label)
         }

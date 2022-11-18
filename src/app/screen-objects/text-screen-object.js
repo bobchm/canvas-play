@@ -57,6 +57,11 @@ class TextScreenObject extends ScreenObject {
         cobj.set("fontFamily", style.fontFamily);
     }
 
+    setText(text) {
+        var cobj = this.getCanvasObj();
+        cobj.set("text", text);
+    }
+
     getEditProperties(selectedObjects) {
         var superProps = super.getEditProperties(selectedObjects);
         var thisProps = [
@@ -103,15 +108,15 @@ class TextScreenObject extends ScreenObject {
 
     getProperty(type) {
         switch (type) {
-            case PropertyType.ButtonLabel:
+            case "text":
                 return this.#text;
-            case PropertyType.BackgroundColor:
+            case "backgroundColor":
                 return this.getCanvasObj().textBackgroundColor;
-            case PropertyType.TextColor:
+            case "textColor":
                 return this.getCanvasObj().fill;
-            case PropertyType.TextStyle:
+            case "textStyle":
                 return this.getTextStyle();
-            case PropertyType.Opacity:
+            case "opacity":
                 return this.getCanvasObj().opacity * 100;
             default:
                 return super.getProperty(type);
@@ -119,7 +124,29 @@ class TextScreenObject extends ScreenObject {
     }
 
     async setProperty(screenMgr, type, value) {
-        this.setEditProperty(screenMgr, type, value);
+        switch (type) {
+            case "text":
+                this.setText(value);
+                break;
+            case "backgroundColor":
+                this.setEditProperty(
+                    screenMgr,
+                    PropertyType.BackgroundColor,
+                    value
+                );
+                break;
+            case "textColor":
+                this.setEditProperty(screenMgr, PropertyType.TextColor, value);
+                break;
+            case "textStyle":
+                this.setEditProperty(screenMgr, PropertyType.TextStyle, value);
+                break;
+            case "opacity":
+                this.setEditProperty(screenMgr, PropertyType.Opacity, value);
+                break;
+            default:
+                super.setProperty(screenMgr, type, value);
+        }
     }
 }
 

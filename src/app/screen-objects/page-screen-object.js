@@ -91,13 +91,13 @@ class PageScreenObject extends ContainerScreenObject {
 
     getProperty(type) {
         switch (type) {
-            case PropertyType.Name:
+            case "name":
                 return this.#name;
-            case PropertyType.BackgroundColor:
+            case "backgroundColor":
                 return this.#backgroundColor;
-            case PropertyType.BackgroundImageSource:
+            case "backgroundImage":
                 return this.#backgroundImage;
-            case PropertyType.BackgroundImageStyle:
+            case "backgroundImageStyle":
                 return this.#backgroundImageStyle;
             default:
                 return super.getProperty(type);
@@ -105,7 +105,34 @@ class PageScreenObject extends ContainerScreenObject {
     }
 
     async setProperty(screenMgr, type, value) {
-        this.setEditProperty(screenMgr, type, value);
+        switch (type) {
+            case "name":
+                this.setEditProperty(screenMgr, PropertyType.Name, value);
+                break;
+            case "backgroundColor":
+                this.setEditProperty(
+                    screenMgr,
+                    PropertyType.BackgroundColor,
+                    value
+                );
+                break;
+            case "backgroundImage":
+                this.setEditProperty(
+                    screenMgr,
+                    PropertyType.BackgroundImageSource,
+                    value
+                );
+                break;
+            case "backgroundImageStyle":
+                this.setEditProperty(
+                    screenMgr,
+                    PropertyType.BackgroundImageStyle,
+                    value
+                );
+                break;
+            default:
+                super.setProperty(screenMgr, type, value);
+        }
     }
 
     getName() {

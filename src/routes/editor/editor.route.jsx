@@ -296,7 +296,7 @@ const Editor = () => {
         if (isModified) {
             var page = appManager.getScreenManager().getCurrentPage();
             if (page) {
-                var content = page.toddddJSON();
+                var content = page.toJSON();
                 // testCompression(content);
                 var spec = appManager
                     .getUserActivityManager()

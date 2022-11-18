@@ -67,11 +67,9 @@ class ImageScreenObject extends ScreenObject {
 
     getProperty(type) {
         switch (type) {
-            case PropertyType.ImageSource:
+            case "imageSource":
                 return this.getSource();
-            case PropertyType.EmbedImage:
-                return isImageEmbedded(this.getCanvasObj());
-            case PropertyType.Opacity:
+            case "opacity":
                 return this.getCanvasObj().opacity * 100;
             default:
                 return super.getProperty(type);
@@ -79,7 +77,20 @@ class ImageScreenObject extends ScreenObject {
     }
 
     async setProperty(screenMgr, type, value) {
-        this.setEditProperty(screenMgr, type, value);
+        switch (type) {
+            case "imageSource":
+                this.setEditProperty(
+                    screenMgr,
+                    PropertyType.ImageSource,
+                    value
+                );
+                break;
+            case "opacity":
+                this.setEditProperty(screenMgr, PropertyType.Opacity, value);
+                break;
+            default:
+                super.setProperty(screenMgr, type, value);
+        }
     }
 
     getSource() {
