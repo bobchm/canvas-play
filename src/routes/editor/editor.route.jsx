@@ -368,7 +368,6 @@ const Editor = () => {
                     height={canvasSpec.height}
                     options={editProperties}
                     propUpdateCallback={handlePropValueChange}
-                    objects={appManager.getScreenManager().getSelectedObjects()}
                     appManager={appManager}
                 />
                 <ListModal

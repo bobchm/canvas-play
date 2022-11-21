@@ -9,7 +9,7 @@ import { selectPropertyPanel } from "./property-palette.component";
 import "./property-palette.styles.scss";
 import { jsonDeepCopy } from "../../utils/app-utils";
 
-const BhvrEditModal = ({ bhvrArgs, appManager, closeCallback, objects }) => {
+const BhvrEditModal = ({ bhvrArgs, appManager, closeCallback }) => {
     const [bArgs, setBArgs] = useState(bhvrArgs);
 
     function argsFromArgs() {
@@ -80,7 +80,6 @@ const BhvrEditModal = ({ bhvrArgs, appManager, closeCallback, objects }) => {
                                 {selectPropertyPanel(
                                     argToOption(arg),
                                     argUpdateCallback,
-                                    objects,
                                     appManager
                                 )}
                             </div>

@@ -19,19 +19,13 @@ import { SymbolButtonShapes } from "../../utils/symbol-button";
 
 var ctr = 0;
 
-export const selectPropertyPanel = (
-    option,
-    propUpdateCallback,
-    objects,
-    appManager
-) => {
+export const selectPropertyPanel = (option, propUpdateCallback, appManager) => {
     switch (option.type.valueType) {
         case PropertyValueType.Text:
             return (
                 <TextPropertyPanel
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
-                    objects={objects}
                 />
             );
         case PropertyValueType.Color:
@@ -39,7 +33,6 @@ export const selectPropertyPanel = (
                 <ColorPropertyPanel
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
-                    objects={objects}
                 />
             );
         case PropertyValueType.Percent:
@@ -47,7 +40,6 @@ export const selectPropertyPanel = (
                 <PercentPropertyPanel
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
-                    objects={objects}
                 />
             );
         case PropertyValueType.TextStyle:
@@ -55,7 +47,6 @@ export const selectPropertyPanel = (
                 <TextStylePropertyPanel
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
-                    objects={objects}
                 />
             );
         case PropertyValueType.ImageSource:
@@ -63,7 +54,6 @@ export const selectPropertyPanel = (
                 <ImageSourcePropertyPanel
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
-                    objects={objects}
                 />
             );
         case PropertyValueType.SymBtnImageSource:
@@ -71,7 +61,6 @@ export const selectPropertyPanel = (
                 <SymbolSourcePropertyPanel
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
-                    objects={objects}
                 />
             );
         case PropertyValueType.BackgroundImageSource:
@@ -79,7 +68,6 @@ export const selectPropertyPanel = (
                 <BackgroundSourcePropertyPanel
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
-                    objects={objects}
                 />
             );
         case PropertyValueType.EmbedImage:
@@ -87,7 +75,6 @@ export const selectPropertyPanel = (
                 <EmbedImagePropertyPanel
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
-                    objects={objects}
                 />
             );
         case PropertyValueType.ButtonShape:
@@ -95,7 +82,6 @@ export const selectPropertyPanel = (
                 <ItemListPropertyPanel
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
-                    objects={objects}
                     items={SymbolButtonShapes}
                     title={"Shape"}
                 />
@@ -105,7 +91,6 @@ export const selectPropertyPanel = (
                 <BackgroundImageStylePropertyPanel
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
-                    objects={objects}
                 />
             );
         case PropertyValueType.Behavior:
@@ -113,7 +98,6 @@ export const selectPropertyPanel = (
                 <BehaviorPropertyPanel
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
-                    objects={objects}
                     appManager={appManager}
                 />
             );
@@ -122,7 +106,6 @@ export const selectPropertyPanel = (
                 <ItemListPropertyPanel
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
-                    objects={objects}
                     items={makePageItems(appManager)}
                     title={"Page"}
                 />
@@ -150,7 +133,6 @@ const PropertyPalette = ({
     height,
     options,
     propUpdateCallback,
-    objects,
     appManager,
 }) => {
     return (
@@ -176,7 +158,6 @@ const PropertyPalette = ({
                     {selectPropertyPanel(
                         option,
                         propUpdateCallback,
-                        objects,
                         appManager
                     )}
                 </div>

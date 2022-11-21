@@ -1,7 +1,6 @@
 import "./bhvrlist-styles.css";
 import React, { useState } from "react";
 import ReactDragListView from "react-drag-listview";
-import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
@@ -13,73 +12,69 @@ import ListModal from "../list-modal/list-modal.component";
 import BhvrEditModal from "./bhvredit-proppanel.component";
 import { BehaviorManager } from "../../app/behaviors/behavior-behaviors";
 
-function itemsFromBehaviors(bhvrs) {
-    return bhvrs.map((bhvr) => bhvr.getDisplay());
+function itemsFromBehavior(bhvr) {
+    return bhvr.compiled.map((node) =>
+        BehaviorManager.sourceFromNode(bhvr, node)
+    );
 }
 
 const BehaviorListPropertyPanel = ({
-    propOption,
-    propUpdateCallback,
-    objects,
+    inBehavior,
+    behaviorCallback,
     appManager,
 }) => {
-    const [bhvrs, setBhvrs] = useState(propOption.current || []);
-    const [items, setItems] = useState(itemsFromBehaviors(bhvrs));
-    const [isBhvrPickerOpen, setIsBhvrPickerOpen] = useState(false);
-    const [editObject] = useState(objects[0]);
-    const [editedBhvr, setEditedBhvr] = useState(null);
+    const [behavior, setBehavior] = useState(inBehavior || []);
+    const [items, setItems] = useState(itemsFromBehavior(inBehavior));
+    const [isFunctionPickerOpen, setIsFunctionPickerOpen] = useState(false);
+    const [editedFunctionIdx, setEditedFunctionIdx] = useState(-1);
     const [editedArgs, setEditedArgs] = useState([]);
     const [areArgumentsOpen, setAreArgumentsOpen] = useState(false);
 
     function handleDragEnd(fromIndex, toIndex) {
         if (fromIndex >= 0 && toIndex >= 0) {
-            var oldBhvrs = bhvrs;
-            var removed = oldBhvrs.splice(fromIndex, 1);
-            oldBhvrs.splice(toIndex, 0, ...removed);
-            setBhvrs(oldBhvrs);
-            setItems(itemsFromBehaviors(oldBhvrs));
-            propUpdateCallback(propOption.type, oldBhvrs);
+            // do the reordering on the compiled nodes
+            var bhvrNodes = behavior.compiled;
+            var removed = bhvrNodes.splice(fromIndex, 1);
+            bhvrNodes.splice(toIndex, 0, ...removed);
+
+            // establish the new behavior
+            var newBehavior = BehaviorManager.behaviorFromCompiled(bhvrNodes);
+            setBehavior(newBehavior);
+            setItems(itemsFromBehavior(newBehavior));
+            behaviorCallback(newBehavior);
         }
     }
 
     function handleDelete(idx) {
-        var oldBhvrs = bhvrs;
-        oldBhvrs.splice(idx, 1);
-        setBhvrs(oldBhvrs);
-        setItems(itemsFromBehaviors(oldBhvrs));
-        propUpdateCallback(propOption.type, oldBhvrs);
+        var bhvrNodes = behavior.compiled;
+        bhvrNodes.splice(idx, 1);
+        var newBehavior = BehaviorManager.behaviorFromCompiled(bhvrNodes);
+        setBehavior(newBehavior);
+        setItems(itemsFromBehavior(newBehavior));
+        behaviorCallback(newBehavior);
     }
 
-    function handleAddBehavior() {
-        setIsBhvrPickerOpen(true);
+    function handleAddFunction() {
+        setIsFunctionPickerOpen(true);
     }
 
-    function handleCloseBhvrPicker(bhvrName) {
-        setIsBhvrPickerOpen(false);
-        if (bhvrName && bhvrName.length > 0) {
-            var cls = BehaviorManager.functionFromName(bhvrName);
-            if (cls) {
-                var instBhvrs = BehaviorManager.instantiateBehaviors(
-                    editObject,
-                    [
-                        {
-                            id: cls.id,
-                        },
-                    ]
-                );
-                var newBhvrs = [...bhvrs, instBhvrs[0]];
-                setBhvrs(newBhvrs);
-                setItems(itemsFromBehaviors(newBhvrs));
-                propUpdateCallback(propOption.type, newBhvrs);
-            }
+    function handleCloseFunctionPicker(fnName) {
+        setIsFunctionPickerOpen(false);
+        if (fnName && fnName.length > 0) {
+            var newBehavior = BehaviorManager.appendFunctionToBehavior(
+                behavior,
+                fnName
+            );
+            setBehavior(newBehavior);
+            setItems(itemsFromBehavior(newBehavior));
+            behaviorCallback(newBehavior);
         }
     }
 
     function handleEdit(idx) {
-        var bhvr = bhvrs[idx];
-        var args = bhvr.getArguments();
+        var args = BehaviorManager.getFunctionArguments(behavior, idx);
         if (args) {
-            setEditedBhvr(bhvr);
+            setEditedFunctionIdx(idx);
             setEditedArgs(args);
             setAreArgumentsOpen(true);
         }
@@ -88,11 +83,16 @@ const BehaviorListPropertyPanel = ({
     function handleEditCompleted(args) {
         setAreArgumentsOpen(false);
         if (args) {
-            editedBhvr.setArguments(args);
-            setEditedBhvr(null);
+            var newBehavior = BehaviorManager.setFunctionArguments(
+                behavior,
+                editedFunctionIdx,
+                args
+            );
+            setEditedFunctionIdx(null);
             setEditedArgs(null);
-            setItems(itemsFromBehaviors(bhvrs));
-            propUpdateCallback(propOption.type, bhvrs);
+            setBehavior(newBehavior);
+            setItems(itemsFromBehavior(newBehavior));
+            behaviorCallback(newBehavior);
         }
     }
 
@@ -106,9 +106,6 @@ const BehaviorListPropertyPanel = ({
                 spacing={2}
                 sx={{ paddingBottom: "5px" }}
             >
-                <Typography display="block" variant="button" mt={0} mb={0}>
-                    Behaviors
-                </Typography>
                 <ReactDragListView
                     onDragEnd={handleDragEnd}
                     nodeSelector="li"
@@ -122,7 +119,10 @@ const BehaviorListPropertyPanel = ({
                             </a>
                             <span className="bhvr-text">{item}</span>
                             <span className="bhvr-icons">
-                                {bhvrs[idx].hasArguments() ? (
+                                {BehaviorManager.hasFunctionArguments(
+                                    behavior,
+                                    idx
+                                ) ? (
                                     <IconButton
                                         style={{ padding: "1px" }}
                                         onClick={(e) => handleEdit(idx)}
@@ -148,7 +148,7 @@ const BehaviorListPropertyPanel = ({
                         color: "black",
                         borderColor: "black",
                     }}
-                    onClick={handleAddBehavior}
+                    onClick={handleAddFunction}
                 >
                     Add Behavior
                 </Button>
@@ -156,15 +156,14 @@ const BehaviorListPropertyPanel = ({
             <ListModal
                 title="Select Behavior"
                 elements={BehaviorManager.allBehaviorNames()}
-                onClose={handleCloseBhvrPicker}
-                open={isBhvrPickerOpen}
+                onClose={handleCloseFunctionPicker}
+                open={isFunctionPickerOpen}
             />
             {areArgumentsOpen && (
                 <BhvrEditModal
                     bhvrArgs={editedArgs}
                     appManager={appManager}
                     closeCallback={handleEditCompleted}
-                    object={objects}
                 />
             )}
         </div>

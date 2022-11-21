@@ -6,6 +6,8 @@ import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 
 import ScriptEditor from "../script-editor/script-editor.component";
+import BehaviorListPropertyPanel from "./bhvrlist-proppanel.component";
+import { BehaviorManager } from "../../app/behaviors/behavior-behaviors";
 
 const BehaviorPropertyPanel = ({
     propOption,
@@ -13,18 +15,57 @@ const BehaviorPropertyPanel = ({
     appManager,
 }) => {
     const [behavior, setBehavior] = useState(propOption.current || []);
-    const [isBhvrEditorOpen, setIsBhvrEditorOpen] = useState(false);
+    const [isScriptEditorOpen, setIsScriptEditorOpen] = useState(false);
+
+    // state for "simple" mode editing
 
     function handleEditBehavior() {
-        setIsBhvrEditorOpen(true);
+        setIsScriptEditorOpen(true);
     }
 
     function handleCloseBhvrEditor(newBehavior) {
-        setIsBhvrEditorOpen(false);
+        setIsScriptEditorOpen(false);
         if (newBehavior) {
             setBehavior(newBehavior);
             propUpdateCallback(propOption.type, newBehavior);
         }
+    }
+
+    function isBehaviorSimple() {
+        return BehaviorManager.isBehaviorSimple(behavior);
+    }
+
+    function simpleBehaviorCallback(newBehavior) {
+        setBehavior(newBehavior);
+        propUpdateCallback(propOption.type, newBehavior);
+    }
+
+    function simpleBehaviorUI() {
+        return (
+            <BehaviorListPropertyPanel
+                inBehavior={behavior}
+                behaviorCallback={simpleBehaviorCallback}
+                appManager={appManager}
+            />
+        );
+    }
+
+    function complexBehaviorUI() {
+        return (
+            <>
+                <div className="behavior-label">{behavior.source}</div>
+                <Button
+                    variant="outlined"
+                    sx={{
+                        color: "black",
+                        borderColor: "black",
+                    }}
+                    onClick={handleEditBehavior}
+                >
+                    Edit Behavior
+                </Button>
+            </>
+        );
     }
 
     return (
@@ -47,23 +88,13 @@ const BehaviorPropertyPanel = ({
                 <Typography display="block" variant="button" mt={0} mb={0}>
                     Behavior
                 </Typography>
-                <div className="behavior-label">{behavior.source}</div>
-                <Button
-                    variant="outlined"
-                    sx={{
-                        color: "black",
-                        borderColor: "black",
-                    }}
-                    onClick={handleEditBehavior}
-                >
-                    Edit Behavior
-                </Button>
+                {isBehaviorSimple() ? simpleBehaviorUI() : complexBehaviorUI()}
             </Stack>
-            {isBhvrEditorOpen && (
+            {isScriptEditorOpen && (
                 <ScriptEditor
                     behavior={behavior}
                     onClose={handleCloseBhvrEditor}
-                    open={isBhvrEditorOpen}
+                    open={isScriptEditorOpen}
                     appManager={appManager}
                 />
             )}

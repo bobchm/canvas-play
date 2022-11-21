@@ -127,4 +127,36 @@ export class BehaviorManager {
         }
         return null;
     }
+
+    static isBehaviorSimple(behavior) {
+        // does the behavior consist only of zero or more function calls with literal arguments?
+    }
+
+    static sourceFromNode(behavior, node) {
+        // generate source code from the specified node - this will only be done for "simple" code (lists
+        //   of function calls) but we should probably do everything - this should be done in canvas-exec
+    }
+
+    static behaviorFromCompiled(compiled) {
+        // create a new behavior by taking the compiled nodes, generating source from them, then compiling
+        // the source to align the new source with the compiled nodes
+    }
+
+    static appendFunctionToBehavior(behavior, fnName) {
+        // create a new behavior appending the named function with "default" parameters, and compiling the result
+    }
+
+    static hasFunctionArguments(behavior, fnIdx) {
+        // get description of function arguments for the editing UI
+    }
+
+    static getFunctionArguments(behavior, fnIdx) {
+        // get description of function arguments for the editing UI
+    }
+
+    static setFunctionArguments(behavior, fnIdx, args) {
+        // the function specified by fnIdx is to have its arguments set to those specified by args
+        //      set them, generate source from behavior, compile it, return a new behavior with the
+        //      new source and compiled block
+    }
 }
