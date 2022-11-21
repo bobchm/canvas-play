@@ -150,7 +150,7 @@ const BehaviorListPropertyPanel = ({
                     }}
                     onClick={handleAddFunction}
                 >
-                    Add Behavior
+                    Add
                 </Button>
             </Stack>
             <ListModal

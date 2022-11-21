@@ -463,6 +463,61 @@ function addFnDefToStackFrame(
     };
 }
 
+function decompile(statements) {
+    var decompiled = "";
+    for (let i = 0; i < statements.length; i++) {
+        decompiled += decompileNode(statements[i]) + "\n";
+    }
+    return decompiled;
+}
+
+function decompileNode(node) {
+    switch (node.type) {
+        case "comment":
+            return "#" + node.value;
+        case "function_definition":
+            break;
+        case "return_statement":
+            break;
+        case "description":
+            break;
+        case "category":
+            break;
+        case "var_assignment":
+            break;
+        case "call_expression":
+            break;
+        case "while_loop":
+            break;
+        case "if_statement":
+            break;
+        case "for_loop":
+            break;
+        case "indexed_assignment":
+            break;
+        case "string_literal":
+            break;
+        case "number_literal":
+            break;
+        case "boolean_literal":
+            break;
+        case "list_literal":
+            break;
+        case "dictionary_literal":
+            break;
+        case "binary_operation":
+            break;
+        case "var_reference":
+            break;
+        case "indexed_access":
+            break;
+        case "function_expression":
+            break;
+
+        default:
+    }
+}
+
 export {
     initializeExecution,
     pushStackFrame,
@@ -478,4 +533,6 @@ export {
     parse,
     simplify,
     execute,
+    decompile,
+    decompileNode,
 };
