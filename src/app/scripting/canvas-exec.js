@@ -472,50 +472,149 @@ function decompile(statements) {
 }
 
 function decompileNode(node) {
+    var decompiled = "";
     switch (node.type) {
         case "comment":
-            return "#" + node.value;
+            decompiled = "#" + node.value;
+            break;
         case "function_definition":
+            decompileFnDef(node);
             break;
         case "return_statement":
+            decompiled += "return " + decompileNode(node.value);
             break;
         case "description":
+            decompiled += "@description " + node.value;
             break;
         case "category":
+            decompiled += "@category " + node.value;
             break;
         case "var_assignment":
+            decompiled +=
+                node.var_name.value + " = " + decompileNode(node.value);
             break;
         case "call_expression":
+            decompiled += node.fn_name.value + "(";
+            for (let i = 0; i < node.arguments.length; i++) {
+                if (i > 0) decompiled += ", ";
+                decompiled += decompileNode(node.arguments[i]);
+            }
+            decompiled += ")";
             break;
         case "while_loop":
+            decompiled += "while " + decompileNode(node.condition) + " {\n";
+            decompiled += decompile(node.body.statements) + "}";
             break;
         case "if_statement":
+            decompiled += "if " + decompileNode(node.condition) + " {\n";
+            decompiled += decompile(node.consequent.statements);
+            if (node.alternate.type === "if_statement") {
+                decompiled += "} else ";
+                decompiled += decompile(node.alternate);
+            } else if (node.alternate === "code_block") {
+                decompiled +=
+                    "} else {\n" + decompile(node.alternate.statements) + "}";
+            } else {
+                decompiled += "}";
+            }
             break;
         case "for_loop":
+            decompiled +=
+                "for " +
+                node.loop_variable.value +
+                " in " +
+                decompileNode(node.iterable) +
+                " {\n" +
+                decompile(node.body.statements) +
+                "}";
             break;
         case "indexed_assignment":
+            decompiled += decompileNode(node.subject);
+            decompiled += " = " + decompileNode(node.value);
             break;
         case "string_literal":
+            decompiled += '"' + node.value + '"';
             break;
         case "number_literal":
+            decompiled += node.value;
             break;
         case "boolean_literal":
+            decompiled += node.value;
             break;
         case "list_literal":
+            decompiled += "[";
+            for (let i = 0; i < node.items; i++) {
+                if (i > 0) decompiled += ", ";
+                decompiled += decompileNode(node.items[i]);
+            }
+            decompiled += "]";
             break;
         case "dictionary_literal":
+            decompiled += "{";
+            for (let i = 0; i < node.entries.length; i++) {
+                var entry = node.entries[i];
+                if (i > 0) decompiled += ", ";
+                decompiled += entry[0].value + ": " + decompileNode(entry[1]);
+            }
+            decompiled += "}";
             break;
         case "binary_operation":
+            decompiled +=
+                decompileNode(node.left) +
+                " " +
+                node.operator.value +
+                " " +
+                decompileNode(node.right);
             break;
         case "var_reference":
+            decompiled += node.var_name.value;
             break;
         case "indexed_access":
+            decompiled +=
+                decompileNode(node.subject) +
+                "[" +
+                decompileNode(node.index) +
+                "]";
             break;
         case "function_expression":
+            decompiled += decompileFnDef(node);
             break;
 
         default:
     }
+    return decompiled;
+}
+
+function decompileFnDef(node) {
+    var decompiled = "function " + node.name.value + "(";
+    for (let i = 0; i < node.parameters.length; i++) {
+        if (i > 0) decompiled += ", ";
+        decompiled += node.parameters[i].name;
+    }
+    decompiled += ") {\n";
+    decompiled += decompile(node.body.statements);
+    decompiled += "}\n";
+    return decompiled;
+}
+
+function isSimpleFunctionCall(node) {
+    // is this a "simple" function call? i.e., a function call with literal
+    //    arguments?
+    if (node.type != "call_expression") return false;
+    for (let j = 0; j < node.arguments.length; j++) {
+        var arg = node.arguments[i];
+        if (
+            ![
+                "string_literal",
+                "number_literal",
+                "boolean_literal",
+                "list_literal",
+                "dictionary_literal",
+            ].includes(arg.type)
+        )
+            return false;
+    }
+    return true;
 }
 
 export {
@@ -535,4 +634,5 @@ export {
     execute,
     decompile,
     decompileNode,
+    isSimpleFunctionCall,
 };

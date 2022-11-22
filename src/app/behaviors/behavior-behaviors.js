@@ -16,7 +16,12 @@ import {
     getVariableValue,
     hasVariableValue,
     setVariable,
+    decompile,
+    decompileNode,
+    isSimpleFunctionCall,
 } from "../scripting/canvas-exec";
+import { PropertyValueType } from "../constants/property-types";
+import { SymBtnShape } from "../../utils/symbol-button";
 
 export const blankBehavior = { source: "", compiled: null };
 
@@ -130,33 +135,98 @@ export class BehaviorManager {
 
     static isBehaviorSimple(behavior) {
         // does the behavior consist only of zero or more function calls with literal arguments?
+        for (let i = 0; i < behavior.compiled.length; i++) {
+            if (!isSimpleFunctionCall(behavior.compiled[i])) return false;
+        }
+        return true;
     }
 
-    static sourceFromNode(behavior, node) {
+    static sourceFromNode(node) {
         // generate source code from the specified node - this will only be done for "simple" code (lists
         //   of function calls) but we should probably do everything - this should be done in canvas-exec
+        return decompileNode(node);
     }
 
     static behaviorFromCompiled(compiled) {
         // create a new behavior by taking the compiled nodes, generating source from them, then compiling
         // the source to align the new source with the compiled nodes
+        try {
+            var source = decompile(compiled);
+            return { source: source, compiled: simplify(parse(source)) };
+        } catch (err) {
+            alert(`Error parsing in behaviorFromCompiled: ${err}`);
+        }
     }
 
     static appendFunctionToBehavior(behavior, fnName) {
         // create a new behavior appending the named function with "default" parameters, and compiling the result
+        var fnSpec = functionFromName(fnName);
+        if (!fnSpec) {
+            alert(`Unknown function in appendFunctionToBehavior: ${fnName}`);
+            return null;
+        }
+        var newSource = "\n" + fnName + "(";
+        for (let i = 0; i < fnSpec.params.length; i++) {
+            if (i > 0) newSource += ", ";
+            newSource += this.defaultParameterValue(fnSpec.params[i].type);
+        }
+        newSource += ")";
+        try {
+            return {
+                source: newSource,
+                compiled: simplify(parse(newSource)),
+            };
+        } catch (err) {
+            alert(`Error parsing in appendFunctionToBehavior: ${err}`);
+            return null;
+        }
+    }
+
+    static defaultParamterValue(ptype) {
+        switch (ptype) {
+            case PropertyValueType.Percent:
+                return 0;
+            case PropertyValueType.ButtonShape:
+                return SymBtnShape.RoundedRect;
+            case PropertyValueType.Color:
+                return '"white"';
+            case PropertyValueType.ScreenObject:
+                return "self";
+            default:
+                return '""';
+        }
     }
 
     static hasFunctionArguments(behavior, fnIdx) {
-        // get description of function arguments for the editing UI
+        // does the behavior at fnIdx have function arguments?
+        var node = behavior.compiled[fnIdx];
+        if (node.type !== "call_expression") return false; // shouldn't happen
+        return node.arguments.length > 0;
     }
 
     static getFunctionArguments(behavior, fnIdx) {
         // get description of function arguments for the editing UI
+        var node = behavior.compiled[fnIdx];
+        if (node.type !== "call_expression") return null; // shouldn't happen
+        return node.arguments;
     }
 
     static setFunctionArguments(behavior, fnIdx, args) {
         // the function specified by fnIdx is to have its arguments set to those specified by args
         //      set them, generate source from behavior, compile it, return a new behavior with the
         //      new source and compiled block
+        var node = behavior.compiled[fnIdx];
+        if (node.type !== "call_expression") return null; // shouldn't happen
+        node.arguments = args;
+        try {
+            var newSource = decompile(behavior.compiled);
+            return {
+                source: newSource,
+                compiled: simplify(parse(newSource)),
+            };
+        } catch (err) {
+            alert(`Error parsing in setFunctionArguments: ${err}`);
+            return null;
+        }
     }
 }

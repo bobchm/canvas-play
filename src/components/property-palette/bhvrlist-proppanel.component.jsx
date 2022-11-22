@@ -13,9 +13,7 @@ import BhvrEditModal from "./bhvredit-proppanel.component";
 import { BehaviorManager } from "../../app/behaviors/behavior-behaviors";
 
 function itemsFromBehavior(bhvr) {
-    return bhvr.compiled.map((node) =>
-        BehaviorManager.sourceFromNode(bhvr, node)
-    );
+    return bhvr.compiled.map((node) => BehaviorManager.sourceFromNode(node));
 }
 
 const BehaviorListPropertyPanel = ({
@@ -65,9 +63,11 @@ const BehaviorListPropertyPanel = ({
                 behavior,
                 fnName
             );
-            setBehavior(newBehavior);
-            setItems(itemsFromBehavior(newBehavior));
-            behaviorCallback(newBehavior);
+            if (newBehavior) {
+                setBehavior(newBehavior);
+                setItems(itemsFromBehavior(newBehavior));
+                behaviorCallback(newBehavior);
+            }
         }
     }
 
@@ -90,9 +90,11 @@ const BehaviorListPropertyPanel = ({
             );
             setEditedFunctionIdx(null);
             setEditedArgs(null);
-            setBehavior(newBehavior);
-            setItems(itemsFromBehavior(newBehavior));
-            behaviorCallback(newBehavior);
+            if (newBehavior) {
+                setBehavior(newBehavior);
+                setItems(itemsFromBehavior(newBehavior));
+                behaviorCallback(newBehavior);
+            }
         }
     }
 
