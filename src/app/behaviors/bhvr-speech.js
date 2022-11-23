@@ -18,6 +18,7 @@ function behaviorSpeakText(text) {
     if (text && text.length) {
         ttsSpeak(text);
     }
+    console.log(`speakText(${text})`);
 }
 
 function localFunctionDefinitions() {

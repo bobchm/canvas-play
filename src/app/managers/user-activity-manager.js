@@ -16,6 +16,11 @@ import { delay } from "../../utils/app-utils";
 import { settingsDefaults } from "./settings-defaults";
 
 import { ttsInit } from "../../utils/textToSpeech";
+import {
+    BehaviorManager,
+    blankBehavior,
+} from "../behaviors/behavior-behaviors";
+import { clearStackTo } from "../scripting/canvas-exec";
 
 class UserActivityManager {
     #currentUserName = null;
@@ -85,8 +90,25 @@ class UserActivityManager {
         return;
     }
 
+    async getCurrentActivity() {
+        return await this.getActivityFromId(this.#currentActivityId);
+    }
+
     async updateActivity(activity) {
         await updateActivity(activity);
+    }
+
+    async updateCurrentActivityBehavior(newBehavior) {
+        var activity = await this.getCurrentActivity();
+        if (activity) {
+            activity.behavior = newBehavior;
+            await updateActivity(activity);
+
+            // need to clear the execution stack down to and including the activity level and return
+            //   the new behavior and the page behavior
+            clearStackTo("activity", true);
+            BehaviorManager.executeWithStackFrame("activity", newBehavior);
+        }
     }
 
     async setActivity(activityName) {
@@ -107,6 +129,10 @@ class UserActivityManager {
                         }
                     }
                 }
+                BehaviorManager.executeWithStackFrame(
+                    "activity",
+                    activity.behavior || blankBehavior
+                );
                 return activity;
             }
         }

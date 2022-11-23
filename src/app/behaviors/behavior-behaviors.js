@@ -19,11 +19,12 @@ import {
     decompile,
     decompileNode,
     isSimpleFunctionCall,
+    logStack,
 } from "../scripting/canvas-exec";
 import { PropertyValueType } from "../constants/property-types";
 import { SymBtnShape } from "../../utils/symbol-button";
 
-export const blankBehavior = { source: "", compiled: null };
+export const blankBehavior = { source: "", compiled: [] };
 
 function getFnCatEntry(catList, cat) {
     for (let i = 0; i < catList.length; i++) {
@@ -44,7 +45,7 @@ export class BehaviorManager {
 
         // set up the execution environment
         initializeExecution();
-        pushStackFrame("_base_");
+        this.pushStackFrame("_base_");
 
         // initialize the different categories of behaviors
         initSystemBehaviors();
@@ -112,9 +113,29 @@ export class BehaviorManager {
         addBuiltInFunction(fnDef);
     }
 
+    static execute(behavior) {
+        if (behavior && behavior.compiled) {
+            try {
+                execute(behavior.compiled);
+            } catch (err) {
+                alert(`Execution error in execute: ${err}`);
+            }
+        }
+    }
+
+    static executeWithStackFrame(frameName, behavior) {
+        this.pushStackFrame(frameName);
+        if (behavior && behavior.compiled) {
+            try {
+                execute(behavior.compiled);
+            } catch (err) {
+                alert(`Execution error in executeWithStackFrame: ${err}`);
+            }
+        }
+    }
+
     static executeFromObject(obj, behavior) {
         if (behavior && behavior.compiled) {
-            pushStackFrame("executeFromObject");
             setVariable("self", obj);
 
             try {
@@ -122,8 +143,18 @@ export class BehaviorManager {
             } catch (err) {
                 alert(`Execution error in executeFromObject: ${err}`);
             }
-            popStackFrame();
+            setVariable("self", null);
         }
+    }
+
+    static popStackFrame() {
+        popStackFrame();
+        logStack(false);
+    }
+
+    static pushStackFrame(frameName) {
+        pushStackFrame(frameName);
+        logStack(false);
     }
 
     static getSelf() {
@@ -165,7 +196,9 @@ export class BehaviorManager {
             alert(`Unknown function in appendFunctionToBehavior: ${fnName}`);
             return null;
         }
-        var newSource = behavior.source + "\n" + fnName + "(";
+        var newSource = behavior.source;
+        if (newSource.length > 0) newSource += "\n";
+        newSource += fnName + "(";
         for (let i = 0; i < fnSpec.params.length; i++) {
             if (i > 0) newSource += ", ";
             newSource += this.defaultParameterValue(fnSpec.params[i].type);

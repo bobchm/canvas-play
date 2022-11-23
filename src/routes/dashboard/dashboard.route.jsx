@@ -13,6 +13,7 @@ import CanvasAppBar from "../../components/canvas-appbar/canvas-appbar.component
 import SettingsModal from "../../components/settings-modal/settings-modal.component";
 
 import "./dashboard.styles.scss";
+import { blankBehavior } from "../../app/behaviors/behavior-behaviors";
 
 const initUserName = "bobchm@gmail.com";
 const appName = "Canvas Play";
@@ -133,9 +134,11 @@ const Dashboard = () => {
             pages: [],
             home: null,
             aspectRatio: aspectRatio,
+            behavior: blankBehavior,
         };
         var actId = await uaManager.addUserActivity(spec);
         if (!actId) return;
+
         // add a placeholder home page
         var pgId = await uaManager.addUserPageToActivity(
             actId,
@@ -143,9 +146,6 @@ const Dashboard = () => {
         );
         if (!pgId) return;
         var activity = await uaManager.getActivityFromId(actId);
-        if (activity) {
-        }
-
         activity.home = pgId;
         await uaManager.updateActivity(activity);
         initializeCurrentUser();

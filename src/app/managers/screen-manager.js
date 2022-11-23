@@ -5,7 +5,10 @@ import TextScreenObject from "../screen-objects/text-screen-object";
 import ImageScreenObject from "../screen-objects/image-screen-object";
 import SymbolButtonScreenObject from "../screen-objects/symbol-button-screen-object";
 import AccessManager from "./access-manager";
-import { blankBehavior } from "../behaviors/behavior-behaviors";
+import {
+    BehaviorManager,
+    blankBehavior,
+} from "../behaviors/behavior-behaviors";
 
 import {
     initCanvas,
@@ -67,8 +70,43 @@ class ScreenManager {
     }
 
     openPage(pageSpec) {
+        if (this.#currentPage) {
+            this.closeCurrentPageBehavior();
+        }
+
         clearCanvas(this.#canvas);
         this.#currentPage = new PageScreenObject(this, null, pageSpec);
+
+        if (this.#currentPage) {
+            this.openCurrentPageBehavior();
+        }
+    }
+
+    openCurrentPageBehavior() {
+        // push the page stack frame, run open page behavior
+        BehaviorManager.executeWithStackFrame(
+            "page",
+            this.#currentPage.getProperty("openBehavior")
+        );
+    }
+
+    closeCurrentPageBehavior() {
+        // run close page behavior, pop page stack frame
+        BehaviorManager.execute(this.#currentPage.getProperty("closeBehavior"));
+        BehaviorManager.popStackFrame();
+    }
+
+    rerunPageBehavior() {
+        // this is specifically for the case where we have edited activity behavior, have run those, and need to do
+        //   page open behaviors now
+        this.openCurrentPageBehavior();
+    }
+
+    changePageOpenBehaviors() {
+        // this case is for when just the page open behaviors have been changed - pop the current page stack
+        //     frame, rerun the behaviors
+        BehaviorManager.popStackFrame();
+        this.openCurrentPageBehavior();
     }
 
     #canvasObjToScreen(scrObj, cnvObj) {

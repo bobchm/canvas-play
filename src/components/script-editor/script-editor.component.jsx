@@ -30,10 +30,12 @@ export default function ScriptEditor({ open, appManager, behavior, onClose }) {
             onClose({ source: bhvr.source, compiled: ast });
         } catch (err) {
             alert(err);
-            inputRef.current.setSelectionRange(
-                err.token.offset,
-                err.token.offset
-            );
+            if (err.token) {
+                inputRef.current.setSelectionRange(
+                    err.token.offset,
+                    err.token.offset
+                );
+            }
             inputRef.current.focus();
         }
     }

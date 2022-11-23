@@ -23,7 +23,7 @@ const BehaviorListPropertyPanel = ({
     appManager,
 }) => {
     const [behavior, setBehavior] = useState(inBehavior || []);
-    const [items, setItems] = useState(itemsFromBehavior(inBehavior));
+    //const [items, setItems] = useState(itemsFromBehavior(inBehavior));
     const [isFunctionPickerOpen, setIsFunctionPickerOpen] = useState(false);
     const [editedFunctionIdx, setEditedFunctionIdx] = useState(-1);
     const [editedArgs, setEditedArgs] = useState([]);
@@ -40,7 +40,7 @@ const BehaviorListPropertyPanel = ({
             // establish the new behavior
             var newBehavior = BehaviorManager.behaviorFromCompiled(bhvrNodes);
             setBehavior(newBehavior);
-            setItems(itemsFromBehavior(newBehavior));
+            //setItems(itemsFromBehavior(newBehavior));
             behaviorCallback(newBehavior);
         }
     }
@@ -50,7 +50,7 @@ const BehaviorListPropertyPanel = ({
         bhvrNodes.splice(idx, 1);
         var newBehavior = BehaviorManager.behaviorFromCompiled(bhvrNodes);
         setBehavior(newBehavior);
-        setItems(itemsFromBehavior(newBehavior));
+        //setItems(itemsFromBehavior(newBehavior));
         behaviorCallback(newBehavior);
     }
 
@@ -67,7 +67,7 @@ const BehaviorListPropertyPanel = ({
             );
             if (newBehavior) {
                 setBehavior(newBehavior);
-                setItems(itemsFromBehavior(newBehavior));
+                //setItems(itemsFromBehavior(newBehavior));
                 behaviorCallback(newBehavior);
             }
         }
@@ -97,7 +97,7 @@ const BehaviorListPropertyPanel = ({
             setEditedArgs(null);
             if (newBehavior) {
                 setBehavior(newBehavior);
-                setItems(itemsFromBehavior(newBehavior));
+                //setItems(itemsFromBehavior(newBehavior));
                 behaviorCallback(newBehavior);
             }
         }
@@ -108,14 +108,17 @@ const BehaviorListPropertyPanel = ({
     }
 
     function handleCloseBhvrEditor(newBehavior) {
+        setIsScriptEditorOpen(false);
         if (newBehavior) {
             setBehavior(newBehavior);
             behaviorCallback(newBehavior);
         }
     }
 
+    var items = itemsFromBehavior(behavior);
+
     return (
-        <div className="behavior-container">
+        <div>
             <Stack
                 className="container"
                 direction="column"
@@ -124,42 +127,44 @@ const BehaviorListPropertyPanel = ({
                 spacing={2}
                 sx={{ paddingBottom: "5px" }}
             >
-                <ReactDragListView
-                    onDragEnd={handleDragEnd}
-                    nodeSelector="li"
-                    handleSelector="a"
-                    style={{ width: "280px" }}
-                >
-                    {items.map((item, idx) => (
-                        <li key={idx}>
-                            <a href="#" style={{ color: "#000000" }}>
-                                <MenuRoundedIcon />
-                            </a>
-                            <span className="bhvr-text">{item}</span>
-                            <span className="bhvr-icons">
-                                {BehaviorManager.hasFunctionArguments(
-                                    behavior,
-                                    idx
-                                ) ? (
+                {items.length > 0 && (
+                    <ReactDragListView
+                        onDragEnd={handleDragEnd}
+                        nodeSelector="li"
+                        handleSelector="a"
+                        style={{ width: "280px" }}
+                    >
+                        {items.map((item, idx) => (
+                            <li key={idx}>
+                                <a href="#" style={{ color: "#000000" }}>
+                                    <MenuRoundedIcon />
+                                </a>
+                                <span className="bhvr-text">{item}</span>
+                                <span className="bhvr-icons">
+                                    {BehaviorManager.hasFunctionArguments(
+                                        behavior,
+                                        idx
+                                    ) ? (
+                                        <IconButton
+                                            style={{ padding: "1px" }}
+                                            onClick={(e) => handleEdit(idx)}
+                                        >
+                                            <EditRoundedIcon />
+                                        </IconButton>
+                                    ) : (
+                                        ""
+                                    )}
                                     <IconButton
                                         style={{ padding: "1px" }}
-                                        onClick={(e) => handleEdit(idx)}
+                                        onClick={(e) => handleDelete(idx)}
                                     >
-                                        <EditRoundedIcon />
+                                        <DeleteRoundedIcon />
                                     </IconButton>
-                                ) : (
-                                    ""
-                                )}
-                                <IconButton
-                                    style={{ padding: "1px" }}
-                                    onClick={(e) => handleDelete(idx)}
-                                >
-                                    <DeleteRoundedIcon />
-                                </IconButton>
-                            </span>
-                        </li>
-                    ))}
-                </ReactDragListView>
+                                </span>
+                            </li>
+                        ))}
+                    </ReactDragListView>
+                )}
                 <Stack
                     className="container"
                     direction="row"

@@ -310,10 +310,11 @@ function stackTop() {
     return globalStack[globalStack.length - 1];
 }
 
-function resetStack(toFrame) {
-    for (let i = 0; i < globalStack.length - 1; i++) {
-        if (globalStack[i] === toFrame) {
-            globalStack = globalStack.slice(0, i + 1);
+function clearStackTo(frameName, including) {
+    for (let i = 0; i < globalStack.length; i++) {
+        if (globalStack[i].name === frameName) {
+            var clearTo = i + (including ? 0 : 1);
+            globalStack = globalStack.slice(0, clearTo);
         }
     }
 }
@@ -617,11 +618,19 @@ function isSimpleFunctionCall(node) {
     return true;
 }
 
+function logStack(verbose) {
+    for (let i = globalStack.length - 1; i >= 0; i--) {
+        console.log(verbose ? globalStack[i] : globalStack[i].name);
+    }
+    console.log("-------------");
+}
+
 export {
     initializeExecution,
     pushStackFrame,
     popStackFrame,
     addStackFrame,
+    clearStackTo,
     addBuiltInFunction,
     functionFromName,
     allFunctionNames,
@@ -635,4 +644,5 @@ export {
     decompile,
     decompileNode,
     isSimpleFunctionCall,
+    logStack,
 };

@@ -99,6 +99,7 @@ export const selectPropertyPanel = (option, propUpdateCallback, appManager) => {
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
                     appManager={appManager}
+                    title={option.type.name}
                 />
             );
         case PropertyValueType.Page:

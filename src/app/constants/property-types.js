@@ -92,6 +92,16 @@ export const PropertyType = {
         valueType: PropertyValueType.Behavior,
         forceReset: false,
     },
+    OpenBehavior: {
+        name: "Open",
+        valueType: PropertyValueType.Behavior,
+        forceReset: false,
+    },
+    CloseBehavior: {
+        name: "Close",
+        valueType: PropertyValueType.Behavior,
+        forceReset: false,
+    },
 };
 
 function checkTextStyleStyle(dest, src, styles, prop) {

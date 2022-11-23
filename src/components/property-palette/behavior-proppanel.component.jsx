@@ -13,6 +13,7 @@ const BehaviorPropertyPanel = ({
     propOption,
     propUpdateCallback,
     appManager,
+    title,
 }) => {
     const [behavior, setBehavior] = useState(propOption.current || []);
     const [isScriptEditorOpen, setIsScriptEditorOpen] = useState(false);
@@ -86,7 +87,7 @@ const BehaviorPropertyPanel = ({
                 sx={{ paddingBottom: "5px" }}
             >
                 <Typography display="block" variant="button" mt={0} mb={0}>
-                    Behavior
+                    {title}
                 </Typography>
                 {isBehaviorSimple() ? simpleBehaviorUI() : complexBehaviorUI()}
             </Stack>

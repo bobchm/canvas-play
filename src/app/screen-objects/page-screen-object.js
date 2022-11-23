@@ -2,12 +2,18 @@ import { PropertyType } from "../constants/property-types";
 import ContainerScreenObject from "./container-screen-object";
 import { ScreenObjectType } from "../constants/screen-object-types";
 import { BackgroundImageStyle } from "../../utils/canvas";
+import {
+    BehaviorManager,
+    blankBehavior,
+} from "../behaviors/behavior-behaviors";
 
 class PageScreenObject extends ContainerScreenObject {
     #name;
     #backgroundColor;
     #backgroundImage;
     #backgroundImageStyle;
+    #openBehavior;
+    #closeBehavior;
 
     constructor(_screenMgr, _parent, _spec) {
         const {
@@ -15,6 +21,8 @@ class PageScreenObject extends ContainerScreenObject {
             backgroundImage = "",
             backgroundImageStyle = BackgroundImageStyle.Center,
             name = "",
+            openBehavior = blankBehavior,
+            closeBehavior = blankBehavior,
         } = _spec;
 
         super(_screenMgr, _parent, _spec);
@@ -23,6 +31,8 @@ class PageScreenObject extends ContainerScreenObject {
         this.#backgroundColor = backgroundColor;
         this.#backgroundImage = backgroundImage;
         this.#backgroundImageStyle = backgroundImageStyle;
+        this.#openBehavior = openBehavior;
+        this.#closeBehavior = closeBehavior;
         _screenMgr?.setBackgroundColor(backgroundColor);
         if (backgroundImage && backgroundImage.length) {
             _screenMgr?.setBackgroundImage(
@@ -40,6 +50,8 @@ class PageScreenObject extends ContainerScreenObject {
             backgroundColor: this.#backgroundColor,
             backgroundImage: this.#backgroundImage,
             backgroundImageStyle: this.#backgroundImageStyle,
+            openBehavior: this.#openBehavior,
+            closeBehavior: this.#closeBehavior,
         };
         return { ...superSpec, ...spec };
     }
@@ -64,6 +76,16 @@ class PageScreenObject extends ContainerScreenObject {
                 current: this.#backgroundImageStyle,
             },
         ];
+        if (selectedObjects.length === 1) {
+            thisProps.push({
+                type: PropertyType.OpenBehavior,
+                current: this.#openBehavior,
+            });
+            thisProps.push({
+                type: PropertyType.CloseBehavior,
+                current: this.#closeBehavior,
+            });
+        }
         return superProps.concat(thisProps);
     }
 
@@ -84,6 +106,14 @@ class PageScreenObject extends ContainerScreenObject {
                 this.#backgroundImageStyle = value;
                 screenMgr.setBackgroundImageStyle(value);
                 break;
+            case PropertyType.OpenBehavior:
+                this.#openBehavior = value;
+                BehaviorManager.popStackFrame();
+
+                break;
+            case PropertyType.CloseBehavior:
+                this.#closeBehavior = value;
+                break;
             default:
                 super.setEditProperty(screenMgr, type, value);
         }
@@ -99,6 +129,10 @@ class PageScreenObject extends ContainerScreenObject {
                 return this.#backgroundImage;
             case "backgroundImageStyle":
                 return this.#backgroundImageStyle;
+            case "openBehavior":
+                return this.#openBehavior;
+            case "closeBehavior":
+                return this.#closeBehavior;
             default:
                 return super.getProperty(type);
         }
@@ -127,6 +161,20 @@ class PageScreenObject extends ContainerScreenObject {
                 this.setEditProperty(
                     screenMgr,
                     PropertyType.BackgroundImageStyle,
+                    value
+                );
+                break;
+            case "openBehavior":
+                this.setEditProperty(
+                    screenMgr,
+                    PropertyType.OpenBehavior,
+                    value
+                );
+                break;
+            case "closeBehavior":
+                this.setEditProperty(
+                    screenMgr,
+                    PropertyType.CloseBehavior,
                     value
                 );
                 break;

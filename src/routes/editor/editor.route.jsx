@@ -12,12 +12,14 @@ import CanvasAppBar from "../../components/canvas-appbar/canvas-appbar.component
 import ButtonBar from "../../components/button-bar/button-bar.component";
 import ListModal from "../../components/list-modal/list-modal.component";
 import TextInputModal from "../../components/text-input-modal/text-input-modal.component";
+import ScriptEditor from "../../components/script-editor/script-editor.component";
 
 import ApplicationManager from "../../app/managers/application-manager";
 import confirmationBox from "../../utils/confirm-box";
 import { defaultPageSpec } from "../../utils/app-utils";
 import { EditMode } from "./edit-modes";
 import { combineProperties } from "../../app/constants/property-types";
+import { blankBehavior } from "../../app/behaviors/behavior-behaviors";
 
 // import { compress, decompress } from "lz-string";
 
@@ -39,6 +41,8 @@ const Editor = () => {
     const [pageList, setPageList] = useState([]);
     const [pagePickerCallback, setPagePickerCallback] = useState(null);
     const [isAddPageOpen, setIsAddPageOpen] = useState(false);
+    const [isScriptEditorOpen, setIsScriptEditorOpen] = useState(false);
+    const [activityBehavior, setActivityBehavior] = useState(blankBehavior);
     const [isLoaded, setIsLoaded] = useState(false);
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
@@ -58,6 +62,10 @@ const Editor = () => {
         { label: "Add Page", callback: handleAddPage },
         { label: "Open Page", callback: handleOpenPage },
         { label: "Delete Page", callback: handleDeletePage },
+        {
+            label: "Edit Activity Behavior",
+            callback: handleEditActivityBehavior,
+        },
     ];
 
     const leftButtonBarSpec = [
@@ -266,6 +274,24 @@ const Editor = () => {
         }
     }
 
+    async function handleEditActivityBehavior() {
+        var uam = appManager.getUserActivityManager();
+        var activity = await uam.getCurrentActivity();
+        if (activity) {
+            setActivityBehavior(activity.behavior || blankBehavior);
+            setIsScriptEditorOpen(true);
+        }
+    }
+
+    async function handleCloseScriptEditor(newBehavior) {
+        setIsScriptEditorOpen(false);
+        if (newBehavior) {
+            var uam = appManager.getUserActivityManager();
+            await uam.updateCurrentActivityBehavior(newBehavior);
+            appManager.getScreenManager().rerunPageBehavior();
+        }
+    }
+
     async function handleBackToActivities() {
         if (
             isModified &&
@@ -386,6 +412,14 @@ const Editor = () => {
                     noLabel="Cancel"
                     noCallback={handleCancelDoAddPage}
                 />
+                {isScriptEditorOpen && (
+                    <ScriptEditor
+                        behavior={activityBehavior}
+                        onClose={handleCloseScriptEditor}
+                        open={isScriptEditorOpen}
+                        appManager={appManager}
+                    />
+                )}
             </Box>
         </div>
     );
