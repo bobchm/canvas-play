@@ -600,8 +600,8 @@ function decompileFnDef(node) {
 function isSimpleFunctionCall(node) {
     // is this a "simple" function call? i.e., a function call with literal
     //    arguments?
-    if (node.type != "call_expression") return false;
-    for (let j = 0; j < node.arguments.length; j++) {
+    if (node.type !== "call_expression") return false;
+    for (let i = 0; i < node.arguments.length; i++) {
         var arg = node.arguments[i];
         if (
             ![

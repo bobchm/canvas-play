@@ -12,15 +12,6 @@ import { jsonDeepCopy } from "../../utils/app-utils";
 const BhvrEditModal = ({ bhvrArgs, appManager, closeCallback }) => {
     const [bArgs, setBArgs] = useState(bhvrArgs);
 
-    function argsFromArgs() {
-        var rargs = {};
-        for (let i = 0; i < bArgs.length; i++) {
-            var arg = bArgs[i];
-            rargs[arg.key] = arg.value;
-        }
-        return rargs;
-    }
-
     function argUpdateCallback({ name }, newValue) {
         var newArgs = jsonDeepCopy(bArgs);
         for (let i = 0; i < newArgs.length; i++) {
@@ -32,9 +23,9 @@ const BhvrEditModal = ({ bhvrArgs, appManager, closeCallback }) => {
         setBArgs(newArgs);
     }
 
-    function argToOption(arg) {
+    function argToPropPanel(arg) {
         return {
-            type: { name: arg.name, valueType: arg.type },
+            type: { name: arg.name, valueType: arg.valueType },
             current: arg.value,
         };
     }
@@ -78,7 +69,7 @@ const BhvrEditModal = ({ bhvrArgs, appManager, closeCallback }) => {
                         >
                             <div className="prop-panel-item">
                                 {selectPropertyPanel(
-                                    argToOption(arg),
+                                    argToPropPanel(arg),
                                     argUpdateCallback,
                                     appManager
                                 )}
@@ -90,7 +81,7 @@ const BhvrEditModal = ({ bhvrArgs, appManager, closeCallback }) => {
                                 mb={0}
                                 noWrap={true}
                             >
-                                {arg.name + ": " + arg.description}
+                                {arg.name}
                             </Typography>
                         </Stack>
                     ))}
@@ -108,7 +99,7 @@ const BhvrEditModal = ({ bhvrArgs, appManager, closeCallback }) => {
                                 color: "black",
                                 borderColor: "black",
                             }}
-                            onClick={() => closeCallback(argsFromArgs())}
+                            onClick={() => closeCallback(bArgs)}
                         >
                             OK
                         </Button>

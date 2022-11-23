@@ -10,6 +10,7 @@ import EditRoundedIcon from "@mui/icons-material/EditRounded";
 
 import ListModal from "../list-modal/list-modal.component";
 import BhvrEditModal from "./bhvredit-proppanel.component";
+import ScriptEditor from "../script-editor/script-editor.component";
 import { BehaviorManager } from "../../app/behaviors/behavior-behaviors";
 
 function itemsFromBehavior(bhvr) {
@@ -27,6 +28,7 @@ const BehaviorListPropertyPanel = ({
     const [editedFunctionIdx, setEditedFunctionIdx] = useState(-1);
     const [editedArgs, setEditedArgs] = useState([]);
     const [areArgumentsOpen, setAreArgumentsOpen] = useState(false);
+    const [isScriptEditorOpen, setIsScriptEditorOpen] = useState(false);
 
     function handleDragEnd(fromIndex, toIndex) {
         if (fromIndex >= 0 && toIndex >= 0) {
@@ -72,7 +74,10 @@ const BehaviorListPropertyPanel = ({
     }
 
     function handleEdit(idx) {
-        var args = BehaviorManager.getFunctionArguments(behavior, idx);
+        var args = BehaviorManager.getFunctionArgumentDescriptions(
+            behavior,
+            idx
+        );
         if (args) {
             setEditedFunctionIdx(idx);
             setEditedArgs(args);
@@ -95,6 +100,17 @@ const BehaviorListPropertyPanel = ({
                 setItems(itemsFromBehavior(newBehavior));
                 behaviorCallback(newBehavior);
             }
+        }
+    }
+
+    function handleEditScript() {
+        setIsScriptEditorOpen(true);
+    }
+
+    function handleCloseBhvrEditor(newBehavior) {
+        if (newBehavior) {
+            setBehavior(newBehavior);
+            behaviorCallback(newBehavior);
         }
     }
 
@@ -144,20 +160,39 @@ const BehaviorListPropertyPanel = ({
                         </li>
                     ))}
                 </ReactDragListView>
-                <Button
-                    variant="outlined"
-                    sx={{
-                        color: "black",
-                        borderColor: "black",
-                    }}
-                    onClick={handleAddFunction}
+                <Stack
+                    className="container"
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="flex-start"
+                    spacing={2}
+                    sx={{ paddingBottom: "5px" }}
                 >
-                    Add
-                </Button>
+                    <Button
+                        variant="outlined"
+                        sx={{
+                            color: "black",
+                            borderColor: "black",
+                        }}
+                        onClick={handleAddFunction}
+                    >
+                        Add
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        sx={{
+                            color: "black",
+                            borderColor: "black",
+                        }}
+                        onClick={handleEditScript}
+                    >
+                        Edit
+                    </Button>
+                </Stack>
             </Stack>
             <ListModal
                 title="Select Behavior"
-                elements={BehaviorManager.allBehaviorNames()}
+                elements={BehaviorManager.allFunctionNames()}
                 onClose={handleCloseFunctionPicker}
                 open={isFunctionPickerOpen}
             />
@@ -166,6 +201,14 @@ const BehaviorListPropertyPanel = ({
                     bhvrArgs={editedArgs}
                     appManager={appManager}
                     closeCallback={handleEditCompleted}
+                />
+            )}
+            {isScriptEditorOpen && (
+                <ScriptEditor
+                    behavior={behavior}
+                    onClose={handleCloseBhvrEditor}
+                    open={isScriptEditorOpen}
+                    appManager={appManager}
                 />
             )}
         </div>

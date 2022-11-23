@@ -165,7 +165,7 @@ export class BehaviorManager {
             alert(`Unknown function in appendFunctionToBehavior: ${fnName}`);
             return null;
         }
-        var newSource = "\n" + fnName + "(";
+        var newSource = behavior.source + "\n" + fnName + "(";
         for (let i = 0; i < fnSpec.params.length; i++) {
             if (i > 0) newSource += ", ";
             newSource += this.defaultParameterValue(fnSpec.params[i].type);
@@ -182,7 +182,7 @@ export class BehaviorManager {
         }
     }
 
-    static defaultParamterValue(ptype) {
+    static defaultParameterValue(ptype) {
         switch (ptype) {
             case PropertyValueType.Percent:
                 return 0;
@@ -204,11 +204,22 @@ export class BehaviorManager {
         return node.arguments.length > 0;
     }
 
-    static getFunctionArguments(behavior, fnIdx) {
+    static getFunctionArgumentDescriptions(behavior, fnIdx) {
         // get description of function arguments for the editing UI
         var node = behavior.compiled[fnIdx];
         if (node.type !== "call_expression") return null; // shouldn't happen
-        return node.arguments;
+        var fnDesc = functionFromName(node.fn_name.value);
+        if (fnDesc === null || fnDesc.params.length !== node.arguments.length)
+            return null;
+        var argDescrs = [];
+        for (let i = 0; i < node.arguments.length; i++) {
+            argDescrs.push({
+                name: fnDesc.params[i].name,
+                valueType: fnDesc.params[i].type,
+                value: node.arguments[i].value,
+            });
+        }
+        return argDescrs;
     }
 
     static setFunctionArguments(behavior, fnIdx, args) {
@@ -217,7 +228,9 @@ export class BehaviorManager {
         //      new source and compiled block
         var node = behavior.compiled[fnIdx];
         if (node.type !== "call_expression") return null; // shouldn't happen
-        node.arguments = args;
+        for (let i = 0; i < args.length; i++) {
+            node.arguments[i].value = args[i].value;
+        }
         try {
             var newSource = decompile(behavior.compiled);
             return {

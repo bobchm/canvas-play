@@ -23,3 +23,5 @@ export function mapRange(value, fromLow, fromHigh, toLow, toHigh) {
 export function jsonDeepCopy(json) {
     return JSON.parse(JSON.stringify(json));
 }
+
+export const delay = (ms) => new Promise((res) => setTimeout(res, ms));

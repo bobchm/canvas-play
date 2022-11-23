@@ -11,6 +11,8 @@ import {
     deletePage,
 } from "../../utils/dbaccess";
 
+import { delay } from "../../utils/app-utils";
+
 import { settingsDefaults } from "./settings-defaults";
 
 import { ttsInit } from "../../utils/textToSpeech";
@@ -49,6 +51,7 @@ class UserActivityManager {
             user = await getUser(userName);
             if (user) break;
             console.log("retrying ...");
+            await delay(1000);
         }
         if (!user) {
             throw new Error(`Unknown user: ${userName}`);
