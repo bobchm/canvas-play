@@ -1,5 +1,8 @@
 import contentURL from "./contentURL";
 
+export const CurrentActivityVersion = "0.00";
+export const CurrentPageVersion = "0.00";
+
 // get all users
 async function getAllUsers() {
     const response = await fetch(contentURL("user/")).catch((error) => {

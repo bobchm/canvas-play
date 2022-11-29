@@ -49,7 +49,6 @@ class ScreenManager {
     #afterAddCallback = null;
     #modifiedCallback = null;
     #selectedObjects = null;
-    #aspectRatio = null;
     #screenRegion;
     #handleInputEvents = false;
     #accessManager = null;
@@ -204,21 +203,19 @@ class ScreenManager {
 
     setupForActivity(activity) {
         // resize and reposition the canvas to accommodate activity.aspectRatio
-        if (activity.aspectRatio !== this.#aspectRatio) {
-            var screenWidth = this.#screenRegion.width;
-            var screenHeight = this.#screenRegion.height;
-            var screenRatio = screenWidth / screenHeight;
-            var newWidth, newHeight;
-            if (screenRatio < activity.aspectRatio) {
-                newWidth = screenWidth;
-                newHeight = newWidth / activity.aspectRatio;
-            } else {
-                newHeight = screenHeight;
-                newWidth = newHeight * activity.aspectRatio;
-            }
-            this.#aspectRatio = activity.aspectRatio;
-            resizeCanvas(this.#canvas, newWidth, newHeight);
+        var screenWidth = this.#screenRegion.width;
+        var screenHeight = this.#screenRegion.height;
+        var screenRatio = screenWidth / screenHeight;
+        var activityRatio = activity.vSize.width / activity.vSize.height;
+        var newWidth, newHeight;
+        if (screenRatio < activityRatio) {
+            newWidth = screenWidth;
+            newHeight = newWidth / activityRatio;
+        } else {
+            newHeight = screenHeight;
+            newWidth = newHeight * activityRatio;
         }
+        resizeCanvas(this.#canvas, newWidth, newHeight);
     }
 
     setModified() {
@@ -248,7 +245,6 @@ class ScreenManager {
             false,
             this.setModified
         );
-        this.#aspectRatio = width / height;
         this.#screenRegion = {
             left: left,
             top: top,

@@ -5,7 +5,7 @@ import List from "@mui/material/List";
 import Typography from "@mui/material/Typography";
 import TextInputModal from "../../components/text-input-modal/text-input-modal.component";
 import confirmationBox from "../../utils/confirm-box";
-import { defaultPageSpec } from "../../utils/app-utils";
+import { defaultActivitySpec, defaultPageSpec } from "../../utils/app-utils";
 import ApplicationManager from "../../app/managers/application-manager";
 
 import ActivityCard from "../../components/activity-card/activity-card.component";
@@ -17,7 +17,7 @@ import { blankBehavior } from "../../app/behaviors/behavior-behaviors";
 
 const initUserName = "bobchm@gmail.com";
 const appName = "Canvas Play";
-const aspectRatio = 4 / 3;
+const defaultVSize = { width: 2000, height: 1500 };
 
 var width = window.innerWidth;
 var height = window.innerHeight - 64;
@@ -76,7 +76,7 @@ const Dashboard = () => {
             addToActivities({
                 name: activity.name,
                 _id: activity._id,
-                aspectRatio: activity.aspectRatio,
+                vSize: activity.vSize,
             });
         }
     }
@@ -129,14 +129,10 @@ const Dashboard = () => {
         setIsActivityCreateOpen(false);
         if (!name || name.length === 0) return;
         var uaManager = applicationManager.getUserActivityManager();
-        var spec = {
-            name: name,
-            pages: [],
-            home: null,
-            aspectRatio: aspectRatio,
-            behavior: blankBehavior,
-        };
-        var actId = await uaManager.addUserActivity(spec);
+
+        var actId = await uaManager.addUserActivity(
+            defaultActivitySpec(name, defaultVSize)
+        );
         if (!actId) return;
 
         // add a placeholder home page
