@@ -1,4 +1,5 @@
 import contentURL from "./contentURL";
+import { preSavePage, postLoadPage } from "./app-utils";
 
 export const CurrentActivityVersion = "0.00";
 export const CurrentPageVersion = "0.00";
@@ -236,20 +237,22 @@ async function getPage(id) {
         return null;
     }
 
-    return response.json();
+    var cPage = await response.json();
+    return postLoadPage(cPage);
 }
 
 // add a new page
 async function DBAddPage(page) {
+    var cPage = preSavePage(page);
     const response = await fetch(contentURL("page/add"), {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify(page),
+        body: JSON.stringify(cPage),
     }).catch((error) => {
         console.log(error);
-        return;
+        return null;
     });
 
     if (!response.ok) {
@@ -260,7 +263,8 @@ async function DBAddPage(page) {
     }
 
     var json = await response.json();
-    return json.ops[0];
+    cPage = json.ops[0];
+    return postLoadPage(cPage);
 }
 
 async function addPage(activityId, page) {
@@ -280,9 +284,10 @@ async function addPage(activityId, page) {
 
 // update page based on object
 async function updatePage(page) {
+    var cPage = preSavePage(page);
     await fetch(contentURL(`page/update/${page._id}`), {
         method: "POST",
-        body: JSON.stringify(page),
+        body: JSON.stringify(cPage),
         headers: {
             "Content-Type": "application/json",
         },
