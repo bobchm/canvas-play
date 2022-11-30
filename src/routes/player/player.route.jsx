@@ -64,7 +64,7 @@ const Player = () => {
             // establish access method since this is play mode - this is all too dependent on order
             // we're doing it here so it happens after settings are set up but before any screen objects are added
             screenMgr.enableAccessMethod(appMgr);
-            userMgr.setActivity(activityName).then((resp) => {
+            appMgr.setActivity(activityName).then((resp) => {
                 var page = startPage
                     ? userMgr.getUserPage(startPage)
                     : userMgr.getHomePage();
