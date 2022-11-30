@@ -7,7 +7,7 @@ export const SymBtnShape = {
     Folder: "folder",
 };
 
-const LabelMargin = 20;
+const LabelMargin = 5;
 
 export const SymbolButtonShapes = [
     { name: "Rectangle", value: SymBtnShape.Rectangle },
@@ -400,6 +400,7 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         var metrics = ctx.measureText(this.label);
         var x = -this.width / 2 + this.justifiedTextX(ctx, metrics);
         var y = -this.height / 2 + textYOffset;
+        y += metrics.fontBoundingBoxAscent;
         ctx.fillText(this.label, x, y);
         this.decorateText(ctx, metrics, x, y);
 
@@ -413,6 +414,7 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
                 this.height -
                 (textYOffset +
                     metrics.fontBoundingBoxDescent +
+                    metrics.fontBoundingBoxAscent +
                     2 * imageMargin);
 
             this.drawImageScaled(ctx, x, y, width, height);
