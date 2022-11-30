@@ -25,6 +25,10 @@ class ApplicationManager {
         }
     }
 
+    resizeScreenRegion(width, height) {
+        this.#screenManager.resizeScreenRegion(width, height);
+    }
+
     getUserActivityManager() {
         return this.#userActivityManager;
     }

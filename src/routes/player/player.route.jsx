@@ -29,8 +29,8 @@ const Player = () => {
         id: "canvas",
         left: 8,
         top: 0,
-        width: window.innerWidth,
-        height: window.innerHeight - aboveCanvasHeight,
+        width: canvasWidth(window.innerWidth),
+        height: canvasHeight(window.innerHeight),
         backgroundColor: "aliceblue",
         doSelection: false,
     };
@@ -54,8 +54,36 @@ const Player = () => {
             searchParams.get("activityName"),
             searchParams.get("startPage")
         );
+
+        function handleResize() {
+            console.log(
+                "(Play) resized to: ",
+                window.innerWidth,
+                "x",
+                window.innerHeight
+            );
+
+            appManager.resizeScreenRegion(
+                canvasWidth(window.innerWidth),
+                canvasHeight(window.innerHeight)
+            );
+        }
+
+        window.addEventListener("resize", handleResize);
+
+        return (_) => {
+            window.removeEventListener("resize", handleResize);
+        };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    function canvasWidth(winWidth) {
+        return winWidth;
+    }
+
+    function canvasHeight(winHeight) {
+        return winHeight - aboveCanvasHeight;
+    }
 
     function initAppForNow(appMgr, userName, activityName, startPage) {
         var userMgr = appMgr.getUserActivityManager();

@@ -49,8 +49,8 @@ const Editor = () => {
         id: "canvas",
         left: 8,
         top: 0,
-        width: window.innerWidth - (drawerWidth + propsWidth),
-        height: window.innerHeight - aboveCanvasHeight,
+        width: canvasWidth(window.innerWidth),
+        height: canvasHeight(window.innerHeight),
         backgroundColor: "aliceblue",
         doSelection: true,
         doObjectEvents: false,
@@ -94,8 +94,36 @@ const Editor = () => {
             searchParams.get("activityName"),
             searchParams.get("startPage")
         );
+
+        function handleResize() {
+            console.log(
+                "(Edit) resized to: ",
+                window.innerWidth,
+                "x",
+                window.innerHeight
+            );
+
+            appManager.resizeScreenRegion(
+                canvasWidth(window.innerWidth),
+                canvasHeight(window.innerHeight)
+            );
+        }
+
+        window.addEventListener("resize", handleResize);
+
+        return (_) => {
+            window.removeEventListener("resize", handleResize);
+        };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    function canvasWidth(winWidth) {
+        return winWidth - (drawerWidth + propsWidth);
+    }
+
+    function canvasHeight(winHeight) {
+        return winHeight - aboveCanvasHeight;
+    }
 
     function initAppForNow(appMgr, userName, activityName, startPage) {
         var userMgr = appManager.getUserActivityManager();

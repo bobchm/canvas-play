@@ -51,6 +51,7 @@ class ScreenManager {
     #modifiedCallback = null;
     #selectedObjects = null;
     #screenRegion;
+    #activitySize;
     #handleInputEvents = false;
     #accessManager = null;
 
@@ -204,10 +205,22 @@ class ScreenManager {
 
     setupForActivity(activity) {
         // resize and reposition the canvas to accommodate activity.aspectRatio
+        this.#activitySize = activity.vSize;
+        this.recalculateCanvas();
+    }
+
+    resizeScreenRegion(width, height) {
+        this.#screenRegion.width = width;
+        this.#screenRegion.height = height;
+        this.recalculateCanvas();
+    }
+
+    recalculateCanvas() {
         var screenWidth = this.#screenRegion.width;
         var screenHeight = this.#screenRegion.height;
         var screenRatio = screenWidth / screenHeight;
-        var activityRatio = activity.vSize.width / activity.vSize.height;
+        var activityRatio =
+            this.#activitySize.width / this.#activitySize.height;
         var newWidth, newHeight;
         if (screenRatio < activityRatio) {
             newWidth = screenWidth;
@@ -217,7 +230,7 @@ class ScreenManager {
             newWidth = newHeight * activityRatio;
         }
         resizeCanvas(this.#canvas, newWidth, newHeight);
-        setZoom(this.#canvas, newWidth / activity.vSize.width);
+        setZoom(this.#canvas, newWidth / this.#activitySize.width);
     }
 
     setModified() {
