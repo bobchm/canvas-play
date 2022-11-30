@@ -28,6 +28,7 @@ import {
     deleteSelectedObjects,
     refresh,
     resizeCanvas,
+    setZoom,
     clearCanvas,
     saveToFile,
     addRect,
@@ -216,6 +217,7 @@ class ScreenManager {
             newWidth = newHeight * activityRatio;
         }
         resizeCanvas(this.#canvas, newWidth, newHeight);
+        setZoom(this.#canvas, newWidth / activity.vSize.width);
     }
 
     setModified() {

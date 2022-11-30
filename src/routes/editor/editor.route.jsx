@@ -100,7 +100,7 @@ const Editor = () => {
     function initAppForNow(appMgr, userName, activityName, startPage) {
         var userMgr = appManager.getUserActivityManager();
         appMgr.setUser(userName).then((response) => {
-            userMgr.setActivity(activityName).then((resp) => {
+            appMgr.setActivity(activityName).then((resp) => {
                 var scrMgr = appManager.getScreenManager();
 
                 var page = startPage

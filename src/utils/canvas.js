@@ -259,6 +259,10 @@ function resizeCanvas(cnv, width, height) {
     containerHeight = height;
 }
 
+function setZoom(cnv, zoom) {
+    cnv.setZoom(zoom);
+}
+
 function finishObjectAdd(cnv, obj, scrObj, inputCallback) {
     obj.id = getObjectId();
     obj.selectable = cnv.selection;
@@ -515,6 +519,7 @@ export {
     refresh,
     clearCanvas,
     resizeCanvas,
+    setZoom,
     createThumbnail,
     saveToFile,
     isImageEmbedded,
