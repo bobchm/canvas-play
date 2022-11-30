@@ -12,8 +12,8 @@ nav {
     border-radius: 5px;
 }
 
-ul,
-li {
+.bhvr-ul,
+.bhvr-li {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -22,12 +22,12 @@ li {
     font-size: 14px;
 }
 
-ul {
+.bhvr-ul {
     position: relative;
     width: 100%;
 }
 
-li {
+.bhvr-li {
     width: 250px;
     padding: 5px 8px;
     position: relative;

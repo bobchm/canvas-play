@@ -135,7 +135,7 @@ const BehaviorListPropertyPanel = ({
                         style={{ width: "280px" }}
                     >
                         {items.map((item, idx) => (
-                            <li key={idx}>
+                            <li className="bhvr-li" key={idx}>
                                 <a href="#" style={{ color: "#000000" }}>
                                     <MenuRoundedIcon />
                                 </a>

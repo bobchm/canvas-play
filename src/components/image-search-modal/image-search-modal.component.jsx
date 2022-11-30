@@ -8,7 +8,7 @@ import List from "@mui/material/List";
 import Stack from "@mui/material/Stack";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import Pagination from "@mui/material/Pagination";
+import ReactPaginate from "react-paginate";
 
 import { ImageServiceType } from "../../utils/image-service";
 import UnsplashImageService from "../../utils/unsplash-image-service";
@@ -19,6 +19,8 @@ import ImageCard from "../image-card/image-card.component";
 import TextInputModal from "../text-input-modal/text-input-modal.component";
 
 import { BackgroundImageStyle } from "../../utils/canvas";
+
+import "./image-search-modal.styles.css";
 
 const PAGE_SZ = 20;
 
@@ -141,9 +143,10 @@ export default function ImageSearchModal({
         setImageData([]);
     }
 
-    function handlePageChange(e, n) {
-        setCurPage(n);
-        doSearch(imageService, n, imageType);
+    function handlePageChange(e) {
+        var pgNum = e.selected + 1;
+        setCurPage(pgNum);
+        doSearch(imageService, pgNum, imageType);
     }
 
     function valueForState(url) {
@@ -293,13 +296,19 @@ export default function ImageSearchModal({
                         ))}
                     </List>
                     {imageData.length > 0 && (
-                        <Pagination
-                            count={numPages}
-                            sx={{ mt: "5px", paddingBottom: "3px" }}
-                            page={curPage}
-                            variant="outlined"
-                            shape="rounded"
-                            onChange={handlePageChange}
+                        <ReactPaginate
+                            breakLabel="..."
+                            nextLabel="next >"
+                            previousLabel="< previous"
+                            pageCount={numPages}
+                            pageRangeDisplayed={curPage}
+                            onPageChange={handlePageChange}
+                            renderOnZeroPageCount={null}
+                            containerClassName={"pagination"}
+                            previousLinkClassName={"pagination__link"}
+                            nextLinkClassName={"pagination__link"}
+                            disabledClassName={"pagination__link--disabled"}
+                            activeClassName={"pagination__link--active"}
                         />
                     )}
                 </Stack>
