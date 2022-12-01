@@ -15,34 +15,34 @@ import { EditMode } from "../../routes/editor/edit-modes";
 
 const options = [
     {
-        icon: <NorthWestRoundedIcon />,
+        icon: <NorthWestRoundedIcon fontSize="large" />,
         label: "",
         mode: EditMode.Select,
     },
     {
-        icon: <CropSquareIcon />,
+        icon: <CropSquareIcon fontSize="large" />,
         label: "",
         mode: EditMode.AddRectangle,
     },
     {
-        icon: <PanoramaFishEyeIcon />,
+        icon: <PanoramaFishEyeIcon fontSize="large" />,
         label: "",
         mode: EditMode.AddCircle,
     },
     {
-        icon: <TextFieldsRoundedIcon />,
+        icon: <TextFieldsRoundedIcon fontSize="large" />,
         label: "",
         mode: EditMode.AddText,
     },
     {
-        icon: <ImageOutlinedIcon />,
+        icon: <ImageOutlinedIcon fontSize="large" />,
         label: "",
         mode: EditMode.AddImage,
     },
     {
         //icon: <PictureInPictureAltRoundedIcon />,
         icon: (
-            <SvgIcon>
+            <SvgIcon fontSize="large">
                 <SymButton />
             </SvgIcon>
         ),
