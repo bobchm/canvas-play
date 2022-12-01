@@ -361,7 +361,7 @@ const Editor = () => {
         }
 
         navigate(
-            `/play?userName=${userName}&activityName=${activityName}&startPage=${currentPageName()}`
+            `/play?userName=${userName}&activityName=${activityName}&startPage=${currentPageName()}&caller=editor`
         );
     }
 

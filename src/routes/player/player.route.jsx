@@ -25,6 +25,11 @@ const Player = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
 
+    const [userName, setUserName] = useState("");
+    const [activityName, setActivityName] = useState("");
+    const [startPage, setStartPage] = useState("");
+    const [caller, setCaller] = useState("");
+
     const canvasSpec = {
         id: "canvas",
         left: 8,
@@ -42,18 +47,23 @@ const Player = () => {
     const leftButtonBarSpec = [
         {
             icon: <ArrowBackRoundedIcon />,
-            callback: handleBackToActivities,
-            tooltip: "Back to Activity Center",
+            callback: handleBackToCaller,
+            tooltip: "Go back to last page",
         },
     ];
 
     useEffect(() => {
-        initAppForNow(
-            appManager,
-            searchParams.get("userName"),
-            searchParams.get("activityName"),
-            searchParams.get("startPage")
-        );
+        var uName = searchParams.get("userName");
+        var aName = searchParams.get("activityName");
+        var sPage = searchParams.get("startPage");
+        var caller = searchParams.get("caller");
+
+        initAppForNow(appManager, uName, aName, sPage);
+
+        setUserName(uName);
+        setActivityName(aName);
+        setStartPage(sPage);
+        setCaller(caller);
 
         function handleResize() {
             console.log(
@@ -110,8 +120,20 @@ const Player = () => {
         });
     }
 
-    async function handleBackToActivities() {
-        navigate("/");
+    async function handleBackToCaller() {
+        if (caller && caller === "editor") {
+            if (startPage && startPage > 0) {
+                navigate(
+                    `/edit?userName=${userName}&activityName=${activityName}&startPage=${startPage}`
+                );
+            } else {
+                navigate(
+                    `/edit?userName=${userName}&activityName=${activityName}`
+                );
+            }
+        } else {
+            navigate("/");
+        }
     }
 
     function resetTitle() {

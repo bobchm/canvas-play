@@ -100,7 +100,9 @@ const Dashboard = () => {
     }
 
     function playActivity(activity) {
-        navigate(`/play?userName=${userName}&activityName=${activity}`);
+        navigate(
+            `/play?userName=${userName}&activityName=${activity}&caller=dashboard`
+        );
     }
 
     function editActivity(activity) {
