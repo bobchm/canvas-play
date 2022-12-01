@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
+import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
@@ -33,6 +34,8 @@ const Editor = () => {
     const [title, setTitle] = useState(appName);
     const [appManager] = useState(() => new ApplicationManager());
     const [appMode, setAppMode] = useState(EditMode.Select);
+    const [userName, setUserName] = useState("");
+    const [activityName, setActivityName] = useState("");
     const [editProperties, setEditProperties] = useState([]);
     const [isModified, setIsModified] = useState(false);
     const [isPagePickerOpen, setIsPagePickerOpen] = useState(false);
@@ -80,6 +83,11 @@ const Editor = () => {
 
     const rightButtonBarSpec = [
         {
+            icon: <PlayArrowRoundedIcon />,
+            callback: handlePlay,
+            tooltip: "Play Page",
+        },
+        {
             icon: <SaveRoundedIcon />,
             callback: handleSavePage,
             tooltip: "Save Page",
@@ -92,12 +100,11 @@ const Editor = () => {
     ];
 
     useEffect(() => {
-        initAppForNow(
-            appManager,
-            searchParams.get("userName"),
-            searchParams.get("activityName"),
-            searchParams.get("startPage")
-        );
+        var uName = searchParams.get("userName");
+        var aName = searchParams.get("activityName");
+        initAppForNow(appManager, uName, aName, searchParams.get("startPage"));
+        setUserName(uName);
+        setActivityName(aName);
 
         function handleResize() {
             console.log(
@@ -337,6 +344,25 @@ const Editor = () => {
             handleSavePage();
         }
         navigate("/");
+    }
+
+    function currentPageName() {
+        return appManager.getScreenManager().getCurrentPageName();
+    }
+
+    async function handlePlay() {
+        if (
+            isModified &&
+            (await confirmationBox(
+                "You made changes. Would you like to save them?"
+            ))
+        ) {
+            handleSavePage();
+        }
+
+        navigate(
+            `/play?userName=${userName}&activityName=${activityName}&startPage=${currentPageName()}`
+        );
     }
 
     function handleSavePage() {

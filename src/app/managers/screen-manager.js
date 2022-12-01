@@ -70,6 +70,10 @@ class ScreenManager {
         return this.#currentPage;
     }
 
+    getCurrentPageName() {
+        return this.#currentPage.getName();
+    }
+
     openPage(pageSpec) {
         if (this.#currentPage) {
             this.closeCurrentPageBehavior();
