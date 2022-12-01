@@ -63,10 +63,12 @@ const Player = () => {
                 window.innerHeight
             );
 
-            appManager.resizeScreenRegion(
-                canvasWidth(window.innerWidth),
-                canvasHeight(window.innerHeight)
-            );
+            if (canvasHeight(window.innerHeight) > 300) {
+                appManager.resizeScreenRegion(
+                    canvasWidth(window.innerWidth),
+                    canvasHeight(window.innerHeight)
+                );
+            }
         }
 
         window.addEventListener("resize", handleResize);

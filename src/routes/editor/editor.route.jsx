@@ -43,6 +43,10 @@ const Editor = () => {
     const [activityBehavior, setActivityBehavior] = useState(blankBehavior);
     const [isLoaded, setIsLoaded] = useState(false);
     const [searchParams] = useSearchParams();
+    const [paletteHeight, setPaletteHeight] = useState(
+        canvasHeight(window.innerHeight)
+    );
+
     const navigate = useNavigate();
 
     const canvasSpec = {
@@ -103,10 +107,15 @@ const Editor = () => {
                 window.innerHeight
             );
 
-            appManager.resizeScreenRegion(
-                canvasWidth(window.innerWidth),
-                canvasHeight(window.innerHeight)
-            );
+            // set a minimum height
+            if (canvasHeight(window.innerHeight) > 300) {
+                appManager.resizeScreenRegion(
+                    canvasWidth(window.innerWidth),
+                    canvasHeight(window.innerHeight)
+                );
+
+                setPaletteHeight(canvasHeight(window.innerHeight));
+            }
         }
 
         window.addEventListener("resize", handleResize);
@@ -403,7 +412,7 @@ const Editor = () => {
                     top={0}
                     left={window.innerWidth - propsWidth}
                     width={propsWidth}
-                    height={canvasSpec.height}
+                    height={paletteHeight}
                     options={editProperties}
                     propUpdateCallback={handlePropValueChange}
                     appManager={appManager}

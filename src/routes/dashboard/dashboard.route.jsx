@@ -16,11 +16,9 @@ import "./dashboard.styles.scss";
 import { blankBehavior } from "../../app/behaviors/behavior-behaviors";
 
 const initUserName = "bobchm@gmail.com";
+const heightOffset = 64;
 const appName = "Canvas Play";
 const defaultVSize = { width: 2000, height: 1500 };
-
-var width = window.innerWidth;
-var height = window.innerHeight - 64;
 
 const Dashboard = () => {
     const [userName, setUserName] = useState(initUserName);
@@ -30,6 +28,8 @@ const Dashboard = () => {
     const [activities, setActivities] = useState([]);
     const [isActivityCreateOpen, setIsActivityCreateOpen] = useState(false);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const [width, setWidth] = useState(window.innerWidth);
+    const [height, setHeight] = useState(window.innerHeight - heightOffset);
 
     const navigate = useNavigate();
 
@@ -49,6 +49,24 @@ const Dashboard = () => {
 
     useEffect(() => {
         setupForUser(userName);
+
+        function handleResize() {
+            console.log(
+                "(Dashboard) resized to: ",
+                window.innerWidth,
+                "x",
+                window.innerHeight
+            );
+
+            setWidth(window.innerWidth);
+            setHeight(window.innerHeight - heightOffset);
+        }
+
+        window.addEventListener("resize", handleResize);
+
+        return (_) => {
+            window.removeEventListener("resize", handleResize);
+        };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
