@@ -14,6 +14,7 @@ import SettingsModal from "../../components/settings-modal/settings-modal.compon
 
 import "./dashboard.styles.scss";
 import { blankBehavior } from "../../app/behaviors/behavior-behaviors";
+import { updateActivity } from "../../utils/dbaccess";
 
 const initUserName = "bobchm@gmail.com";
 const heightOffset = 64;
@@ -95,6 +96,8 @@ const Dashboard = () => {
                 name: activity.name,
                 _id: activity._id,
                 vSize: activity.vSize,
+                image: activity.image,
+                description: activity.description,
             });
         }
     }
@@ -171,6 +174,31 @@ const Dashboard = () => {
         setIsActivityCreateOpen(false);
     }
 
+    async function handleActivityChange(
+        name,
+        newName,
+        newDescription,
+        newImage
+    ) {
+        var uam = applicationManager.getUserActivityManager();
+        var activity = await uam.getActivity(name);
+        if (
+            !activity ||
+            (newName === activity.name &&
+                newDescription === activity.description &&
+                newImage === activity.image)
+        ) {
+            return false;
+        }
+
+        activity.name = newName;
+        activity.description = newDescription;
+        activity.image = newImage;
+
+        updateActivity(activity);
+        return true;
+    }
+
     return (
         <div>
             <CanvasAppBar
@@ -190,9 +218,10 @@ const Dashboard = () => {
                         <ActivityCard
                             key={idx}
                             name={activity.name}
-                            image="https://howtodrawforkids.com/wp-content/uploads/2022/05/9-easy-monkey-drawing-tutorial.jpg"
-                            description="This is my favorite activity!"
+                            image={activity.image}
+                            description={activity.description}
                             actions={activityActions}
+                            changeCallback={handleActivityChange}
                         />
                     ))}
                 </List>
