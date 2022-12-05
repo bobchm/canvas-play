@@ -12,6 +12,9 @@ export function defaultPageSpec(name) {
         backgroundColor: "white",
         name: name,
         children: [],
+        openBehavior: blankBehavior,
+        closeBehavior: blankBehavior,
+        variables: {},
     });
 
     return {
@@ -76,6 +79,7 @@ export function defaultActivitySpec(name, vSize) {
         vSize: vSize,
         version: CurrentActivityVersion,
         behavior: blankBehavior,
+        variables: {},
     };
 }
 

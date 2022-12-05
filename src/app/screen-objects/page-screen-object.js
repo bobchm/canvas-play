@@ -14,6 +14,7 @@ class PageScreenObject extends ContainerScreenObject {
     #backgroundImageStyle;
     #openBehavior;
     #closeBehavior;
+    #variables;
 
     constructor(_screenMgr, _parent, _spec) {
         const {
@@ -23,6 +24,7 @@ class PageScreenObject extends ContainerScreenObject {
             name = "",
             openBehavior = blankBehavior,
             closeBehavior = blankBehavior,
+            variables = {},
         } = _spec;
 
         super(_screenMgr, _parent, _spec);
@@ -33,6 +35,7 @@ class PageScreenObject extends ContainerScreenObject {
         this.#backgroundImageStyle = backgroundImageStyle;
         this.#openBehavior = openBehavior;
         this.#closeBehavior = closeBehavior;
+        this.#variables = variables;
         _screenMgr?.setBackgroundColor(backgroundColor);
         if (backgroundImage && backgroundImage.length) {
             _screenMgr?.setBackgroundImage(
@@ -52,6 +55,7 @@ class PageScreenObject extends ContainerScreenObject {
             backgroundImageStyle: this.#backgroundImageStyle,
             openBehavior: this.#openBehavior,
             closeBehavior: this.#closeBehavior,
+            variables: this.#variables,
         };
         return { ...superSpec, ...spec };
     }

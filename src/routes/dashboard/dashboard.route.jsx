@@ -13,7 +13,6 @@ import CanvasAppBar from "../../components/canvas-appbar/canvas-appbar.component
 import SettingsModal from "../../components/settings-modal/settings-modal.component";
 
 import "./dashboard.styles.scss";
-import { blankBehavior } from "../../app/behaviors/behavior-behaviors";
 import { updateActivity } from "../../utils/dbaccess";
 
 const initUserName = "bobchm@gmail.com";
@@ -134,10 +133,6 @@ const Dashboard = () => {
         }
     }
 
-    function handleAddActivity() {
-        setIsActivityCreateOpen(true);
-    }
-
     function handleOpenSettings() {
         applicationManager.getUserActivityManager().openSettingsChange();
         setIsSettingsOpen(true);
@@ -146,6 +141,10 @@ const Dashboard = () => {
     function settingsCloseCallback() {
         setIsSettingsOpen(false);
         applicationManager.getUserActivityManager().closeSettingsChange();
+    }
+
+    function handleAddActivity() {
+        setIsActivityCreateOpen(true);
     }
 
     async function handleCreateActivity(name) {
