@@ -36,6 +36,10 @@ class UserActivityManager {
 
     #pageHash;
 
+    #activityVariables = {};
+    #areActivityVariablesDirty = false;
+    #dirtyPages = [];
+
     constructor() {
         // we will grab the page data associated with the userName in the future
         // right now, just initialize to having one blank page
@@ -119,6 +123,7 @@ class UserActivityManager {
         for (let i = 0; i < user.activities.length; i++) {
             var activity = await getActivity(user.activities[i]);
             if (activity && activity.name === activityName) {
+                this.clearActivity();
                 this.#currentActivityId = activity._id;
                 for (let j = 0; j < activity.pages.length; j++) {
                     var page = await getPage(activity.pages[j]);
@@ -137,6 +142,35 @@ class UserActivityManager {
             }
         }
         return null;
+    }
+
+    async closeActivity() {
+        if (this.#currentActivityId) {
+            if (this.#areActivityVariablesDirty) {
+                var activity = await this.getActivityFromId(
+                    this.#currentActivityId
+                );
+                if (activity) {
+                    activity.variables = this.#activityVariables;
+                    await this.updateActivity(activity);
+                }
+            }
+
+            for (let i = 0; i < this.#dirtyPages.length; i++) {
+                var page = this.getUserPage(this.#dirtyPages[i]);
+                if (page) {
+                    await this.modifyUserPage(page);
+                }
+            }
+        }
+        this.clearActivity();
+    }
+
+    clearActivity() {
+        this.#currentActivityId = null;
+        this.#activityVariables = {};
+        this.#areActivityVariablesDirty = false;
+        this.#dirtyPages = [];
     }
 
     async addUserActivity(activity) {
@@ -253,6 +287,57 @@ class UserActivityManager {
         if (spec) {
             this.#pageHash.delete(name);
             await deletePage(this.#currentActivityId, spec._id);
+        }
+    }
+
+    hasActivityVariable(varName) {
+        return this.#activityVariables.hasOwnProperty(varName);
+    }
+
+    getActivityVariable(varName) {
+        if (!this.hasActivityVariable(varName)) return null;
+        return this.#activityVariables[varName];
+    }
+
+    puttActivityVariable(varName, value) {
+        if (this.hasActivityVariable(varName)) {
+            this.#activityVariables[varName] = value;
+        }
+    }
+
+    removeActivityVariable(varName) {
+        if (this.hasActivityVariable(varName)) {
+            delete this.#activityVariables[varName];
+        }
+    }
+
+    hasPageVariable(pageName, varName) {
+        var page = this.getUserPage(pageName);
+        if (page) {
+            return page.variables.hasOwnProperty(varName);
+        }
+        return false;
+    }
+
+    getPageVariable(pageName, varName) {
+        var page = this.getUserPage(pageName);
+        if (page) {
+            return page.variables[varName];
+        }
+        return null;
+    }
+
+    putPageVariable(pageName, varName, value) {
+        var page = this.getUserPage(pageName);
+        if (page) {
+            page.variables[varName] = value;
+        }
+    }
+
+    removePageVariable(pageName, varName) {
+        var page = this.getUserPage(pageName);
+        if (page) {
+            delete page.variables[varName];
         }
     }
 }

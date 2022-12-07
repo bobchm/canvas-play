@@ -121,6 +121,7 @@ const Player = () => {
     }
 
     async function handleBackToCaller() {
+        appManager.getUserActivityManager().closeActivity();
         if (caller && caller === "editor") {
             if (startPage && startPage > 0) {
                 navigate(
