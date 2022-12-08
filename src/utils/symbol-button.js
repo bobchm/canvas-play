@@ -400,7 +400,9 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         var metrics = ctx.measureText(this.label);
         var x = -this.width / 2 + this.justifiedTextX(ctx, metrics);
         var y = -this.height / 2 + textYOffset;
-        y += metrics.fontBoundingBoxAscent;
+        if (this.image) {
+            y += metrics.fontBoundingBoxAscent;
+        }
         ctx.fillText(this.label, x, y);
         this.decorateText(ctx, metrics, x, y);
 
