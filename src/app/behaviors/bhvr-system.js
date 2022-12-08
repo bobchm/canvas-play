@@ -131,22 +131,26 @@ function behaviorSetSetting(setting, value) {
 }
 
 function behaviorHasActivityKV(key) {
-    return BehaviorManager.appManager.getUserManager().hasActivityVariable(key);
+    return BehaviorManager.appManager
+        .getUserActivityManager()
+        .hasActivityVariable(key);
 }
 
 function behaviorGetActivityKV(key) {
-    return BehaviorManager.appManager.getUserManager().getActivityVariable(key);
+    return BehaviorManager.appManager
+        .getUserActivityManager()
+        .getActivityVariable(key);
 }
 
 function behaviorPutActivityKV(key, value) {
     return BehaviorManager.appManager
-        .getUserManager()
+        .getUserActivityManager()
         .putActivityVariable(key, value);
 }
 
 function behaviorRemoveActivityKV(key) {
     return BehaviorManager.appManager
-        .getUserManager()
+        .getUserActivityManager()
         .removeActivityVariable(key);
 }
 
@@ -155,7 +159,7 @@ function behaviorHasPageKV(key) {
         .getScreenManager()
         .getCurrentPageName();
     return BehaviorManager.appManager
-        .getUserManager()
+        .getUserActivityManager()
         .hasPageVariable(currentPage, key);
 }
 
@@ -164,7 +168,7 @@ function behaviorGetPageKV(key) {
         .getScreenManager()
         .getCurrentPageName();
     return BehaviorManager.appManager
-        .getUserManager()
+        .getUserActivityManager()
         .getPageVariable(currentPage, key);
 }
 
@@ -173,7 +177,7 @@ function behaviorPutPageKV(key, value) {
         .getScreenManager()
         .getCurrentPageName();
     return BehaviorManager.appManager
-        .getUserManager()
+        .getUserActivityManager()
         .putPageVariable(currentPage, key, value);
 }
 
@@ -182,7 +186,7 @@ function behaviorRemovePageKV(key) {
         .getScreenManager()
         .getCurrentPageName();
     return BehaviorManager.appManager
-        .getUserManager()
+        .getUserActivityManager()
         .removePageVariable(currentPage, key);
 }
 

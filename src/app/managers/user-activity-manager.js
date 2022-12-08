@@ -125,6 +125,7 @@ class UserActivityManager {
             if (activity && activity.name === activityName) {
                 this.clearActivity();
                 this.#currentActivityId = activity._id;
+                this.#activityVariables = activity.variables;
                 for (let j = 0; j < activity.pages.length; j++) {
                     var page = await getPage(activity.pages[j]);
                     if (page) {
@@ -299,30 +300,30 @@ class UserActivityManager {
         return this.#activityVariables[varName];
     }
 
-    puttActivityVariable(varName, value) {
-        if (this.hasActivityVariable(varName)) {
-            this.#activityVariables[varName] = value;
-        }
+    putActivityVariable(varName, value) {
+        this.#activityVariables[varName] = value;
+        this.#areActivityVariablesDirty = true;
     }
 
     removeActivityVariable(varName) {
         if (this.hasActivityVariable(varName)) {
             delete this.#activityVariables[varName];
         }
+        this.#areActivityVariablesDirty = true;
     }
 
     hasPageVariable(pageName, varName) {
         var page = this.getUserPage(pageName);
         if (page) {
-            return page.variables.hasOwnProperty(varName);
+            return page.content.variables.hasOwnProperty(varName);
         }
         return false;
     }
 
     getPageVariable(pageName, varName) {
         var page = this.getUserPage(pageName);
-        if (page) {
-            return page.variables[varName];
+        if (page && page.content.variables.hasOwnProperty(varName)) {
+            return page.content.variables[varName];
         }
         return null;
     }
@@ -330,14 +331,22 @@ class UserActivityManager {
     putPageVariable(pageName, varName, value) {
         var page = this.getUserPage(pageName);
         if (page) {
-            page.variables[varName] = value;
+            page.content.variables[varName] = value;
+            this.markPageVariablesDirty(pageName);
         }
     }
 
     removePageVariable(pageName, varName) {
         var page = this.getUserPage(pageName);
-        if (page) {
-            delete page.variables[varName];
+        if (page && page.content.variables.hasOwnProperty(varName)) {
+            delete page.content.variables[varName];
+            this.markPageVariablesDirty(pageName);
+        }
+    }
+
+    markPageVariablesDirty(pageName) {
+        if (!this.#dirtyPages.includes(pageName)) {
+            this.#dirtyPages.push(pageName);
         }
     }
 }
