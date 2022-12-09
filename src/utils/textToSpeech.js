@@ -25,7 +25,9 @@ function ttsGetVoices() {
     var voices = [];
     for (let i = 0; i < ttsServices.length; i++) {
         var theseVoices = ttsServices[i].service.getVoices();
-        voices = [...voices, ...theseVoices];
+        if (theseVoices) {
+            voices = [...voices, ...theseVoices];
+        }
     }
     return voices;
 }

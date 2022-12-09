@@ -58,7 +58,7 @@ export default function SpeechSettings({ appManager }) {
     const [pitch, setPitch] = useState(ttsGetPitch());
     const [voices] = useState(ttsGetVoices());
     const [langs] = useState(getLanguages(voices));
-    const [voice, setVoice] = useState(ttsGetVoice().name);
+    const [voice, setVoice] = useState(ttsGetVoice() ? ttsGetVoice().name : "");
     const [lang, setLang] = useState(getCurrentLanguage(voices, voice));
     const [langVoices, setLangVoices] = useState(voicesFromLang(voices, lang));
     const [uaManager] = useState(appManager.getUserActivityManager());

@@ -47,6 +47,7 @@ class WebSpeechTTSService extends TTSService {
     }
 
     getVoices() {
+        if (!this.#voices) return null;
         var rvoices = this.#voices.map((voice) => {
             return { service: serviceName, name: voice.name, lang: voice.lang };
         });
@@ -54,17 +55,21 @@ class WebSpeechTTSService extends TTSService {
     }
 
     fullVoiceFromName(name) {
+        if (!this.#voices) return null;
         return this.#voices.find((tvoice) => tvoice.name === name);
     }
 
     getVoice() {
+        if (!this.#speech) return null;
         return this.#speech.voice;
     }
 
     setVoice(name) {
-        if (!this.#voices || this.#voices.length === 0) {
+        if (!this.#voices || this.#voices.length === 0 || !this.#speech) {
             this.#voiceFallenBackFrom = name;
-            this.#speech.voice = null;
+            if (this.#speech) {
+                this.#speech.voice = null;
+            }
             return;
         }
         var voice = this.fullVoiceFromName(name);
@@ -79,49 +84,60 @@ class WebSpeechTTSService extends TTSService {
     }
 
     getVolume() {
+        if (!this.#speech) return 0;
         return Math.round(
             mapRange(this.#speech.volume, lowVolume, hiVolume, 0, 100)
         );
     }
 
     setVolume(ivol) {
-        var vol = mapRange(ivol, 0, 100, lowVolume, hiVolume);
-        if (vol < lowVolume || vol > hiVolume) {
-            throw new Error("Invalid volume for ttsSetVolume");
+        if (this.#speech) {
+            var vol = mapRange(ivol, 0, 100, lowVolume, hiVolume);
+            if (vol < lowVolume || vol > hiVolume) {
+                throw new Error("Invalid volume for ttsSetVolume");
+            }
+            this.#speech.volume = vol;
         }
-        this.#speech.volume = vol;
     }
 
     getRate() {
+        if (!this.#speech) return 0;
         return Math.round(mapRange(this.#speech.rate, lowRate, hiRate, 0, 100));
     }
 
     setRate(irate) {
-        var rate = mapRange(irate, 0, 100, lowRate, hiRate);
-        if (rate < lowRate || rate > hiRate) {
-            throw new Error("Invalid rate for ttsSetRate");
+        if (this.#speech) {
+            var rate = mapRange(irate, 0, 100, lowRate, hiRate);
+            if (rate < lowRate || rate > hiRate) {
+                throw new Error("Invalid rate for ttsSetRate");
+            }
+            this.#speech.rate = rate;
         }
-        this.#speech.rate = rate;
     }
 
     getPitch() {
+        if (!this.#speech) return 0;
         return Math.round(
             mapRange(this.#speech.pitch, lowPitch, hiPitch, 0, 100)
         );
     }
 
     setPitch(ipitch) {
-        var pitch = mapRange(ipitch, 0, 100, lowPitch, hiPitch);
-        if (pitch < lowPitch || pitch > hiPitch) {
-            throw new Error("Invalid pitch for ttsSetPitch");
+        if (this.#speech) {
+            var pitch = mapRange(ipitch, 0, 100, lowPitch, hiPitch);
+            if (pitch < lowPitch || pitch > hiPitch) {
+                throw new Error("Invalid pitch for ttsSetPitch");
+            }
+            this.#speech.pitch = pitch;
         }
-        this.#speech.pitch = pitch;
     }
 
     speak(text) {
-        window.speechSynthesis.cancel();
-        this.#speech.text = text;
-        window.speechSynthesis.speak(this.#speech);
+        if (this.#speech) {
+            window.speechSynthesis.cancel();
+            this.#speech.text = text;
+            window.speechSynthesis.speak(this.#speech);
+        }
     }
 
     pauseSpeech() {
