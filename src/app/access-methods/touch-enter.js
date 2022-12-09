@@ -23,15 +23,16 @@ class TouchEnter extends AccessMethod {
                 var t_o = appManager.getSetting("touchEnterHoldTime");
                 if (t_o <= 0) {
                     this.doSelection(appManager, scrObj, false);
+                } else {
+                    scrObj.highlight(
+                        appManager,
+                        appManager.getSetting("touchEnterHighlightType")
+                    );
+                    this.#currentTimeout = setTimeout(
+                        () => this.doSelection(appManager, scrObj, true),
+                        t_o
+                    );
                 }
-                scrObj.highlight(
-                    appManager,
-                    appManager.getSetting("touchEnterHighlightType")
-                );
-                this.#currentTimeout = setTimeout(
-                    () => this.doSelection(appManager, scrObj, true),
-                    t_o
-                );
                 break;
             case InputEvent.ObjectMouseUp:
             case InputEvent.ObjectMouseExit:

@@ -153,31 +153,31 @@ function behaviorGetCurrentPage() {
 }
 
 function behaviorGetAngle(obj) {
-    return getAngle(obj);
+    return getAngle(obj.getCanvasObj());
 }
 
 function behaviorRotateTo(obj, angle) {
     var cnv = BehaviorManager.appManager.getScreenManager().getCanvas();
-    rotateTo(cnv, obj, angle);
+    rotateTo(cnv, obj.getCanvasObj(), angle);
 }
 
 function behaviorRotateBy(obj, dAngle) {
     var cnv = BehaviorManager.appManager.getScreenManager().getCanvas();
-    rotateBy(cnv, obj, dAngle);
+    rotateBy(cnv, obj.getCanvasObj(), dAngle);
 }
 
 function behaviorGetPosition(obj) {
-    return getPosition(obj);
+    return getPosition(obj.getCanvasObj());
 }
 
 function behaviorMoveTo(obj, x, y) {
     var cnv = BehaviorManager.appManager.getScreenManager().getCanvas();
-    moveTo(cnv, obj, x, y);
+    moveTo(cnv, obj.getCanvasObj(), x, y);
 }
 
 function behaviorMoveBy(obj, dx, dy) {
     var cnv = BehaviorManager.appManager.getScreenManager().getCanvas();
-    moveBy(cnv, obj, dx, dy);
+    moveBy(cnv, obj.getCanvasObj(), dx, dy);
 }
 
 export { initScreenObjectBehaviors };

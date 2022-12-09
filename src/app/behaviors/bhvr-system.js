@@ -103,15 +103,6 @@ function initSystemBehaviors() {
         description:
             "Remove the specified key/value pair from the current page.",
     });
-
-    BehaviorManager.addBuiltInFunction({
-        name: "pageRemoveKV",
-        function: behaviorRemovePageKV,
-        parameters: [{ type: PropertyValueType.Text, name: "key" }],
-        category: "system",
-        description:
-            "Remove the specified key/value pair from the current page.",
-    });
 }
 
 function behaviorGetSetting(setting) {

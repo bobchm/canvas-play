@@ -123,7 +123,7 @@ const Player = () => {
     async function handleBackToCaller() {
         appManager.getUserActivityManager().closeActivity();
         if (caller && caller === "editor") {
-            if (startPage && startPage > 0) {
+            if (startPage && startPage.length > 0) {
                 navigate(
                     `/edit?userName=${userName}&activityName=${activityName}&startPage=${startPage}`
                 );

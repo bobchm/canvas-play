@@ -140,7 +140,12 @@ function clearMousedownCallback(cnv, callbk) {
 }
 
 function setMousedownCallback(cnv, callbk) {
-    cnv.on("mouse:down", callbk);
+    cnv.on("mouse:down", (options) => {
+        var zoom = cnv.getZoom();
+        options.pointer.x /= zoom;
+        options.pointer.y /= zoom;
+        callbk(options);
+    });
 }
 
 function disableSelection(cnv) {
