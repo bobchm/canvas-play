@@ -488,6 +488,36 @@ function embedImage(cnv, image) {
     }
 }
 
+function getAngle(obj) {
+    return obj.angle;
+}
+
+function rotateTo(cnv, obj, angle) {
+    angle %= 360;
+    obj.rotate(angle);
+    cnv.renderAll();
+}
+
+function rotateBy(cnv, obj, dAngle) {
+    var angle = (getAngle(obj) + dAngle) % 360;
+    rotateTo(cnv, obj, angle);
+}
+
+function getPosition(obj) {
+    return { x: obj.left, y: obj.top };
+}
+
+function moveTo(cnv, obj, x, y) {
+    obj.left = x;
+    obj.top = y;
+    obj.setCoords(true);
+    cnv.renderAll();
+}
+
+function moveBy(cnv, obj, dx, dy) {
+    moveTo(cnv, obj, obj.left + dx, obj.top + dy);
+}
+
 export {
     initCanvas,
     addRect,
@@ -524,4 +554,10 @@ export {
     saveToFile,
     isImageEmbedded,
     embedImage,
+    getAngle,
+    rotateTo,
+    rotateBy,
+    getPosition,
+    moveTo,
+    moveBy,
 };

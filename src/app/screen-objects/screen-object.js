@@ -87,6 +87,13 @@ class ScreenObject {
         }
     }
 
+    getProperty(type) {
+        if (type === "angle") {
+            return;
+        }
+        return null;
+    }
+
     highlight(appManager, highlightType) {
         return;
     }
@@ -101,10 +108,6 @@ class ScreenObject {
 
     select() {
         return;
-    }
-
-    getProperty(property) {
-        return null;
     }
 
     async setProperty(screenMgr, property, value) {

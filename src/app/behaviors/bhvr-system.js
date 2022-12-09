@@ -5,6 +5,7 @@ import {
     ttsSetRate,
     ttsSetVolume,
 } from "../../utils/textToSpeech";
+import { delay } from "../../utils/app-utils";
 
 function initSystemBehaviors() {
     BehaviorManager.addBuiltInFunction({
@@ -27,7 +28,7 @@ function initSystemBehaviors() {
     });
 
     BehaviorManager.addBuiltInFunction({
-        name: "ActivityHasKV",
+        name: "activityHasKV",
         function: behaviorHasActivityKV,
         parameters: [{ type: PropertyValueType.Text, name: "key" }],
         category: "system",
@@ -36,7 +37,7 @@ function initSystemBehaviors() {
     });
 
     BehaviorManager.addBuiltInFunction({
-        name: "ActivityGetKV",
+        name: "activityGetKV",
         function: behaviorGetActivityKV,
         parameters: [{ type: PropertyValueType.Text, name: "key" }],
         category: "system",
@@ -45,7 +46,7 @@ function initSystemBehaviors() {
     });
 
     BehaviorManager.addBuiltInFunction({
-        name: "ActivityPutKV",
+        name: "activityPutKV",
         function: behaviorPutActivityKV,
         parameters: [
             { type: PropertyValueType.Text, name: "key" },
@@ -57,7 +58,7 @@ function initSystemBehaviors() {
     });
 
     BehaviorManager.addBuiltInFunction({
-        name: "ActivityRemoveKV",
+        name: "activityRemoveKV",
         function: behaviorRemoveActivityKV,
         parameters: [{ type: PropertyValueType.Text, name: "key" }],
         category: "system",
@@ -66,7 +67,7 @@ function initSystemBehaviors() {
     });
 
     BehaviorManager.addBuiltInFunction({
-        name: "PageHasKV",
+        name: "pageHasKV",
         function: behaviorHasPageKV,
         parameters: [{ type: PropertyValueType.Text, name: "key" }],
         category: "system",
@@ -75,7 +76,7 @@ function initSystemBehaviors() {
     });
 
     BehaviorManager.addBuiltInFunction({
-        name: "PageGetKV",
+        name: "pageGetKV",
         function: behaviorGetPageKV,
         parameters: [{ type: PropertyValueType.Text, name: "key" }],
         category: "system",
@@ -84,7 +85,7 @@ function initSystemBehaviors() {
     });
 
     BehaviorManager.addBuiltInFunction({
-        name: "PagePutKV",
+        name: "pagePutKV",
         function: behaviorPutPageKV,
         parameters: [
             { type: PropertyValueType.Text, name: "key" },
@@ -95,7 +96,16 @@ function initSystemBehaviors() {
     });
 
     BehaviorManager.addBuiltInFunction({
-        name: "PageRemoveKV",
+        name: "pageRemoveKV",
+        function: behaviorRemovePageKV,
+        parameters: [{ type: PropertyValueType.Text, name: "key" }],
+        category: "system",
+        description:
+            "Remove the specified key/value pair from the current page.",
+    });
+
+    BehaviorManager.addBuiltInFunction({
+        name: "pageRemoveKV",
         function: behaviorRemovePageKV,
         parameters: [{ type: PropertyValueType.Text, name: "key" }],
         category: "system",

@@ -1,5 +1,13 @@
 import { BehaviorManager } from "./behavior-behaviors";
 import { PropertyValueType } from "../constants/property-types";
+import {
+    getAngle,
+    rotateTo,
+    rotateBy,
+    getPosition,
+    moveTo,
+    moveBy,
+} from "../../utils/canvas";
 
 function initScreenObjectBehaviors() {
     BehaviorManager.addBuiltInFunction({
@@ -48,7 +56,69 @@ function initScreenObjectBehaviors() {
         function: behaviorGetCurrentPage,
         parameters: [],
         category: "screen object",
-        description: "Gethe currently active page.",
+        description: "Get the currently active page.",
+    });
+
+    BehaviorManager.addBuiltInFunction({
+        name: "getAngle",
+        function: behaviorGetAngle,
+        parameters: [{ type: PropertyValueType.ScreenObject, name: "object" }],
+        category: "screen object",
+        description: "Get the angle of the specified object.",
+    });
+
+    BehaviorManager.addBuiltInFunction({
+        name: "rotateTo",
+        function: behaviorRotateTo,
+        parameters: [
+            { type: PropertyValueType.ScreenObject, name: "object" },
+            { type: PropertyValueType.Number, name: "angle" },
+        ],
+        category: "screen object",
+        description: "Rotate the object to the specified angle.",
+    });
+
+    BehaviorManager.addBuiltInFunction({
+        name: "rotateBy",
+        function: behaviorRotateBy,
+        parameters: [
+            { type: PropertyValueType.ScreenObject, name: "object" },
+            { type: PropertyValueType.Number, name: "dAngle" },
+        ],
+        category: "screen object",
+        description: "Rotate the object by the specified angle.",
+    });
+
+    BehaviorManager.addBuiltInFunction({
+        name: "getPosition",
+        function: behaviorGetPosition,
+        parameters: [{ type: PropertyValueType.ScreenObject, name: "object" }],
+        category: "screen object",
+        description: "Get the position of the specified object.",
+    });
+
+    BehaviorManager.addBuiltInFunction({
+        name: "moveTo",
+        function: behaviorMoveTo,
+        parameters: [
+            { type: PropertyValueType.ScreenObject, name: "object" },
+            { type: PropertyValueType.Number, name: "x" },
+            { type: PropertyValueType.Number, name: "y" },
+        ],
+        category: "screen object",
+        description: "Move the object to the specified position.",
+    });
+
+    BehaviorManager.addBuiltInFunction({
+        name: "moveBy",
+        function: behaviorMoveBy,
+        parameters: [
+            { type: PropertyValueType.ScreenObject, name: "object" },
+            { type: PropertyValueType.Number, name: "dx" },
+            { type: PropertyValueType.Number, name: "dy" },
+        ],
+        category: "screen object",
+        description: "Move the object by the specified x and y amounts.",
     });
 }
 
@@ -79,7 +149,35 @@ function behaviorGetMyPage() {
 }
 
 function behaviorGetCurrentPage() {
-    return BehaviorManager.getScreenManager().getCurrentPage();
+    return BehaviorManager.appManager.getScreenManager().getCurrentPage();
+}
+
+function behaviorGetAngle(obj) {
+    return getAngle(obj);
+}
+
+function behaviorRotateTo(obj, angle) {
+    var cnv = BehaviorManager.appManager.getScreenManager().getCanvas();
+    rotateTo(cnv, obj, angle);
+}
+
+function behaviorRotateBy(obj, dAngle) {
+    var cnv = BehaviorManager.appManager.getScreenManager().getCanvas();
+    rotateBy(cnv, obj, dAngle);
+}
+
+function behaviorGetPosition(obj) {
+    return getPosition(obj);
+}
+
+function behaviorMoveTo(obj, x, y) {
+    var cnv = BehaviorManager.appManager.getScreenManager().getCanvas();
+    moveTo(cnv, obj, x, y);
+}
+
+function behaviorMoveBy(obj, dx, dy) {
+    var cnv = BehaviorManager.appManager.getScreenManager().getCanvas();
+    moveBy(cnv, obj, dx, dy);
 }
 
 export { initScreenObjectBehaviors };

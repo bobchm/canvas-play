@@ -13,6 +13,7 @@ export const PropertyValueType = {
     Page: "page",
     Behavior: "behavior",
     ScreenObject: "screenobject",
+    Number: "number",
 };
 
 export const PropertyType = {
