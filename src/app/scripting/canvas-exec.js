@@ -159,13 +159,13 @@ function executeWhileLoop(node) {
 function executeIfStatement(node) {
     if (evaluateExpression(node.condition)) {
         executeCodeBlock(node.consequent);
-    }
-
-    // else clause can either be code block or another if statement (emulating elseif)
-    else if (node.alternate.type === "if_statement") {
-        executeStatement(node.alternate);
-    } else {
-        executeCodeBlock(node.alternate);
+    } else if (node.alternate) {
+        // else clause can either be code block or another if statement (emulating elseif)
+        if (node.alternate.type === "if_statement") {
+            executeStatement(node.alternate);
+        } else {
+            executeCodeBlock(node.alternate);
+        }
     }
 }
 

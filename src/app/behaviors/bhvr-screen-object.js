@@ -5,9 +5,29 @@ import {
     rotateTo,
     rotateBy,
     getPosition,
+    getDimensions,
     moveTo,
     moveBy,
+    setDimensions,
+    animatePosition,
+    animateDimensions,
+    animateAngle,
+    animateOpacity,
 } from "../../utils/canvas";
+
+export const AnimationType = {
+    Normal: "normal", // don't add field
+    Bounce: "bounce", // easeOutBounce
+    Elastic: "elastic", // easeOutElastic
+    Smooth: "smooth", // easeOutExpo
+};
+
+export const AnimationTypes = [
+    { name: "Normal", value: AnimationType.Normal },
+    { name: "Bounce", value: AnimationType.Bounce },
+    { name: "Elastic", value: AnimationType.Elastic },
+    { name: "Smooth", value: AnimationType.Smooth },
+];
 
 function initScreenObjectBehaviors() {
     BehaviorManager.addBuiltInFunction({
@@ -98,6 +118,29 @@ function initScreenObjectBehaviors() {
     });
 
     BehaviorManager.addBuiltInFunction({
+        name: "getDimensions",
+        function: behaviorGetDimensions,
+        parameters: [{ type: PropertyValueType.ScreenObject, name: "object" }],
+        category: "screen object",
+        description:
+            "Get the dimensions (x, y, width, height) of the specified object.",
+    });
+
+    BehaviorManager.addBuiltInFunction({
+        name: "setDimensions",
+        function: behaviorSetDimensions,
+        parameters: [
+            { type: PropertyValueType.ScreenObject, name: "object" },
+            { type: PropertyValueType.Number, name: "x" },
+            { type: PropertyValueType.Number, name: "y" },
+            { type: PropertyValueType.Number, name: "width" },
+            { type: PropertyValueType.Number, name: "height" },
+        ],
+        category: "screen object",
+        description: "Move the object to the specified position.",
+    });
+
+    BehaviorManager.addBuiltInFunction({
         name: "moveTo",
         function: behaviorMoveTo,
         parameters: [
@@ -119,6 +162,62 @@ function initScreenObjectBehaviors() {
         ],
         category: "screen object",
         description: "Move the object by the specified x and y amounts.",
+    });
+
+    BehaviorManager.addBuiltInFunction({
+        name: "animatePosition",
+        function: behaviorAnimatePosition,
+        parameters: [
+            { type: PropertyValueType.ScreenObject, name: "object" },
+            { type: PropertyValueType.Number, name: "x" },
+            { type: PropertyValueType.Number, name: "y" },
+            { type: PropertyValueType.Number, name: "msecs" },
+            { type: PropertyValueType.AnimationType, name: "type" },
+        ],
+        category: "screen object",
+        description: "Animate the object to the specified position.",
+    });
+
+    BehaviorManager.addBuiltInFunction({
+        name: "animateDimensions",
+        function: behaviorAnimateDimensions,
+        parameters: [
+            { type: PropertyValueType.ScreenObject, name: "object" },
+            { type: PropertyValueType.Number, name: "x" },
+            { type: PropertyValueType.Number, name: "y" },
+            { type: PropertyValueType.Number, name: "width" },
+            { type: PropertyValueType.Number, name: "height" },
+            { type: PropertyValueType.Number, name: "msecs" },
+            { type: PropertyValueType.AnimationType, name: "type" },
+        ],
+        category: "screen object",
+        description: "Animate the object to have the specified dimensions.",
+    });
+
+    BehaviorManager.addBuiltInFunction({
+        name: "animateAngle",
+        function: behaviorAnimateAngle,
+        parameters: [
+            { type: PropertyValueType.ScreenObject, name: "object" },
+            { type: PropertyValueType.Number, name: "angle" },
+            { type: PropertyValueType.Number, name: "msecs" },
+            { type: PropertyValueType.AnimationType, name: "type" },
+        ],
+        category: "screen object",
+        description: "Animate the object to the specified angle.",
+    });
+
+    BehaviorManager.addBuiltInFunction({
+        name: "animateOpacity",
+        function: behaviorAnimateOpacity,
+        parameters: [
+            { type: PropertyValueType.ScreenObject, name: "object" },
+            { type: PropertyValueType.Number, name: "opacity" },
+            { type: PropertyValueType.Number, name: "msecs" },
+            { type: PropertyValueType.AnimationType, name: "type" },
+        ],
+        category: "screen object",
+        description: "Animate the object to the specified opacity.",
     });
 }
 
@@ -170,6 +269,15 @@ function behaviorGetPosition(obj) {
     return getPosition(obj.getCanvasObj());
 }
 
+function behaviorGetDimensions(obj) {
+    return getDimensions(obj.getCanvasObj());
+}
+
+function behaviorSetDimensions(obj, x, y, width, height) {
+    var cnv = BehaviorManager.appManager.getScreenManager().getCanvas();
+    setDimensions(cnv, obj.getCanvasObj(), x, y, width, height);
+}
+
 function behaviorMoveTo(obj, x, y) {
     var cnv = BehaviorManager.appManager.getScreenManager().getCanvas();
     moveTo(cnv, obj.getCanvasObj(), x, y);
@@ -178,6 +286,35 @@ function behaviorMoveTo(obj, x, y) {
 function behaviorMoveBy(obj, dx, dy) {
     var cnv = BehaviorManager.appManager.getScreenManager().getCanvas();
     moveBy(cnv, obj.getCanvasObj(), dx, dy);
+}
+
+function behaviorAnimatePosition(obj, x, y, msecs, animType) {
+    var cnv = BehaviorManager.appManager.getScreenManager().getCanvas();
+    animatePosition(cnv, obj.getCanvasObj(), x, y, msecs, animType);
+}
+
+function behaviorAnimateDimensions(obj, x, y, width, height, msecs, animType) {
+    var cnv = BehaviorManager.appManager.getScreenManager().getCanvas();
+    animateDimensions(
+        cnv,
+        obj.getCanvasObj(),
+        x,
+        y,
+        width,
+        height,
+        msecs,
+        animType
+    );
+}
+
+function behaviorAnimateAngle(obj, angle, msecs, animType) {
+    var cnv = BehaviorManager.appManager.getScreenManager().getCanvas();
+    animateAngle(cnv, obj.getCanvasObj(), angle, msecs, animType);
+}
+
+function behaviorAnimateOpacity(obj, opacity, msecs, animType) {
+    var cnv = BehaviorManager.appManager.getScreenManager().getCanvas();
+    animateOpacity(cnv, obj.getCanvasObj(), opacity / 100, msecs, animType);
 }
 
 export { initScreenObjectBehaviors };

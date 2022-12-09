@@ -512,6 +512,19 @@ function getPosition(obj) {
     return { x: obj.left, y: obj.top };
 }
 
+function getDimensions(obj) {
+    return { x: obj.left, y: obj.top, width: obj.width, height: obj.height };
+}
+
+function setDimensions(cnv, obj, x, y, width, height) {
+    obj.left = x;
+    obj.top = y;
+    obj.width = width;
+    obj.height = height;
+    obj.setCoords(true);
+    cnv.renderAll();
+}
+
 function moveTo(cnv, obj, x, y) {
     obj.left = x;
     obj.top = y;
@@ -521,6 +534,45 @@ function moveTo(cnv, obj, x, y) {
 
 function moveBy(cnv, obj, dx, dy) {
     moveTo(cnv, obj, obj.left + dx, obj.top + dy);
+}
+
+function xlateOptions(cnv, dur, animType) {
+    var options = {
+        duration: dur,
+        onChange: cnv.renderAll.bind(cnv),
+    };
+    switch (animType) {
+        case "bounce":
+            options.easing = fabric.util.ease["easeOutBounce"];
+            break;
+        case "elastic":
+            options.easing = fabric.util.ease["easeOutElastic"];
+            break;
+        case "smooth":
+            options.easing = fabric.util.ease["easeOutExpo"];
+            break;
+        default:
+    }
+    return options;
+}
+
+function animatePosition(cnv, obj, x, y, dur, animType) {
+    obj.animate({ left: x, top: y }, xlateOptions(cnv, dur, animType));
+}
+
+function animateDimensions(cnv, obj, x, y, width, height, dur, animType) {
+    obj.animate(
+        { left: x, top: y, width: width, height: height },
+        xlateOptions(cnv, dur, animType)
+    );
+}
+
+function animateAngle(cnv, obj, angle, dur, animType) {
+    obj.animate("angle", angle, xlateOptions(cnv, dur, animType));
+}
+
+function animateOpacity(cnv, obj, opacity, dur, animType) {
+    obj.animate("opacity", opacity, xlateOptions(cnv, dur, animType));
 }
 
 export {
@@ -563,6 +615,12 @@ export {
     rotateTo,
     rotateBy,
     getPosition,
+    getDimensions,
+    setDimensions,
     moveTo,
     moveBy,
+    animatePosition,
+    animateDimensions,
+    animateAngle,
+    animateOpacity,
 };
