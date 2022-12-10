@@ -248,9 +248,15 @@ function behaviorGetScreenObject(id) {
 
 function behaviorGetMyPage() {
     var self = BehaviorManager.getSelf();
-    if (!self) return null;
+    if (!self) {
+        console.log("getMyPage-self is null");
+        return null;
+    }
 
-    return self.getPage();
+    var page = self.getPage();
+    console.log("getMyPage-page");
+    console.log(page);
+    return page;
 }
 
 function behaviorGetCurrentPage() {
