@@ -235,9 +235,15 @@ function behaviorSetProperty(obj, attribute, value) {
 
 function behaviorGetScreenObject(id) {
     var page = behaviorGetMyPage();
-    if (!page) return null;
+    if (!page) {
+        console.log("getScreenObject-page is null");
+        return null;
+    }
 
-    return page.getChildFromId(id);
+    var obj = page.getChildFromId(id);
+    console.log("getScreenObject-object");
+    console.log(obj);
+    return obj;
 }
 
 function behaviorGetMyPage() {
