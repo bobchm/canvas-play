@@ -46,11 +46,15 @@ class ScreenObject {
     getChildren() {
         return [];
     }
+    
+    isPage() {
+        return false;
+    }
 
     getPage() {
         var obj = this;
         while (obj) {
-            if (obj.constructor.name === "PageScreenObject") {
+            if (obj.isPage()) {
                 return obj;
             }
             obj = obj.getParent();
