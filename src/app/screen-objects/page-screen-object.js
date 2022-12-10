@@ -190,6 +190,10 @@ class PageScreenObject extends ContainerScreenObject {
     getName() {
         return this.#name;
     }
+    
+    isPage() {
+        return true;
+    }
 }
 
 export default PageScreenObject;
