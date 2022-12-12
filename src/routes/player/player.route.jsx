@@ -66,12 +66,12 @@ const Player = () => {
         setCaller(caller);
 
         function handleResize() {
-            console.log(
-                "(Play) resized to: ",
-                window.innerWidth,
-                "x",
-                window.innerHeight
-            );
+            // console.log(
+            //     "(Play) resized to: ",
+            //     window.innerWidth,
+            //     "x",
+            //     window.innerHeight
+            // );
 
             if (canvasHeight(window.innerHeight) > 300) {
                 appManager.resizeScreenRegion(

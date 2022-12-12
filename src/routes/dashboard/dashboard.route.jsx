@@ -51,12 +51,12 @@ const Dashboard = () => {
         setupForUser(userName);
 
         function handleResize() {
-            console.log(
-                "(Dashboard) resized to: ",
-                window.innerWidth,
-                "x",
-                window.innerHeight
-            );
+            // console.log(
+            //     "(Dashboard) resized to: ",
+            //     window.innerWidth,
+            //     "x",
+            //     window.innerHeight
+            // );
 
             setWidth(window.innerWidth);
             setHeight(window.innerHeight - heightOffset);

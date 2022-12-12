@@ -107,12 +107,12 @@ const Editor = () => {
         setActivityName(aName);
 
         function handleResize() {
-            console.log(
-                "(Edit) resized to: ",
-                window.innerWidth,
-                "x",
-                window.innerHeight
-            );
+            // console.log(
+            //     "(Edit) resized to: ",
+            //     window.innerWidth,
+            //     "x",
+            //     window.innerHeight
+            // );
 
             // set a minimum height
             if (canvasHeight(window.innerHeight) > 300) {

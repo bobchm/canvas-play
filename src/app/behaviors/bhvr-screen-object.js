@@ -236,27 +236,19 @@ function behaviorSetProperty(obj, attribute, value) {
 function behaviorGetScreenObject(id) {
     var page = behaviorGetMyPage();
     if (!page) {
-        console.log("getScreenObject-page is null");
         return null;
     }
 
-    var obj = page.getChildFromId(id);
-    console.log("getScreenObject-object");
-    console.log(obj);
-    return obj;
+    return page.getChildFromId(id);
 }
 
 function behaviorGetMyPage() {
     var self = BehaviorManager.getSelf();
     if (!self) {
-        console.log("getMyPage-self is null");
         return null;
     }
 
-    var page = self.getPage();
-    console.log("getMyPage-page");
-    console.log(page);
-    return page;
+    return self.getPage();
 }
 
 function behaviorGetCurrentPage() {

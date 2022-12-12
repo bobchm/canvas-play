@@ -18,13 +18,13 @@ function behaviorSpeakText(text) {
     if (text && text.length) {
         ttsSpeak(text);
     }
-    console.log(`speakText(${text})`);
 }
 
 function localFunctionDefinitions() {
     return `
     function speakLabel() {
         @category speech
+        @description Speak the label of the screen object calling this function.
         label = getObjectProperty(self, "label")
         if (label) {
             speakText(label)

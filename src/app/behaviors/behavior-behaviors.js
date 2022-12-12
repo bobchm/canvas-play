@@ -1,3 +1,6 @@
+import { initStringBehaviors } from "./bhvr-string";
+import { initMathBehaviors } from "./bhvr-math";
+import { initArrayBehaviors } from "./bhvr-array";
 import { initSystemBehaviors } from "./bhvr-system";
 import { initScreenObjectBehaviors } from "./bhvr-screen-object";
 import { initSpeechBehaviors } from "./bhvr-speech";
@@ -48,6 +51,9 @@ export class BehaviorManager {
         this.pushStackFrame("_base_");
 
         // initialize the different categories of behaviors
+        initStringBehaviors();
+        initMathBehaviors();
+        initArrayBehaviors();
         initSystemBehaviors();
         initScreenObjectBehaviors();
         initSpeechBehaviors();

@@ -619,10 +619,10 @@ function isSimpleFunctionCall(node) {
 }
 
 function logStack(verbose) {
-    for (let i = globalStack.length - 1; i >= 0; i--) {
-        console.log(verbose ? globalStack[i] : globalStack[i].name);
-    }
-    console.log("-------------");
+    // for (let i = globalStack.length - 1; i >= 0; i--) {
+    //     console.log(verbose ? globalStack[i] : globalStack[i].name);
+    // }
+    // console.log("-------------");
 }
 
 export {

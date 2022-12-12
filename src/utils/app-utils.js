@@ -38,11 +38,11 @@ function deflatePage(iPage) {
     var cContent = compressToEncodedURIComponent(stringified);
     var iLength = stringified.length;
     var cLength = cContent.length;
-    console.log(
-        `page compression: ${
-            (cLength / iLength) * 100
-        }% - (${iLength} vs. ${cLength})`
-    );
+    // console.log(
+    //     `page compression: ${
+    //         (cLength / iLength) * 100
+    //     }% - (${iLength} vs. ${cLength})`
+    // );
     return {
         name: iPage.name,
         content: cContent,
