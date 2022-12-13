@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
@@ -9,6 +9,9 @@ import AccordionMenu from "../accordion-menu/accordion-menu.component";
 
 import { BehaviorManager } from "../../app/behaviors/behavior-behaviors";
 
+var scriptHistory = [];
+var scriptHistoryCursor = -1;
+
 export default function ScriptRepl({ open, onClose }) {
     const [inputScript, setInputScript] = useState("");
     const [runningScript, setRunningScript] = useState("");
@@ -18,6 +21,12 @@ export default function ScriptRepl({ open, onClose }) {
 
     const inputRef = React.useRef();
     const outputRef = React.useRef();
+
+    useEffect(() => {
+        if (outputRef.current) {
+            outputRef.current.scrollTop = outputRef.current.scrollHeight;
+        }
+    }, [runningScript]);
 
     function handleClose() {
         onClose();
@@ -46,14 +55,34 @@ export default function ScriptRepl({ open, onClose }) {
         inputRef.current.focus();
     }
 
+    function addToHistory(cmd) {
+        scriptHistory.push(cmd);
+        scriptHistoryCursor = scriptHistory.length - 1;
+    }
+
     function handleEnter() {
         if (inputScript.length) {
             var value = BehaviorManager.runSource(inputScript);
             var newRunning =
                 runningScript + "\n> " + inputScript + "\n" + value;
             setRunningScript(newRunning);
+            addToHistory(inputScript);
         }
         setInputScript("");
+    }
+
+    function handlePrevHistory() {
+        if (scriptHistoryCursor >= 0) {
+            setInputScript(scriptHistory[scriptHistoryCursor]);
+            scriptHistoryCursor -= 1;
+        }
+    }
+
+    function handleNextHistory() {
+        if (scriptHistoryCursor < scriptHistory.length - 1) {
+            scriptHistoryCursor += 1;
+            setInputScript(scriptHistory[scriptHistoryCursor]);
+        }
     }
 
     return (
@@ -73,7 +102,11 @@ export default function ScriptRepl({ open, onClose }) {
                     direction="column"
                     alignItems="center"
                     justifyContent="flex-start"
-                    sx={{ margin: "2% 2% 2% 2%", height: "100%" }}
+                    sx={{
+                        margin: "2% 2% 2% 2%",
+                        height: "100%",
+                        padding: "5px",
+                    }}
                     spacing={2}
                 >
                     <Typography variant="h3" align="center">
@@ -105,7 +138,7 @@ export default function ScriptRepl({ open, onClose }) {
                                 fullWidth
                                 minRows={10}
                                 maxRows={10}
-                                outputRef={outputRef}
+                                inputRef={outputRef}
                             />
                             <TextField
                                 value={inputScript}
@@ -120,6 +153,13 @@ export default function ScriptRepl({ open, onClose }) {
                                         handleEnter();
                                     }
                                 }}
+                                onKeyDown={(ev) => {
+                                    if (ev.key === "ArrowUp") {
+                                        handlePrevHistory();
+                                    } else if (ev.key === "ArrowDown") {
+                                        handleNextHistory();
+                                    }
+                                }}
                                 label={"Script"}
                                 fullWidth
                                 inputRef={inputRef}
@@ -131,7 +171,7 @@ export default function ScriptRepl({ open, onClose }) {
                         sx={{
                             color: "black",
                             borderColor: "black",
-                            paddingBottom: "5px",
+                            marginBottom: "5px",
                         }}
                         onClick={() => handleClose()}
                     >
