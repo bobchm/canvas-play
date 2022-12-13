@@ -145,6 +145,11 @@ var grammar = {
             postprocess: (d) => d[1],
         },
         {
+            name: "top_level_statement",
+            symbols: ["_", "expression"],
+            postprocess: (d) => d[1],
+        },
+        {
             name: "function_definition",
             symbols: [
                 { literal: "function" },

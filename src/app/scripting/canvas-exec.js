@@ -32,13 +32,15 @@ function simplify(ast) {
 
 function execute(ast) {
     // ast should be a list of executable records
+    var value = null;
     for (let i = 0; i < ast.length; i++) {
         try {
-            executeTopLevel(ast[i]);
+            value = executeTopLevel(ast[i]);
         } catch (err) {
             throw err;
         }
     }
+    return value;
 }
 
 function executionError(err, node) {
@@ -50,57 +52,69 @@ function executionError(err, node) {
 }
 
 function executeTopLevel(node) {
+    var value = null;
     switch (node.type) {
         case "comment":
+            value = true;
             break;
         case "function_definition":
-            defineFunction(node);
+            value = defineFunction(node);
             break;
         case "return_statement":
             throw executionError("Return statement at top level", node);
         default:
-            executeStatement(node);
+            if (isExpressionNode(node)) {
+                value = evaluateExpression(node);
+            } else {
+                value = executeStatement(node);
+            }
     }
+    return value;
 }
 
 function defineFunction(node) {
-    setFunction(node.name.value, node.parameters, node.body, node);
+    return setFunction(node.name.value, node.parameters, node.body, node);
 }
 
 function executeStatement(node) {
+    var value = null;
     switch (node.type) {
         case "comment":
         case "description":
         case "category":
+            value = true;
             break;
         case "var_assignment":
-            executeAssignment(node);
+            value = executeAssignment(node);
             break;
         case "call_expression":
-            executeFnCall(node);
+            value = executeFnCall(node);
             break;
         case "while_loop":
-            executeWhileLoop(node);
+            value = executeWhileLoop(node);
             break;
         case "if_statement":
-            executeIfStatement(node);
+            value = executeIfStatement(node);
             break;
         case "for_loop":
-            executeForLoop(node);
+            value = executeForLoop(node);
             break;
         case "indexed_assignment":
-            executeIndexedAssignment(node);
+            value = executeIndexedAssignment(node);
             break;
         case "return_statement":
-            executeReturnStatement(node);
+            value = executeReturnStatement(node);
             break;
         default:
             throw new Error(`Improper statement: ${node.type}`);
     }
+    return value;
 }
 
 function executeAssignment(node) {
-    setVariable(node.var_name.value, evaluateExpression(node.value));
+    var value = evaluateExpression(node.value);
+    setVariable(node.var_name.value, value);
+    return value;
 }
 
 function executeFnCall(node) {
@@ -154,6 +168,7 @@ function executeWhileLoop(node) {
         executeCodeBlock(node.body);
         if (stackTop().returnFlag) break;
     }
+    return true;
 }
 
 function executeIfStatement(node) {
@@ -167,6 +182,7 @@ function executeIfStatement(node) {
             executeCodeBlock(node.alternate);
         }
     }
+    return true;
 }
 
 function executeForLoop(node) {
@@ -181,15 +197,18 @@ function executeForLoop(node) {
         executeCodeBlock(body);
         if (stackTop().returnFlag) break;
     }
+    return true;
 }
 
 function executeCodeBlock(body) {
+    var value = null;
     for (let i = 0; i < body.statements.length; i++) {
-        executeStatement(body.statements[i]);
+        value = executeStatement(body.statements[i]);
         if (stackTop().returnFlag) {
             break;
         }
     }
+    return value;
 }
 
 function executeIndexedAssignment(node) {
@@ -198,11 +217,13 @@ function executeIndexedAssignment(node) {
         executionError("Indexed assignment of non-array", node);
     }
     ary[node.index] = evaluateExpression(node.value);
+    return ary[node.index];
 }
 
 function executeReturnStatement(node) {
     stackTop().returnValue = evaluateExpression(node.value);
     stackTop().returnFlag = true;
+    return stackTop().returnValue;
 }
 
 function evaluateExpression(node) {
@@ -234,11 +255,27 @@ function evaluateExpression(node) {
                 throw executionError("Error accessing index value", node);
             }
         case "function_expression":
-            defineFunction(node);
-            break;
+            return defineFunction(node);
         default:
             throw executionError(`Unknown AST node type (${node.type})`, node);
     }
+}
+
+const expressionNodes = [
+    "string_literal",
+    "number_literal",
+    "boolean_literal",
+    "list_literal",
+    "dictionary_literal",
+    "binary_operation",
+    "var_reference",
+    "call_expression",
+    "indexed_access",
+    "function_expression",
+];
+
+function isExpressionNode(node) {
+    return expressionNodes.includes(node.type);
 }
 
 function evaluateList(node) {
@@ -419,6 +456,7 @@ function setFunction(name, params, body, node) {
         description,
         node
     );
+    return name;
 }
 
 function addBuiltInFunction(fnDef) {

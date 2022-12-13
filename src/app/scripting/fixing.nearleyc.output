@@ -1,3 +1,9 @@
+after creating the grammar with:
+
+nearleyc src/app/scripting/canvas-lang.ne -o src/app/scripting/canvas-lang.js
+
+Edit canvas-lang.js:
+
 1. Remove (or comment out) outer wrapping function.
 2. Remove the part at the bottom that does 'if module !== undefined ...
 3. Remove (or comment out) the line near the top: const moo = require("moo");

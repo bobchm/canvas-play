@@ -102,17 +102,21 @@ export class BehaviorManager {
 
     static runSource(source) {
         var ast = null;
+        var value = null;
         try {
             ast = simplify(parse(source));
         } catch (err) {
             alert(`Error parsing in runSource: ${err}`);
         }
 
-        try {
-            execute(ast);
-        } catch (err) {
-            alert(`Execution error in runSource: ${err}`);
+        if (ast) {
+            try {
+                value = execute(ast);
+            } catch (err) {
+                alert(`Execution error in runSource: ${err}`);
+            }
         }
+        return value;
     }
 
     static addBuiltInFunction(fnDef) {

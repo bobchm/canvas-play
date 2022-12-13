@@ -14,6 +14,7 @@ import ButtonBar from "../../components/button-bar/button-bar.component";
 import ListModal from "../../components/list-modal/list-modal.component";
 import TextInputModal from "../../components/text-input-modal/text-input-modal.component";
 import ScriptEditor from "../../components/script-editor/script-editor.component";
+import ScriptRepl from "../../components/repl/repl.component";
 
 import ApplicationManager from "../../app/managers/application-manager";
 import confirmationBox from "../../utils/confirm-box";
@@ -49,6 +50,7 @@ const Editor = () => {
     const [paletteHeight, setPaletteHeight] = useState(
         canvasHeight(window.innerHeight)
     );
+    const [isReplOpen, setIsReplOpen] = useState(false);
 
     const navigate = useNavigate();
 
@@ -70,6 +72,10 @@ const Editor = () => {
         {
             label: "Edit Activity Behavior",
             callback: handleEditActivityBehavior,
+        },
+        {
+            label: "REPL",
+            callback: handleOpenRepl,
         },
     ];
 
@@ -334,6 +340,14 @@ const Editor = () => {
         }
     }
 
+    async function handleOpenRepl() {
+        setIsReplOpen(true);
+    }
+
+    async function handleCloseRepl() {
+        setIsReplOpen(false);
+    }
+
     async function handleBackToActivities() {
         if (
             isModified &&
@@ -466,6 +480,9 @@ const Editor = () => {
                         open={isScriptEditorOpen}
                         appManager={appManager}
                     />
+                )}
+                {isReplOpen && (
+                    <ScriptRepl onClose={handleCloseRepl} open={isReplOpen} />
                 )}
             </Box>
         </div>
