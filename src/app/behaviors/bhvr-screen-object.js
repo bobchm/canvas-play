@@ -1,5 +1,14 @@
+import PageScreenObject from "../screen-objects/page-screen-object";
+import RectScreenObject from "../screen-objects/rect-screen-object";
+import CircleScreenObject from "../screen-objects/circle-screen-object";
+import TextScreenObject from "../screen-objects/text-screen-object";
+import ImageScreenObject from "../screen-objects/image-screen-object";
+import SymbolButtonScreenObject from "../screen-objects/symbol-button-screen-object";
 import { BehaviorManager } from "./behavior-behaviors";
 import { PropertyValueType } from "../constants/property-types";
+import { ScreenObjectType } from "../constants/screen-object-types";
+import { SymBtnShape } from "../../utils/symbol-button";
+import { blankBehavior } from "./behavior-behaviors";
 import {
     getAngle,
     rotateTo,
@@ -30,6 +39,80 @@ export const AnimationTypes = [
 ];
 
 function initScreenObjectBehaviors() {
+    BehaviorManager.addBuiltInFunction({
+        name: "createRectangle",
+        function: behaviorCreateRectangle,
+        parameters: [
+            { type: PropertyValueType.Number, name: "x" },
+            { type: PropertyValueType.Number, name: "y" },
+            { type: PropertyValueType.Number, name: "width" },
+            { type: PropertyValueType.Number, name: "height" },
+            { type: PropertyValueType.Color, name: "fillColor" },
+            { type: PropertyValueType.Color, name: "borderColor" },
+        ],
+        category: "screen object",
+        description: "Add a rectangle screen object to the current page.",
+    });
+
+    BehaviorManager.addBuiltInFunction({
+        name: "createCircle",
+        function: behaviorCreateCircle,
+        parameters: [
+            { type: PropertyValueType.Number, name: "x" },
+            { type: PropertyValueType.Number, name: "y" },
+            { type: PropertyValueType.Number, name: "radius" },
+            { type: PropertyValueType.Color, name: "fillColor" },
+            { type: PropertyValueType.Color, name: "borderColor" },
+        ],
+        category: "screen object",
+        description: "Add a circle screen object to the current page.",
+    });
+
+    BehaviorManager.addBuiltInFunction({
+        name: "createText",
+        function: behaviorCreateText,
+        parameters: [
+            { type: PropertyValueType.Text, name: "text" },
+            { type: PropertyValueType.Number, name: "x" },
+            { type: PropertyValueType.Number, name: "y" },
+            { type: PropertyValueType.Color, name: "textColor" },
+        ],
+        category: "screen object",
+        description: "Add a text screen object to the current page.",
+    });
+
+    BehaviorManager.addBuiltInFunction({
+        name: "createImage",
+        function: behaviorCreateImage,
+        parameters: [
+            { type: PropertyValueType.ImageSource, name: "imageSource" },
+            { type: PropertyValueType.Number, name: "x" },
+            { type: PropertyValueType.Number, name: "y" },
+            { type: PropertyValueType.Number, name: "width" },
+            { type: PropertyValueType.Number, name: "height" },
+        ],
+        category: "screen object",
+        description: "Add an image screen object to the current page.",
+    });
+
+    BehaviorManager.addBuiltInFunction({
+        name: "createSymbolButton",
+        function: behaviorCreateSymbolButton,
+        parameters: [
+            { type: PropertyValueType.Text, name: "label" },
+            { type: PropertyValueType.ImageSource, name: "symbolSource" },
+            { type: PropertyValueType.Number, name: "x" },
+            { type: PropertyValueType.Number, name: "y" },
+            { type: PropertyValueType.Number, name: "width" },
+            { type: PropertyValueType.Number, name: "height" },
+            { type: PropertyValueType.Color, name: "fillColor" },
+            { type: PropertyValueType.Color, name: "borderColor" },
+            { type: PropertyValueType.Color, name: "textColor" },
+        ],
+        category: "screen object",
+        description: "Add a symbol button screen object to the current page.",
+    });
+
     BehaviorManager.addBuiltInFunction({
         name: "getObjectProperty",
         function: behaviorGetProperty,
@@ -219,6 +302,105 @@ function initScreenObjectBehaviors() {
         category: "screen object",
         description: "Animate the object to the specified opacity.",
     });
+}
+
+function behaviorCreateRectangle(x, y, width, height, fillColor, borderColor) {
+    var screenMgr = BehaviorManager.getScreenManager();
+    return new RectScreenObject(screenMgr, screenMgr.getCurrentPage(), {
+        type: ScreenObjectType.Rectangle,
+        shapeSpec: {
+            left: x,
+            top: y,
+            width: width,
+            height: height,
+            fill: fillColor,
+            stroke: borderColor,
+            opacity: 1.0,
+        },
+    });
+}
+
+function behaviorCreateCircle(x, y, radius, fillColor, borderColor) {
+    var screenMgr = BehaviorManager.getScreenManager();
+    return new CircleScreenObject(screenMgr, screenMgr.getCurrentPage(), {
+        type: ScreenObjectType.Circle,
+        shapeSpec: {
+            left: x,
+            top: y,
+            radius: radius,
+            fill: fillColor,
+            stroke: borderColor,
+            opacity: 1.0,
+        },
+    });
+}
+
+function behaviorCreateText(text, x, y, textColor) {
+    var screenMgr = BehaviorManager.getScreenManager();
+    return new TextScreenObject(screenMgr, screenMgr.getCurrentPage(), text, {
+        type: ScreenObjectType.Text,
+        shapeSpec: {
+            left: x,
+            top: y,
+            fill: textColor,
+            stroke: textColor,
+            opacity: 1.0,
+        },
+    });
+}
+
+function behaviorCreateImage(imageSource, x, y, width, height) {
+    var screenMgr = BehaviorManager.getScreenManager();
+    var imageObj = new ImageScreenObject(
+        screenMgr,
+        screenMgr.getCurrentPage(),
+        {
+            type: ScreenObjectType.Image,
+            shapeSpec: {
+                left: x,
+                top: y,
+                width: width,
+                height: height,
+                opacity: 1.0,
+            },
+        }
+    );
+    imageObj.setSource(screenMgr, imageSource);
+}
+
+function behaviorCreateSymbolButton(
+    label,
+    symbolSource,
+    x,
+    y,
+    width,
+    height,
+    fillColor,
+    borderColor,
+    textColor
+) {
+    var screenMgr = BehaviorManager.getScreenManager();
+    var newObj = new SymbolButtonScreenObject(
+        screenMgr,
+        screenMgr.getCurrentPage(),
+        label,
+        SymBtnShape.RoundedRect,
+        blankBehavior,
+        {
+            type: ScreenObjectType.SymbolButton,
+            shapeSpec: {
+                left: x,
+                top: y,
+                width: width,
+                height: height,
+                fill: fillColor,
+                stroke: borderColor,
+                opacity: 1.0,
+                imageSource: symbolSource,
+            },
+        }
+    );
+    newObj.getCanvasObj().setTextColor(textColor);
 }
 
 function behaviorGetProperty(obj, attribute) {
