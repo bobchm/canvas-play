@@ -17,11 +17,17 @@ const lexer = moo.compile({
     lbrace: "{",
     rbrace: "}",
     assignment: "=",
+    pluseq: "+=",
+    minuseq: "-=",
+    multiplyeq: "*=",
+    divideeq: "/=",
+    moduloeq: "%=",
     plus: "+",
     minus: "-",
     multiply: "*",
     divide: "/",
     modulo: "%",
+    power: "^",
     colon: ":",
     comment: {
         match: /#[^\n]*/,
@@ -187,16 +193,18 @@ executable_statements
         %}
 
 executable_statement
-   -> return_statement     {% id %}
-   |  var_assignment       {% id %}
-   |  call_statement       {% id %}
-   |  line_comment         {% id %}
+   -> return_statement      {% id %}
+   |  var_assignment        {% id %}
+   |  var_op_assignment     {% id %}
+   |  call_statement        {% id %}
+   |  line_comment          {% id %}
    |  line_category         {% id %}
-   |  line_description         {% id %}
-   |  indexed_assignment   {% id %}
-   |  while_loop           {% id %}
-   |  if_statement         {% id %}
-   |  for_loop             {% id %}
+   |  line_description      {% id %}
+   |  indexed_assignment    {% id %}
+   |  indexed_op_assignment {% id %}
+   |  while_loop            {% id %}
+   |  if_statement          {% id %}
+   |  for_loop              {% id %}
 
 return_statement
    -> "return" __ expression
@@ -220,6 +228,26 @@ var_assignment
                 end: d[4].end
             })
         %}
+
+var_op_assignment
+    -> identifier _ assign_operator _ expression
+        {%
+            d => ({
+                type: "var_op_assignment",
+                var_name: d[0],
+                op: d[2],
+                value: d[4],
+                start: d[0].start,
+                end: d[4].end
+            })
+        %}
+
+assign_operator
+    -> "+="  {% convertTokenId %}
+    |  "-="  {% convertTokenId %}
+    |  "*="  {% convertTokenId %}
+    |  "/="  {% convertTokenId %}
+    |  "%="  {% convertTokenId %}
 
 call_statement -> call_expression  {% id %}
 
@@ -254,6 +282,20 @@ indexed_assignment
                 type: "indexed_assignment",
                 subject: d[0],
                 index: d[4],
+                value: d[10],
+                start: d[0].start,
+                end: d[10].end
+            })
+        %}
+
+indexed_op_assignment
+    -> unary_expression _ "[" _ expression _ "]" _ assign_operator _ expression
+        {%
+            d => ({
+                type: "indexed_op_assignment",
+                subject: d[0],
+                index: d[4],
+                op: d[8],
                 value: d[10],
                 start: d[0].start,
                 end: d[10].end
@@ -337,6 +379,7 @@ boolean_expression
         {%
             d => ({
                 type: "binary_operation",
+                subtype: "boolean",
                 operator: convertToken(d[2]),
                 left: d[0],
                 right: d[4],
@@ -355,6 +398,7 @@ comparison_expression
         {%
             d => ({
                 type: "binary_operation",
+                subtype: "comparison",
                 operator: d[2],
                 left: d[0],
                 right: d[4],
@@ -372,10 +416,23 @@ comparison_operator
 
 additive_expression
     -> multiplicative_expression    {% id %}
-    |  multiplicative_expression _ [+-] _ additive_expression
+    |  multiplicative_expression _ "+" _ additive_expression
         {%
             d => ({
                 type: "binary_operation",
+                subtype: "additive",
+                operator: convertToken(d[2]),
+                left: d[0],
+                right: d[4],
+                start: d[0].start,
+                end: d[4].end
+            })
+        %}
+    |  multiplicative_expression _ "-" _ additive_expression
+        {%
+            d => ({
+                type: "binary_operation",
+                subtype: "additive",
                 operator: convertToken(d[2]),
                 left: d[0],
                 right: d[4],
@@ -385,11 +442,51 @@ additive_expression
         %}
 
 multiplicative_expression
-    -> unary_expression     {% id %}
-    |  unary_expression _ [*/%] _ multiplicative_expression
+    -> power_expression     {% id %}
+    |  power_expression _ "*" _ multiplicative_expression
         {%
             d => ({
                 type: "binary_operation",
+                subtype: "multiplicative",
+                operator: convertToken(d[2]),
+                left: d[0],
+                right: d[4],
+                start: d[0].start,
+                end: d[4].end
+            })
+        %}
+    |  power_expression _ "/" _ multiplicative_expression
+        {%
+            d => ({
+                type: "binary_operation",
+                subtype: "multiplicative",
+                operator: convertToken(d[2]),
+                left: d[0],
+                right: d[4],
+                start: d[0].start,
+                end: d[4].end
+            })
+        %}
+    |  power_expression _ "%" _ multiplicative_expression
+        {%
+            d => ({
+                type: "binary_operation",
+                subtype: "multiplicative",
+                operator: convertToken(d[2]),
+                left: d[0],
+                right: d[4],
+                start: d[0].start,
+                end: d[4].end
+            })
+        %}
+
+power_expression
+    -> unary_expression     {% id %}
+    |  unary_expression _ "^" _ unary_expression
+        {%
+            d => ({
+                type: "binary_operation",
+                subtype: "power",
                 operator: convertToken(d[2]),
                 left: d[0],
                 right: d[4],

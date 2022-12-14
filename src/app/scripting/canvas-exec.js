@@ -87,6 +87,9 @@ function executeStatement(node) {
         case "var_assignment":
             value = executeAssignment(node);
             break;
+        case "var_op_assignment":
+            value = executeOpAssignment(node);
+            break;
         case "call_expression":
             value = executeFnCall(node);
             break;
@@ -102,6 +105,9 @@ function executeStatement(node) {
         case "indexed_assignment":
             value = executeIndexedAssignment(node);
             break;
+        case "indexed_op_assignment":
+            value = executeIndexedOpAssignment(node);
+            break;
         case "return_statement":
             value = executeReturnStatement(node);
             break;
@@ -115,6 +121,31 @@ function executeAssignment(node) {
     var value = evaluateExpression(node.value);
     setVariable(node.var_name.value, value);
     return value;
+}
+
+function opEvaluate(op, lvalue, rvalue) {
+    switch (op) {
+        case "pluseq":
+            return lvalue + rvalue;
+        case "minuseq":
+            return lvalue - rvalue;
+        case "multiplyeq":
+            return lvalue * rvalue;
+        case "divideeq":
+            return lvalue / rvalue;
+        case "moduloeq":
+            return lvalue % rvalue;
+        default:
+            return 0;
+    }
+}
+
+function executeOpAssignment(node) {
+    var lvalue = getVariableValue(node.var_name.value, node);
+    var rvalue = evaluateExpression(node.value);
+    var newvalue = opEvaluate(node.op.type, lvalue, rvalue);
+    setVariable(node.var_name.value, newvalue);
+    return newvalue;
 }
 
 function executeFnCall(node) {
@@ -220,6 +251,17 @@ function executeIndexedAssignment(node) {
     return ary[node.index];
 }
 
+function executeIndexedOpAssignment(node) {
+    var ary = evaluateExpression(node.subject);
+    if (!Array.isArray(ary)) {
+        executionError("Indexed assignment of non-array", node);
+    }
+
+    var rvalue = evaluateExpression(node.value);
+    ary[node.index] = opEvaluate(node.op.type, ary[node.index], rvalue);
+    return ary[node.index];
+}
+
 function executeReturnStatement(node) {
     stackTop().returnValue = evaluateExpression(node.value);
     stackTop().returnFlag = true;
@@ -310,6 +352,8 @@ function evaluateBinaryOp(op, left, right, node) {
                 return left - right;
             case "*":
                 return left * right;
+            case "^":
+                return left ** right;
             case "/":
                 return left / right;
             case "%":
