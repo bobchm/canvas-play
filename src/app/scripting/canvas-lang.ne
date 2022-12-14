@@ -1,5 +1,12 @@
 @{%
-const moo = require("moo");
+import moo from "moo";
+
+let comment,
+    number_literal,
+    identifier,
+    string_literal,
+    description,
+    category;
 
 const lexer = moo.compile({
     ws: /[ \t]+/,
@@ -29,6 +36,7 @@ const lexer = moo.compile({
     modulo: "%",
     power: "^",
     colon: ":",
+    period: ".",
     comment: {
         match: /#[^\n]*/,
         value: s => s.substring(1)
@@ -83,6 +91,17 @@ function tokenEnd(token) {
     return {
         line: token.line,
         col: token.col + token.text.length - 1
+    };
+}
+
+function tokenValueEnd(token) {
+    const lastNewLine = token.value.lastIndexOf("\n");
+    if (lastNewLine !== -1) {
+        throw new Error("Unsupported case: token with line breaks");
+    }
+    return {
+        line: token.line,
+        col: token.col + token.value.length - 1
     };
 }
 
@@ -283,6 +302,21 @@ indexed_access
                 index: d[4],
                 start: d[0].start,
                 end: tokenEnd(d[6])
+            })
+        %}
+    |  unary_expression "." identifier
+        {%
+            d => ({
+                type: "indexed_access",
+                subject: d[0],
+                index: {
+                    type: "string_literal",
+                    value: d[2].value,
+                    start: d[2].start,
+                    end: d[2].end,
+                },
+                start: d[0].start,
+                end: tokenValueEnd(d[2])
             })
         %}
 
