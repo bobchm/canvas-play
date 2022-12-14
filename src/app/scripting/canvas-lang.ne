@@ -332,6 +332,22 @@ indexed_assignment
                 end: d[10].end
             })
         %}
+    | unary_expression "." identifier _ "=" _ expression
+        {%
+            d => ({
+                type: "indexed_assignment",
+                subject: d[0],
+                index: {
+                    type: "string_literal",
+                    value: d[2].value,
+                    start: d[2].start,
+                    end: d[2].end,
+                },
+                value: d[6],
+                start: d[0].start,
+                end: d[6].end
+            })
+        %}
 
 indexed_op_assignment
     -> unary_expression _ "[" _ expression _ "]" _ assign_operator _ expression
@@ -344,6 +360,23 @@ indexed_op_assignment
                 value: d[10],
                 start: d[0].start,
                 end: d[10].end
+            })
+        %}
+    | unary_expression "." identifier _ assign_operator _ expression
+        {%
+            d => ({
+                type: "indexed_op_assignment",
+                subject: d[0],
+                index: {
+                    type: "string_literal",
+                    value: d[2].value,
+                    start: d[2].start,
+                    end: d[2].end,
+                },
+                op: d[4],
+                value: d[6],
+                start: d[0].start,
+                end: d[6].end
             })
         %}
 

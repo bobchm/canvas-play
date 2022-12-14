@@ -1,6 +1,5 @@
 // Generated automatically by nearley, version 2.20.1
 // http://github.com/Hardmath123/nearley
-
 import moo from "moo";
 
 let comment, number_literal, identifier, string_literal, description, category;
@@ -475,6 +474,31 @@ var grammar = {
             }),
         },
         {
+            name: "indexed_assignment",
+            symbols: [
+                "unary_expression",
+                { literal: "." },
+                "identifier",
+                "_",
+                { literal: "=" },
+                "_",
+                "expression",
+            ],
+            postprocess: (d) => ({
+                type: "indexed_assignment",
+                subject: d[0],
+                index: {
+                    type: "string_literal",
+                    value: d[2].value,
+                    start: d[2].start,
+                    end: d[2].end,
+                },
+                value: d[6],
+                start: d[0].start,
+                end: d[6].end,
+            }),
+        },
+        {
             name: "indexed_op_assignment",
             symbols: [
                 "unary_expression",
@@ -497,6 +521,32 @@ var grammar = {
                 value: d[10],
                 start: d[0].start,
                 end: d[10].end,
+            }),
+        },
+        {
+            name: "indexed_op_assignment",
+            symbols: [
+                "unary_expression",
+                { literal: "." },
+                "identifier",
+                "_",
+                "assign_operator",
+                "_",
+                "expression",
+            ],
+            postprocess: (d) => ({
+                type: "indexed_op_assignment",
+                subject: d[0],
+                index: {
+                    type: "string_literal",
+                    value: d[2].value,
+                    start: d[2].start,
+                    end: d[2].end,
+                },
+                op: d[4],
+                value: d[6],
+                start: d[0].start,
+                end: d[6].end,
             }),
         },
         {

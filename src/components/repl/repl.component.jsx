@@ -64,7 +64,11 @@ export default function ScriptRepl({ open, onClose }) {
         if (inputScript.length) {
             var value = BehaviorManager.runSource(inputScript);
             var newRunning =
-                runningScript + "\n> " + inputScript + "\n" + value;
+                runningScript +
+                "\n> " +
+                inputScript +
+                "\n" +
+                JSON.stringify(value);
             setRunningScript(newRunning);
             addToHistory(inputScript);
         }

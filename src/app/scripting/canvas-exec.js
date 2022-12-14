@@ -1,5 +1,6 @@
 import nearley from "nearley";
 import grammar from "./canvas-lang";
+import { isObject } from "../../utils/app-utils";
 
 var globalStack = [];
 
@@ -246,10 +247,6 @@ function executeForLoop(node) {
         if (stackTop().returnFlag) break;
     }
     return true;
-}
-
-function isObject(val) {
-    return val && typeof val === "object";
 }
 
 function executeCodeBlock(body) {

@@ -93,4 +93,8 @@ export function jsonDeepCopy(json) {
     return JSON.parse(JSON.stringify(json));
 }
 
+export function isObject(val) {
+    return val && typeof val === "object";
+}
+
 export const delay = (ms) => new Promise((res) => setTimeout(res, ms));
