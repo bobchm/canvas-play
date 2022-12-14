@@ -74,6 +74,10 @@ class ScreenManager {
         return this.#currentPage.getName();
     }
 
+    getVScreenSize() {
+        return this.#activitySize;
+    }
+
     openPage(pageSpec) {
         if (this.#currentPage) {
             this.closeCurrentPageBehavior();

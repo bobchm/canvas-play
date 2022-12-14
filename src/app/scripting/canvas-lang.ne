@@ -99,6 +99,17 @@ function convertTokenId(data) {
     return convertToken(data[0]);
 }
 
+function convertNegToken(data) {
+    var token = data[1];
+    return {
+        type: token.type,
+        value: -token.value,
+        start: tokenStart(token),
+        end: tokenEnd(token)
+    };
+    
+}
+
 %}
 
 @lexer lexer
@@ -611,6 +622,7 @@ line_description -> %description {% convertTokenId %}
 string_literal -> %string_literal {% convertTokenId %}
 
 number -> %number_literal {% convertTokenId %}
+     | "-" %number_literal {% convertNegToken %}
 
 identifier -> %identifier {% convertTokenId %}
 

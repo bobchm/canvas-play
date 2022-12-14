@@ -105,6 +105,16 @@ function convertTokenId(data) {
     return convertToken(data[0]);
 }
 
+function convertNegToken(data) {
+    var token = data[1];
+    return {
+        type: token.type,
+        value: -token.value,
+        start: tokenStart(token),
+        end: tokenEnd(token),
+    };
+}
+
 var grammar = {
     Lexer: lexer,
     ParserRules: [
@@ -987,6 +997,16 @@ var grammar = {
                     : number_literal,
             ],
             postprocess: convertTokenId,
+        },
+        {
+            name: "number",
+            symbols: [
+                { literal: "-" },
+                lexer.has("number_literal")
+                    ? { type: "number_literal" }
+                    : number_literal,
+            ],
+            postprocess: convertNegToken,
         },
         {
             name: "identifier",

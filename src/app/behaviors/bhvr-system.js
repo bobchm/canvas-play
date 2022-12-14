@@ -28,6 +28,30 @@ function initSystemBehaviors() {
     });
 
     BehaviorManager.addBuiltInFunction({
+        name: "debugAlert",
+        function: behaviorDebugAlert,
+        parameters: [{ type: PropertyValueType.Text, name: "alert" }],
+        category: "system",
+        description: "Pop up an inaccessble alert.",
+    });
+
+    BehaviorManager.addBuiltInFunction({
+        name: "getScreenWidth",
+        function: behaviorGetScreenWidth,
+        parameters: [],
+        category: "system",
+        description: "Get the width of the (virtual) screen.",
+    });
+
+    BehaviorManager.addBuiltInFunction({
+        name: "getScreenHeight",
+        function: behaviorGetScreenHeight,
+        parameters: [],
+        category: "system",
+        description: "Get the width of the (virtual) screen.",
+    });
+
+    BehaviorManager.addBuiltInFunction({
         name: "activityHasKV",
         function: behaviorHasActivityKV,
         parameters: [{ type: PropertyValueType.Text, name: "key" }],
@@ -129,6 +153,21 @@ function behaviorSetSetting(setting, value) {
 
         default:
     }
+}
+
+function behaviorDebugAlert(txt) {
+    alert(txt);
+    return txt;
+}
+
+function behaviorGetScreenHeight() {
+    var sz = BehaviorManager.appManager.getScreenManager().getVScreenSize();
+    return sz.height;
+}
+
+function behaviorGetScreenWidth() {
+    var sz = BehaviorManager.appManager.getScreenManager().getVScreenSize();
+    return sz.width;
 }
 
 function behaviorHasActivityKV(key) {
