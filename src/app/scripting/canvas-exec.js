@@ -140,6 +140,23 @@ function opEvaluate(op, lvalue, rvalue) {
     }
 }
 
+function opFromOpName(opName) {
+    switch (opName) {
+        case "pluseq":
+            return "+=";
+        case "minuseq":
+            return "-=";
+        case "multiplyeq":
+            return "*=";
+        case "divideeq":
+            return "/=";
+        case "moduloeq":
+            return "%=";
+        default:
+            return "";
+    }
+}
+
 function executeOpAssignment(node) {
     var lvalue = getVariableValue(node.var_name.value, node);
     var rvalue = evaluateExpression(node.value);
@@ -231,6 +248,10 @@ function executeForLoop(node) {
     return true;
 }
 
+function isObject(val) {
+    return val && typeof val === "object";
+}
+
 function executeCodeBlock(body) {
     var value = null;
     for (let i = 0; i < body.statements.length; i++) {
@@ -244,22 +265,26 @@ function executeCodeBlock(body) {
 
 function executeIndexedAssignment(node) {
     var ary = evaluateExpression(node.subject);
-    if (!Array.isArray(ary)) {
+    if (!Array.isArray(ary) && !isObject(ary)) {
         executionError("Indexed assignment of non-array", node);
     }
-    ary[node.index] = evaluateExpression(node.value);
-    return ary[node.index];
+    ary[node.index.value] = evaluateExpression(node.value);
+    return ary[node.index.value];
 }
 
 function executeIndexedOpAssignment(node) {
     var ary = evaluateExpression(node.subject);
-    if (!Array.isArray(ary)) {
+    if (!Array.isArray(ary) && !isObject(ary)) {
         executionError("Indexed assignment of non-array", node);
     }
 
     var rvalue = evaluateExpression(node.value);
-    ary[node.index] = opEvaluate(node.op.type, ary[node.index], rvalue);
-    return ary[node.index];
+    ary[node.index.value] = opEvaluate(
+        node.op.type,
+        ary[node.index.value],
+        rvalue
+    );
+    return ary[node.index.value];
 }
 
 function executeReturnStatement(node) {
@@ -576,6 +601,14 @@ function decompileNode(node) {
             decompiled +=
                 node.var_name.value + " = " + decompileNode(node.value);
             break;
+        case "var_op_assignment":
+            decompiled +=
+                node.var_name.value +
+                " " +
+                opFromOpName(node.op.type) +
+                " " +
+                decompileNode(node.value);
+            break;
         case "call_expression":
             decompiled += node.fn_name.value + "(";
             for (let i = 0; i < node.arguments.length; i++) {
@@ -614,6 +647,14 @@ function decompileNode(node) {
         case "indexed_assignment":
             decompiled += decompileNode(node.subject);
             decompiled += " = " + decompileNode(node.value);
+            break;
+        case "indexed_op_assignment":
+            decompiled += decompileNode(node.subject);
+            decompiled +=
+                " " +
+                opFromOpName(node.op.type) +
+                " " +
+                decompileNode(node.value);
             break;
         case "string_literal":
             decompiled += '"' + node.value + '"';
