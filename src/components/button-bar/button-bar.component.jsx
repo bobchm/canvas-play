@@ -29,17 +29,19 @@ export default function ButtonBar({
                 boxSizing: "border-box",
             }}
         >
-            {leftButtons.map((button, idx) => (
-                <IconButton
-                    key={idx}
-                    onClick={button.callback}
-                    edge="end"
-                    title={button.tooltip}
-                    sx={{ marginLeft: "2px" }}
-                >
-                    {button.icon}
-                </IconButton>
-            ))}
+            <div>
+                {leftButtons.map((button, idx) => (
+                    <IconButton
+                        key={idx}
+                        onClick={button.callback}
+                        edge="end"
+                        title={button.tooltip}
+                        sx={{ marginLeft: "2px" }}
+                    >
+                        {button.icon}
+                    </IconButton>
+                ))}
+            </div>
             <div>
                 {rightButtons.map((button, idx) => (
                     <IconButton

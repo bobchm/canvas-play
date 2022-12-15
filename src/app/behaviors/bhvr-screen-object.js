@@ -255,6 +255,24 @@ function initScreenObjectBehaviors() {
     });
 
     BehaviorManager.addBuiltInFunction({
+        name: "bringToFront",
+        function: behaviorBringToFront,
+        parameters: [{ type: PropertyValueType.ScreenObject, name: "object" }],
+        category: "screen object",
+        description:
+            "Send the specified object to the back of all other objects.",
+    });
+
+    BehaviorManager.addBuiltInFunction({
+        name: "sendToBack",
+        function: behaviorSendToBack,
+        parameters: [{ type: PropertyValueType.ScreenObject, name: "object" }],
+        category: "screen object",
+        description:
+            "Bring the specified object to the front of all other objects.",
+    });
+
+    BehaviorManager.addBuiltInFunction({
         name: "animatePosition",
         function: behaviorAnimatePosition,
         parameters: [
@@ -485,6 +503,14 @@ function behaviorMoveTo(obj, x, y) {
 function behaviorMoveBy(obj, dx, dy) {
     var cnv = BehaviorManager.appManager.getScreenManager().getCanvas();
     moveBy(cnv, obj.getCanvasObj(), dx, dy);
+}
+
+function behaviorBringToFront(obj) {
+    BehaviorManager.appManager.getScreenManager().bringObjectToFront(obj);
+}
+
+function behaviorSendToBack(obj) {
+    BehaviorManager.appManager.getScreenManager().sendObjectToBack(obj);
 }
 
 function behaviorAnimatePosition(obj, x, y, msecs, animType) {

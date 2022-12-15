@@ -65,6 +65,7 @@ function initCanvas(
         // });
     }
 
+    cnv.preserveObjectStacking = true;
     setSelectionColor(cnv);
     return cnv;
 }
@@ -441,6 +442,16 @@ function deleteSelectedObjects(cnv) {
     }
 }
 
+function bringToFront(cnv, obj) {
+    obj.bringToFront();
+    cnv.renderAll();
+}
+
+function sendToBack(cnv, obj) {
+    obj.sendToBack();
+    cnv.renderAll();
+}
+
 function createThumbnail(cnv, width, height, callback) {
     cnv.getElement().toBlob(function (blob) {
         var url = URL.createObjectURL(blob);
@@ -603,6 +614,8 @@ export {
     setSelectedObject,
     removeObject,
     deleteSelectedObjects,
+    bringToFront,
+    sendToBack,
     refresh,
     clearCanvas,
     resizeCanvas,

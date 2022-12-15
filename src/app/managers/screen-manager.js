@@ -26,6 +26,8 @@ import {
     enableInputCallback,
     setSelectedObject,
     deleteSelectedObjects,
+    bringToFront,
+    sendToBack,
     removeObject,
     refresh,
     resizeCanvas,
@@ -182,6 +184,32 @@ class ScreenManager {
             page.removeChild(obj);
         }
         removeObject(this.#canvas, obj.getCanvasObj());
+    }
+
+    bringSelectionToFront() {
+        if (this.#currentPage && this.#selectedObjects) {
+            for (let i = 0; i < this.#selectedObjects.length; i++) {
+                var obj = this.#selectedObjects[i];
+                this.bringObjectToFront(obj);
+            }
+        }
+    }
+
+    sendSelectionToBack() {
+        if (this.#currentPage && this.#selectedObjects) {
+            for (let i = 0; i < this.#selectedObjects.length; i++) {
+                var obj = this.#selectedObjects[i];
+                this.sendObjectToBack(obj);
+            }
+        }
+    }
+
+    bringObjectToFront(obj) {
+        bringToFront(this.#canvas, obj.getCanvasObj());
+    }
+
+    sendObjectToBack(obj) {
+        sendToBack(this.#canvas, obj.getCanvasObj());
     }
 
     setSelectionCallback(callbk) {

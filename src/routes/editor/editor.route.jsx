@@ -5,6 +5,8 @@ import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
+import FlipToFrontRoundedIcon from "@mui/icons-material/FlipToFrontRounded";
+import FlipToBackRoundedIcon from "@mui/icons-material/FlipToBackRounded";
 
 import PlayCanvas from "../../components/play-canvas/play-canvas.component";
 import ObjectPalette from "../../components/object-palette/object-palette.component";
@@ -22,6 +24,10 @@ import { defaultPageSpec } from "../../utils/app-utils";
 import { EditMode } from "./edit-modes";
 import { combineProperties } from "../../app/constants/property-types";
 import { blankBehavior } from "../../app/behaviors/behavior-behaviors";
+
+import { ReactComponent as DuplicateIcon } from "./duplicate.svg";
+import { ReactComponent as SprayIcon } from "./spray.svg";
+import SvgIcon from "@mui/material/SvgIcon";
 
 const drawerWidth = 100;
 const propsWidth = 300;
@@ -85,13 +91,41 @@ const Editor = () => {
             callback: handleBackToActivities,
             tooltip: "Back to Activity Center",
         },
-    ];
-
-    const rightButtonBarSpec = [
         {
             icon: <PlayArrowRoundedIcon />,
             callback: handlePlay,
             tooltip: "Play Page",
+        },
+    ];
+
+    const rightButtonBarSpec = [
+        {
+            icon: (
+                <SvgIcon>
+                    <SprayIcon />
+                </SvgIcon>
+            ),
+            callback: handleSpray,
+            tooltip: "Spray",
+        },
+        {
+            icon: <FlipToFrontRoundedIcon />,
+            callback: handleBringToFront,
+            tooltip: "Bring to Front",
+        },
+        {
+            icon: <FlipToBackRoundedIcon />,
+            callback: handleSendToBack,
+            tooltip: "Send To Back",
+        },
+        {
+            icon: (
+                <SvgIcon>
+                    <DuplicateIcon />
+                </SvgIcon>
+            ),
+            callback: handleDuplicate,
+            tooltip: "Duplicate Selection",
         },
         {
             icon: <SaveRoundedIcon />,
@@ -362,6 +396,22 @@ const Editor = () => {
 
     function currentPageName() {
         return appManager.getScreenManager().getCurrentPageName();
+    }
+
+    function handleSpray() {
+        alert("spray");
+    }
+
+    function handleBringToFront() {
+        appManager.getScreenManager().bringSelectionToFront();
+    }
+
+    function handleSendToBack() {
+        appManager.getScreenManager().sendSelectionToBack();
+    }
+
+    function handleDuplicate() {
+        alert("duplicate");
     }
 
     async function handlePlay() {
