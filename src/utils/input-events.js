@@ -5,4 +5,5 @@ export const InputEvent = {
     ObjectMouseExit: "objectmouseexit",
     MouseDown: "mousedown",
     MouseUp: "mouseup",
+    MouseMove: "mousemove",
 };

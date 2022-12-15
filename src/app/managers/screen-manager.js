@@ -5,6 +5,7 @@ import TextScreenObject from "../screen-objects/text-screen-object";
 import ImageScreenObject from "../screen-objects/image-screen-object";
 import SymbolButtonScreenObject from "../screen-objects/symbol-button-screen-object";
 import AccessManager from "./access-manager";
+import { InputEvent } from "../../utils/input-events";
 import {
     BehaviorManager,
     blankBehavior,
@@ -24,6 +25,9 @@ import {
     disableSelection,
     enableSelection,
     enableInputCallback,
+    objectAtXY,
+    enableMouseTracking,
+    disableMouseTracking,
     setSelectedObject,
     setSelectedObjects,
     deleteSelectedObjects,
@@ -41,30 +45,38 @@ import {
     addImage,
     addSymbolButton,
     addText,
+    getDimensions,
 } from "../../utils/canvas";
 
 import { defaultImageData } from "../../utils/image-defaults";
 import { ScreenObjectType } from "../constants/screen-object-types";
 import { SymBtnShape } from "../../utils/symbol-button";
+import { EditMode } from "../../routes/editor/edit-modes";
+
+const sprayXOffset = 20;
+const sprayYOffset = 20;
 
 class ScreenManager {
     #canvas = null;
     #currentPage = null;
-    #addObjectMode = null;
+    #appMode = EditMode.Select;
     #selectionCallback = null;
-    #afterAddCallback = null;
+    #modeChangeCallback = null;
     #modifiedCallback = null;
     #selectedObjects = null;
     #screenRegion;
     #activitySize;
     #handleInputEvents = false;
     #accessManager = null;
+    #sprayMouseDown = false;
+    #sprayObject = null;
 
     constructor() {
         this.addObjectOnMousedown = this.addObjectOnMousedown.bind(this);
         this.scrMgrSelectionCallback = this.scrMgrSelectionCallback.bind(this);
         this.setModified = this.setModified.bind(this);
         this.inputCallback = this.inputCallback.bind(this);
+        this.sprayTrackMouse = this.sprayTrackMouse.bind(this);
     }
 
     getCanvas() {
@@ -225,7 +237,6 @@ class ScreenManager {
         if (this.#currentPage && this.#selectedObjects) {
             var clones = [];
             var selObjs = this.#selectedObjects;
-            var checkObj = this.#selectedObjects[0];
             setSelectedObjects(this.#canvas, null);
             for (let i = 0; i < selObjs.length; i++) {
                 var obj = selObjs[i];
@@ -242,14 +253,13 @@ class ScreenManager {
         this.#selectionCallback = callbk;
     }
 
-    setAfterAddCallback(callbk) {
-        // this is only called after adding an object
-        this.#afterAddCallback = callbk;
-    }
-
     setModifiedCallback(callbk) {
         // this is only called on modifications on the canvas
         this.#modifiedCallback = callbk;
+    }
+
+    setModeChangeCallback(callbk) {
+        this.#modeChangeCallback = callbk;
     }
 
     getBackgroundColor() {
@@ -354,7 +364,7 @@ class ScreenManager {
 
     addObjectOnMousedown(options) {
         var newObj = null;
-        switch (this.#addObjectMode) {
+        switch (this.#appMode.submode) {
             case "Rectangle":
                 if (this.#currentPage) {
                     newObj = new RectScreenObject(this, this.#currentPage, {
@@ -454,37 +464,132 @@ class ScreenManager {
                 return;
         }
         if (newObj && newObj.getCanvasObj()) {
-            this.setAddObjectMode(null);
-            if (this.#afterAddCallback) {
-                this.#afterAddCallback(newObj);
+            if (this.#modeChangeCallback) {
+                this.#modeChangeCallback(EditMode.Select);
             }
             setSelectedObject(this.#canvas, newObj.getCanvasObj());
         }
     }
 
-    setAddObjectMode(mode) {
-        if (this.#addObjectMode === mode) return;
-        if (this.#addObjectMode === null) {
-            // need to turn off the selection callback at the canvas level but don't
-            // clear here
-            clearSelectionCallback(this.#canvas);
-        } else {
-            clearMousedownCallback(this.#canvas, this.addObjectOnMousedown);
+    setMode(mode) {
+        if (this.#appMode === mode) return;
+        switch (this.#appMode.mode) {
+            case "Select":
+                clearSelectionCallback(this.#canvas);
+                break;
+            case "Add":
+                clearMousedownCallback(this.#canvas, this.addObjectOnMousedown);
+                break;
+            case "Spray":
+                disableMouseTracking(this.#canvas, this.sprayTrackMouse);
+                break;
+            default:
         }
-        if (mode === null) {
-            // restore any selection callback
-            if (this.#selectionCallback) {
-                setSelectionCallback(
-                    this.#canvas,
-                    this.scrMgrSelectionCallback
-                );
-            }
-            enableSelection(this.#canvas);
-            this.#addObjectMode = mode;
+        switch (mode.mode) {
+            case "Select":
+                // restore any selection callback
+                if (this.#selectionCallback) {
+                    setSelectionCallback(
+                        this.#canvas,
+                        this.scrMgrSelectionCallback
+                    );
+                }
+                enableSelection(this.#canvas);
+                break;
+
+            case "Add":
+                disableSelection(this.#canvas);
+                setMousedownCallback(this.#canvas, this.addObjectOnMousedown);
+                break;
+            case "Spray":
+                this.setSelection([]);
+                disableSelection(this.#canvas);
+                this.#sprayMouseDown = false;
+                enableMouseTracking(this.#canvas, this.sprayTrackMouse);
+                break;
+
+            default:
+        }
+        this.#appMode = mode;
+    }
+
+    sprayTrackMouse(eventType, x, y) {
+        switch (eventType) {
+            case InputEvent.MouseDown:
+                console.log(`${eventType}-${x}.${y}`);
+                this.#sprayObject = objectAtXY(this.#canvas, x, y);
+                if (!this.#sprayObject) {
+                    if (this.#modeChangeCallback) {
+                        this.#modeChangeCallback(EditMode.Select);
+                    }
+                } else {
+                    this.#sprayMouseDown = true;
+                }
+                break;
+            case InputEvent.MouseMove:
+                if (this.#sprayMouseDown) {
+                    console.log(`${eventType}-${x}.${y}`);
+                }
+                break;
+            case InputEvent.MouseUp:
+                this.finishSpray(x, y);
+                if (this.#modeChangeCallback) {
+                    this.#modeChangeCallback(EditMode.Select);
+                }
+                break;
+            default:
+        }
+    }
+
+    calcSprayAdditions(mx, my) {
+        var vsSz = this.getVScreenSize();
+        mx = Math.max(0, mx);
+        mx = Math.min(mx, vsSz.width - 1);
+        my = Math.max(0, my);
+        my = Math.min(my, vsSz.height - 1);
+
+        var { x, y, width, height } = getDimensions(this.#sprayObject);
+        var ncols, nrows;
+        if (mx < x) {
+            ncols = Math.trunc((mx - x) / (width + sprayXOffset));
+        } else if (mx > x + width) {
+            ncols = Math.trunc((mx - (x + width)) / (width + sprayXOffset));
         } else {
-            disableSelection(this.#canvas);
-            this.#addObjectMode = mode;
-            setMousedownCallback(this.#canvas, this.addObjectOnMousedown);
+            ncols = 0;
+        }
+
+        if (my < y) {
+            nrows = Math.trunc((my - y) / (height + sprayYOffset));
+        } else if (mx > y + height) {
+            nrows = Math.trunc((my - (y + height)) / (height + sprayYOffset));
+        } else {
+            nrows = 0;
+        }
+
+        return { nrows: nrows, ncols: ncols };
+    }
+
+    finishSpray(x, y) {
+        var { ncols, nrows } = this.calcSprayAdditions(x, y);
+        if (ncols === 0 && nrows === 0) return;
+
+        var { x, y, width, height } = getDimensions(this.#sprayObject);
+        for (let ccnt = 0; ccnt <= Math.abs(ncols); ccnt++) {
+            for (let rcnt = 0; rcnt <= Math.abs(nrows); rcnt++) {
+                if (rcnt !== 0 || ccnt !== 0) {
+                    var offx = Math.sign(ncols) * ccnt * (width + sprayXOffset);
+                    var offy =
+                        Math.sign(nrows) * rcnt * (height + sprayYOffset);
+                    var scrObj = this.#canvasObjToScreen(
+                        this.#currentPage,
+                        this.#sprayObject
+                    );
+                    if (scrObj) {
+                        var newObj = this.cloneObject(scrObj);
+                        moveBy(this.#canvas, newObj.getCanvasObj(), offx, offy);
+                    }
+                }
+            }
         }
     }
 

@@ -92,6 +92,55 @@ function disableInputCallback(cnv, inputCallback) {
     });
 }
 
+function objectAtXY(cnv, x, y) {
+    var zoom = cnv.getZoom();
+    var pt = new fabric.Point(x * zoom, y * zoom);
+    var objects = cnv.getObjects();
+    for (let i = 0; i < objects.length; i++) {
+        if (objects[i].containsPoint(pt)) {
+            return objects[i];
+        }
+    }
+    return null;
+}
+
+function enableMouseTracking(cnv, inputCallback) {
+    cnv.on({
+        "mouse:up": function (eventData) {
+            var zoom = cnv.getZoom();
+            inputCallback(
+                InputEvent.MouseUp,
+                eventData.pointer.x / zoom,
+                eventData.pointer.y / zoom
+            );
+        },
+        "mouse:move": function (eventData) {
+            var zoom = cnv.getZoom();
+            inputCallback(
+                InputEvent.MouseMove,
+                eventData.pointer.x / zoom,
+                eventData.pointer.y / zoom
+            );
+        },
+        "mouse:down": function (eventData) {
+            var zoom = cnv.getZoom();
+            inputCallback(
+                InputEvent.MouseDown,
+                eventData.pointer.x / zoom,
+                eventData.pointer.y / zoom
+            );
+        },
+    });
+}
+
+function disableMouseTracking(cnv, inputCallback) {
+    cnv.off({
+        "mouse:up": null,
+        "mouse:move": null,
+        "mouse:down": null,
+    });
+}
+
 function handleInputEvent(eventType, eventData, callback, scrObj) {
     var data;
     switch (eventType) {
@@ -620,6 +669,9 @@ export {
     enableSelection,
     disableInputCallback,
     enableInputCallback,
+    objectAtXY,
+    enableMouseTracking,
+    disableMouseTracking,
     getBackgroundColor,
     setBackgroundColor,
     getBackgroundImage,

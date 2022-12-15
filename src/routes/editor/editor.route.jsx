@@ -26,7 +26,7 @@ import { combineProperties } from "../../app/constants/property-types";
 import { blankBehavior } from "../../app/behaviors/behavior-behaviors";
 
 import { ReactComponent as DuplicateIcon } from "./duplicate.svg";
-import { ReactComponent as SprayIcon } from "./spray.svg";
+
 import SvgIcon from "@mui/material/SvgIcon";
 
 const drawerWidth = 100;
@@ -100,15 +100,6 @@ const Editor = () => {
     ];
 
     const rightButtonBarSpec = [
-        {
-            icon: (
-                <SvgIcon>
-                    <SprayIcon />
-                </SvgIcon>
-            ),
-            callback: handleSpray,
-            tooltip: "Spray",
-        },
         {
             icon: <FlipToFrontRoundedIcon />,
             callback: handleBringToFront,
@@ -198,7 +189,7 @@ const Editor = () => {
                     appMgr.openPage(page.name);
                 }
                 scrMgr.setSelectionCallback(handleSelectionChange);
-                scrMgr.setAfterAddCallback(handleAfterAdd);
+                scrMgr.setModeChangeCallback(handleUserModeChange);
                 scrMgr.setModifiedCallback(() => markChanged(true));
                 handleSelectionChange([]);
                 markChanged(false);
@@ -240,11 +231,7 @@ const Editor = () => {
 
     function handleUserModeChange(mode) {
         setAppMode(mode);
-        appManager.getScreenManager().setAddObjectMode(mode.submode);
-    }
-
-    function handleAfterAdd(newObj) {
-        setAppMode(EditMode.Select);
+        appManager.getScreenManager().setMode(mode);
     }
 
     function refreshLocalProperties(propType, value) {
@@ -399,10 +386,6 @@ const Editor = () => {
 
     function currentPageName() {
         return appManager.getScreenManager().getCurrentPageName();
-    }
-
-    function handleSpray() {
-        alert("spray");
     }
 
     function handleBringToFront() {

@@ -9,6 +9,7 @@ import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
 import TextFieldsRoundedIcon from "@mui/icons-material/TextFieldsRounded";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
 import { ReactComponent as SymButton } from "./button.svg";
+import { ReactComponent as SprayIcon } from "./spray.svg";
 import SvgIcon from "@mui/material/SvgIcon";
 
 import { EditMode } from "../../routes/editor/edit-modes";
@@ -40,7 +41,6 @@ const options = [
         mode: EditMode.AddImage,
     },
     {
-        //icon: <PictureInPictureAltRoundedIcon />,
         icon: (
             <SvgIcon fontSize="large">
                 <SymButton />
@@ -48,6 +48,15 @@ const options = [
         ),
         label: "",
         mode: EditMode.AddSymbolButton,
+    },
+    {
+        icon: (
+            <SvgIcon fontSize="large">
+                <SprayIcon />
+            </SvgIcon>
+        ),
+        label: "",
+        mode: EditMode.Spray,
     },
 ];
 
