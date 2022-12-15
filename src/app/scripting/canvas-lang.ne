@@ -16,6 +16,7 @@ const lexer = moo.compile({
     gte: ">=",
     gt: ">",
     eq: "==",
+    neq: "!=",
     lparan: "(",
     rparan: ")",
     comma: ",",
@@ -70,7 +71,8 @@ const lexer = moo.compile({
             and: "and",
             or: "or",
             true: "true",
-            false: "false"
+            false: "false",
+            null: "null",
         })
     }
 });
@@ -491,6 +493,7 @@ comparison_operator
     |  "<"   {% convertTokenId %}
     |  "<="  {% convertTokenId %}
     |  "=="  {% convertTokenId %}
+    |  "!="  {% convertTokenId %}
 
 additive_expression
     -> multiplicative_expression    {% id %}
@@ -589,8 +592,9 @@ unary_expression
     |  list_literal         {% id %}
     |  dictionary_literal   {% id %}
     |  boolean_literal      {% id %}
+    |  null_literal         {% id %}
     |  indexed_access       {% id %}
-    |  function_expression       {% id %}
+    |  function_expression  {% id %}
     |  "(" expression ")"
         {%
             data => data[1]
@@ -663,6 +667,17 @@ boolean_literal
             d => ({
                 type: "boolean_literal",
                 value: false,
+                start: tokenStart(d[0]),
+                end: tokenEnd(d[0])
+            })
+        %}
+
+null_literal
+    -> "null"
+        {%
+            d => ({
+                type: "null_literal",
+                value: null,
                 start: tokenStart(d[0]),
                 end: tokenEnd(d[0])
             })

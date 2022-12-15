@@ -26,6 +26,7 @@ import {
     enableInputCallback,
     setSelectedObject,
     deleteSelectedObjects,
+    removeObject,
     refresh,
     resizeCanvas,
     setZoom,
@@ -173,6 +174,14 @@ class ScreenManager {
             if (this.#selectionCallback) this.#selectionCallback([]);
             this.#selectedObjects = [];
         }
+    }
+
+    deleteObject(obj) {
+        var page = obj.getPage();
+        if (page) {
+            page.removeChild(obj);
+        }
+        removeObject(this.#canvas, obj.getCanvasObj());
     }
 
     setSelectionCallback(callbk) {

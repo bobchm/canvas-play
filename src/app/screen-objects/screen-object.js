@@ -46,7 +46,7 @@ class ScreenObject {
     getChildren() {
         return [];
     }
-    
+
     isPage() {
         return false;
     }
@@ -92,10 +92,16 @@ class ScreenObject {
     }
 
     getProperty(type) {
-        if (type === "angle") {
-            return;
+        if (type === "id") {
+            return this.#id;
         }
         return null;
+    }
+
+    setProperty(screenMgr, type, value) {
+        if (type === "id") {
+            this.#id = value;
+        }
     }
 
     highlight(appManager, highlightType) {

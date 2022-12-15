@@ -1,4 +1,3 @@
-import PageScreenObject from "../screen-objects/page-screen-object";
 import RectScreenObject from "../screen-objects/rect-screen-object";
 import CircleScreenObject from "../screen-objects/circle-screen-object";
 import TextScreenObject from "../screen-objects/text-screen-object";
@@ -111,6 +110,14 @@ function initScreenObjectBehaviors() {
         ],
         category: "screen object",
         description: "Add a symbol button screen object to the current page.",
+    });
+
+    BehaviorManager.addBuiltInFunction({
+        name: "deleteScreenObject",
+        function: behaviorDeleteScreenObject,
+        parameters: [{ type: PropertyValueType.ScreenObject, name: "object" }],
+        category: "screen object",
+        description: "Delete the specified screen object.",
     });
 
     BehaviorManager.addBuiltInFunction({
@@ -305,7 +312,7 @@ function initScreenObjectBehaviors() {
 }
 
 function behaviorCreateRectangle(x, y, width, height, fillColor, borderColor) {
-    var screenMgr = BehaviorManager.getScreenManager();
+    var screenMgr = BehaviorManager.appManager.getScreenManager();
     return new RectScreenObject(screenMgr, screenMgr.getCurrentPage(), {
         type: ScreenObjectType.Rectangle,
         shapeSpec: {
@@ -321,7 +328,7 @@ function behaviorCreateRectangle(x, y, width, height, fillColor, borderColor) {
 }
 
 function behaviorCreateCircle(x, y, radius, fillColor, borderColor) {
-    var screenMgr = BehaviorManager.getScreenManager();
+    var screenMgr = BehaviorManager.appManager.getScreenManager();
     return new CircleScreenObject(screenMgr, screenMgr.getCurrentPage(), {
         type: ScreenObjectType.Circle,
         shapeSpec: {
@@ -336,7 +343,7 @@ function behaviorCreateCircle(x, y, radius, fillColor, borderColor) {
 }
 
 function behaviorCreateText(text, x, y, textColor) {
-    var screenMgr = BehaviorManager.getScreenManager();
+    var screenMgr = BehaviorManager.appManager.getScreenManager();
     return new TextScreenObject(screenMgr, screenMgr.getCurrentPage(), text, {
         type: ScreenObjectType.Text,
         shapeSpec: {
@@ -350,7 +357,7 @@ function behaviorCreateText(text, x, y, textColor) {
 }
 
 function behaviorCreateImage(imageSource, x, y, width, height) {
-    var screenMgr = BehaviorManager.getScreenManager();
+    var screenMgr = BehaviorManager.appManager.getScreenManager();
     var imageObj = new ImageScreenObject(
         screenMgr,
         screenMgr.getCurrentPage(),
@@ -379,7 +386,7 @@ function behaviorCreateSymbolButton(
     borderColor,
     textColor
 ) {
-    var screenMgr = BehaviorManager.getScreenManager();
+    var screenMgr = BehaviorManager.appManager.getScreenManager();
     var newObj = new SymbolButtonScreenObject(
         screenMgr,
         screenMgr.getCurrentPage(),
@@ -401,6 +408,12 @@ function behaviorCreateSymbolButton(
         }
     );
     newObj.getCanvasObj().setTextColor(textColor);
+    return newObj;
+}
+
+function behaviorDeleteScreenObject(obj) {
+    BehaviorManager.appManager.getScreenManager().deleteObject(obj);
+    return null;
 }
 
 function behaviorGetProperty(obj, attribute) {

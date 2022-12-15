@@ -298,6 +298,8 @@ function evaluateExpression(node) {
             return node.value;
         case "boolean_literal":
             return node.value;
+        case "null_literal":
+            return node.value;
         case "list_literal":
             return evaluateList(node);
         case "dictionary_literal":
@@ -329,6 +331,7 @@ const expressionNodes = [
     "string_literal",
     "number_literal",
     "boolean_literal",
+    "null_literal",
     "list_literal",
     "dictionary_literal",
     "binary_operation",
@@ -368,6 +371,8 @@ function evaluateBinaryOp(op, left, right, node) {
                 return left <= right;
             case "==":
                 return left === right;
+            case "!=":
+                return left !== right;
             case "+":
                 return left + right;
             case "-":
@@ -662,6 +667,9 @@ function decompileNode(node) {
         case "boolean_literal":
             decompiled += node.value;
             break;
+        case "null_literal":
+            decompiled += node.value;
+            break;
         case "list_literal":
             decompiled += "[";
             for (let i = 0; i < node.items; i++) {
@@ -729,6 +737,7 @@ function isSimpleFunctionCall(node) {
                 "string_literal",
                 "number_literal",
                 "boolean_literal",
+                "null_literal",
                 "list_literal",
                 "dictionary_literal",
             ].includes(arg.type)

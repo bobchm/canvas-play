@@ -16,6 +16,7 @@ const lexer = moo.compile({
     gte: ">=",
     gt: ">",
     eq: "==",
+    neq: "!=",
     lparan: "(",
     rparan: ")",
     comma: ",",
@@ -71,6 +72,7 @@ const lexer = moo.compile({
             or: "or",
             true: "true",
             false: "false",
+            null: "null",
         }),
     },
 });
@@ -755,6 +757,11 @@ var grammar = {
             postprocess: convertTokenId,
         },
         {
+            name: "comparison_operator",
+            symbols: [{ literal: "!=" }],
+            postprocess: convertTokenId,
+        },
+        {
             name: "additive_expression",
             symbols: ["multiplicative_expression"],
             postprocess: id,
@@ -921,6 +928,11 @@ var grammar = {
         },
         {
             name: "unary_expression",
+            symbols: ["null_literal"],
+            postprocess: id,
+        },
+        {
+            name: "unary_expression",
             symbols: ["indexed_access"],
             postprocess: id,
         },
@@ -1015,6 +1027,16 @@ var grammar = {
             postprocess: (d) => ({
                 type: "boolean_literal",
                 value: false,
+                start: tokenStart(d[0]),
+                end: tokenEnd(d[0]),
+            }),
+        },
+        {
+            name: "null_literal",
+            symbols: [{ literal: "null" }],
+            postprocess: (d) => ({
+                type: "null_literal",
+                value: null,
                 start: tokenStart(d[0]),
                 end: tokenEnd(d[0]),
             }),

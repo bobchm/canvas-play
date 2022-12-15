@@ -100,6 +100,7 @@ function behaviorPop(ary) {
 
 function behaviorPush(ary, value) {
     ary.push(value);
+    return value;
 }
 
 function behaviorShift(ary) {
