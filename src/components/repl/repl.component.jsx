@@ -167,6 +167,7 @@ export default function ScriptRepl({ open, onClose }) {
                                 label={"Script"}
                                 fullWidth
                                 inputRef={inputRef}
+                                inputProps={{ spellCheck: "false" }}
                             />
                         </Stack>
                     </Stack>

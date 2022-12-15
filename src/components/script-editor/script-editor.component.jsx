@@ -114,6 +114,7 @@ export default function ScriptEditor({ open, appManager, behavior, onClose }) {
                             minRows={10}
                             maxRows={10}
                             inputRef={inputRef}
+                            inputProps={{ spellCheck: "false" }}
                         />
                     </Stack>
                     <Stack

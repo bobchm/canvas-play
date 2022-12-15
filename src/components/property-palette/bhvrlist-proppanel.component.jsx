@@ -17,6 +17,8 @@ function itemsFromBehavior(bhvr) {
     return bhvr.compiled.map((node) => BehaviorManager.sourceFromNode(node));
 }
 
+const maxItemSize = 12;
+
 const BehaviorListPropertyPanel = ({
     inBehavior,
     behaviorCallback,
@@ -115,6 +117,11 @@ const BehaviorListPropertyPanel = ({
         }
     }
 
+    function prepForDisplay(item) {
+        if (!item || item.length < maxItemSize) return item;
+        return item.substring(0, maxItemSize);
+    }
+
     var items = itemsFromBehavior(behavior);
 
     return (
@@ -139,7 +146,9 @@ const BehaviorListPropertyPanel = ({
                                 <a href="#" style={{ color: "#000000" }}>
                                     <MenuRoundedIcon />
                                 </a>
-                                <span className="bhvr-text">{item}</span>
+                                <span className="bhvr-text">
+                                    {prepForDisplay(item)}
+                                </span>
                                 <span className="bhvr-icons">
                                     {BehaviorManager.hasFunctionArguments(
                                         behavior,
