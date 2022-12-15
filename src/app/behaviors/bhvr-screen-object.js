@@ -113,8 +113,8 @@ function initScreenObjectBehaviors() {
     });
 
     BehaviorManager.addBuiltInFunction({
-        name: "deleteScreenObject",
-        function: behaviorDeleteScreenObject,
+        name: "deleteObject",
+        function: behaviorDeleteObject,
         parameters: [{ type: PropertyValueType.ScreenObject, name: "object" }],
         category: "screen object",
         description: "Delete the specified screen object.",
@@ -270,6 +270,14 @@ function initScreenObjectBehaviors() {
         category: "screen object",
         description:
             "Bring the specified object to the front of all other objects.",
+    });
+
+    BehaviorManager.addBuiltInFunction({
+        name: "duplicateObject",
+        function: behaviorDuplicateObject,
+        parameters: [{ type: PropertyValueType.ScreenObject, name: "object" }],
+        category: "screen object",
+        description: "Duplicate the specified screen object.",
     });
 
     BehaviorManager.addBuiltInFunction({
@@ -429,7 +437,7 @@ function behaviorCreateSymbolButton(
     return newObj;
 }
 
-function behaviorDeleteScreenObject(obj) {
+function behaviorDeleteObject(obj) {
     BehaviorManager.appManager.getScreenManager().deleteObject(obj);
     return null;
 }
@@ -511,6 +519,10 @@ function behaviorBringToFront(obj) {
 
 function behaviorSendToBack(obj) {
     BehaviorManager.appManager.getScreenManager().sendObjectToBack(obj);
+}
+
+function behaviorDuplicateObject(obj) {
+    return BehaviorManager.appManager.getScreenManager().cloneObject(obj);
 }
 
 function behaviorAnimatePosition(obj, x, y, msecs, animType) {

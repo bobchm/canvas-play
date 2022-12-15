@@ -178,6 +178,21 @@ function setSelectedObject(cnv, obj) {
     cnv.renderAll();
 }
 
+function setSelectedObjects(cnv, objs) {
+    cnv.discardActiveObject();
+    if (objs && objs.length > 0) {
+        if (objs.length > 1) {
+            var sel = new fabric.ActiveSelection(objs, {
+                canvas: cnv,
+            });
+            cnv.setActiveObject(sel);
+        } else {
+            cnv.setActiveObject(objs[0]);
+        }
+    }
+    cnv.requestRenderAll();
+}
+
 function getObjectId() {
     return `#object-${objIdCtr++}`;
 }
@@ -612,6 +627,7 @@ export {
     setBackgroundImageURL,
     setBackgroundImageStyle,
     setSelectedObject,
+    setSelectedObjects,
     removeObject,
     deleteSelectedObjects,
     bringToFront,

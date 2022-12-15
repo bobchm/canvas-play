@@ -25,9 +25,11 @@ import {
     enableSelection,
     enableInputCallback,
     setSelectedObject,
+    setSelectedObjects,
     deleteSelectedObjects,
     bringToFront,
     sendToBack,
+    moveBy,
     removeObject,
     refresh,
     resizeCanvas,
@@ -155,6 +157,13 @@ class ScreenManager {
         }
     }
 
+    setSelection(objs) {
+        this.#selectedObjects = objs;
+        this.#selectionCallback(objs);
+        var cobjs = objs.map((obj) => obj.getCanvasObj());
+        setSelectedObjects(this.#canvas, cobjs);
+    }
+
     clearSelectionCallback() {
         clearSelectionCallback(this.#canvas);
         this.#selectionCallback = null;
@@ -210,6 +219,22 @@ class ScreenManager {
 
     sendObjectToBack(obj) {
         sendToBack(this.#canvas, obj.getCanvasObj());
+    }
+
+    duplicateSelection(offx, offy) {
+        if (this.#currentPage && this.#selectedObjects) {
+            var clones = [];
+            var selObjs = this.#selectedObjects;
+            var checkObj = this.#selectedObjects[0];
+            setSelectedObjects(this.#canvas, null);
+            for (let i = 0; i < selObjs.length; i++) {
+                var obj = selObjs[i];
+                var newObj = this.cloneObject(obj);
+                moveBy(this.#canvas, newObj.getCanvasObj(), offx, offy);
+                clones.push(newObj);
+            }
+            this.setSelection(clones);
+        }
     }
 
     setSelectionCallback(callbk) {
@@ -512,6 +537,12 @@ class ScreenManager {
             default:
                 return null;
         }
+    }
+
+    cloneObject(obj) {
+        var json = obj.toJSON();
+        var parent = obj.getParent();
+        return this.createFromSpec(parent, json);
     }
 
     screenToFile(filename) {

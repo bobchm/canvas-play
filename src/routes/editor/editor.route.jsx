@@ -36,6 +36,7 @@ const buttonBarHeight = 30;
 const aboveCanvasHeight = appBarHeight + buttonBarHeight;
 
 const appName = "Canvas Play";
+var suspendSelectionCallback = false;
 
 const Editor = () => {
     const [title, setTitle] = useState(appName);
@@ -217,22 +218,24 @@ const Editor = () => {
     }
 
     function handleSelectionChange(objs) {
-        var props = [];
-        if (!objs || objs.length <= 0) {
-            var page = appManager.getScreenManager().getCurrentPage();
-            if (page) {
-                objs = [page];
-            }
-        }
-        if (objs && objs.length > 0) {
-            for (let i = 0; i < objs.length; i++) {
-                var objProps = objs[i].getEditProperties(objs);
-                for (let j = 0; j < objProps.length; j++) {
-                    addToEditProperties(props, objProps[j]);
+        if (!suspendSelectionCallback) {
+            var props = [];
+            if (!objs || objs.length <= 0) {
+                var page = appManager.getScreenManager().getCurrentPage();
+                if (page) {
+                    objs = [page];
                 }
             }
+            if (objs && objs.length > 0) {
+                for (let i = 0; i < objs.length; i++) {
+                    var objProps = objs[i].getEditProperties(objs);
+                    for (let j = 0; j < objProps.length; j++) {
+                        addToEditProperties(props, objProps[j]);
+                    }
+                }
+            }
+            setEditProperties(props);
         }
-        setEditProperties(props);
     }
 
     function handleUserModeChange(mode) {
@@ -404,14 +407,17 @@ const Editor = () => {
 
     function handleBringToFront() {
         appManager.getScreenManager().bringSelectionToFront();
+        markChanged(true);
     }
 
     function handleSendToBack() {
         appManager.getScreenManager().sendSelectionToBack();
+        markChanged(true);
     }
 
     function handleDuplicate() {
-        alert("duplicate");
+        appManager.getScreenManager().duplicateSelection(50, 50);
+        markChanged(true);
     }
 
     async function handlePlay() {
@@ -431,16 +437,24 @@ const Editor = () => {
 
     function handleSavePage() {
         if (isModified) {
-            var page = appManager.getScreenManager().getCurrentPage();
+            var screenMgr = appManager.getScreenManager();
+            var page = screenMgr.getCurrentPage();
             if (page) {
+                // Object selection sometimes embeds the objects in a selection frame and alters their
+                // positions. Need to clear selection, save, and then reselect.
+                suspendSelectionCallback = true;
+                var selectedObjects = screenMgr.getSelectedObjects();
+                screenMgr.setSelection([]);
+
                 var content = page.toJSON();
-                // testCompression(content);
                 var spec = appManager
                     .getUserActivityManager()
                     .getUserPage(page.getName());
                 spec.content = content;
                 appManager.getUserActivityManager().modifyUserPage(spec);
                 markChanged(false);
+                screenMgr.setSelection(selectedObjects);
+                suspendSelectionCallback = false;
                 //appManager.getScreenManager().screenToFile("zqe.png");
             }
         }
