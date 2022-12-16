@@ -70,6 +70,8 @@ class ScreenManager {
     #accessManager = null;
     #sprayMouseDown = false;
     #sprayObject = null;
+    #sprayRegistry = [];
+    #sprayExtent = { col: 0, row: 0 };
 
     constructor() {
         this.addObjectOnMousedown = this.addObjectOnMousedown.bind(this);
@@ -516,39 +518,47 @@ class ScreenManager {
     sprayTrackMouse(eventType, x, y) {
         switch (eventType) {
             case InputEvent.MouseDown:
-                console.log(`${eventType}-${x}.${y}`);
-                this.#sprayObject = objectAtXY(this.#canvas, x, y);
+                var cnvObj = objectAtXY(this.#canvas, x, y);
+                if (cnvObj) {
+                    this.#sprayObject = this.#canvasObjToScreen(
+                        this.#currentPage,
+                        cnvObj
+                    );
+                }
                 if (!this.#sprayObject) {
                     if (this.#modeChangeCallback) {
                         this.#modeChangeCallback(EditMode.Select);
                     }
                 } else {
                     this.#sprayMouseDown = true;
+                    this.#sprayRegistry = [];
+                    this.#sprayExtent = { col: 0, row: 0 };
                 }
                 break;
             case InputEvent.MouseMove:
                 if (this.#sprayMouseDown) {
-                    console.log(`${eventType}-${x}.${y}`);
+                    this.updateSpray(x, y);
                 }
                 break;
             case InputEvent.MouseUp:
-                this.finishSpray(x, y);
                 if (this.#modeChangeCallback) {
                     this.#modeChangeCallback(EditMode.Select);
                 }
+                this.#sprayMouseDown = false;
+                this.#sprayRegistry = [];
+                this.#sprayExtent = { col: 0, row: 0 };
                 break;
             default:
         }
     }
 
-    calcSprayAdditions(mx, my) {
+    calcSprayAdditions(mx, my, { x, y, width, height }) {
         var vsSz = this.getVScreenSize();
         mx = Math.max(0, mx);
         mx = Math.min(mx, vsSz.width - 1);
         my = Math.max(0, my);
         my = Math.min(my, vsSz.height - 1);
 
-        var { x, y, width, height } = getDimensions(this.#sprayObject);
         var ncols, nrows;
         if (mx < x) {
             ncols = Math.trunc((mx - x) / (width + sprayXOffset));
@@ -560,7 +570,7 @@ class ScreenManager {
 
         if (my < y) {
             nrows = Math.trunc((my - y) / (height + sprayYOffset));
-        } else if (mx > y + height) {
+        } else if (my > y + height) {
             nrows = Math.trunc((my - (y + height)) / (height + sprayYOffset));
         } else {
             nrows = 0;
@@ -569,28 +579,130 @@ class ScreenManager {
         return { nrows: nrows, ncols: ncols };
     }
 
-    finishSpray(x, y) {
-        var { ncols, nrows } = this.calcSprayAdditions(x, y);
-        if (ncols === 0 && nrows === 0) return;
+    sprayDeleteRows(srow, erow) {
+        if (srow > erow) {
+            var temp = srow;
+            srow = erow;
+            erow = temp;
+        }
 
-        var { x, y, width, height } = getDimensions(this.#sprayObject);
+        for (let row = srow; row <= erow; row++) {
+            for (let i = 0; i < this.#sprayRegistry.length; i++) {
+                var reg = this.#sprayRegistry[i];
+                if (reg && reg.row === row) {
+                    this.deleteObject(reg.obj);
+                    this.#sprayRegistry[i] = null;
+                }
+            }
+        }
+    }
+
+    sprayDeleteCols(scol, ecol) {
+        if (scol > ecol) {
+            var temp = scol;
+            scol = ecol;
+            ecol = temp;
+        }
+
+        for (let col = scol; col <= ecol; col++) {
+            for (let i = 0; i < this.#sprayRegistry.length; i++) {
+                var reg = this.#sprayRegistry[i];
+                if (reg && reg.col === col) {
+                    this.deleteObject(reg.obj);
+                    this.#sprayRegistry[i] = null;
+                }
+            }
+        }
+    }
+
+    sprayDeleteUpdate(pcols, prows, ncols, nrows) {
+        if (
+            (pcols < 0 && ncols >= 0) ||
+            (pcols > 0 && ncols <= 0) ||
+            (prows < 0 && nrows >= 0) ||
+            (prows > 0 && nrows <= 0)
+        ) {
+            // delete everything
+            this.sprayDeleteRows(0, prows);
+            this.sprayDeleteCols(0, pcols);
+            return { pcols: 0, prows: 0 };
+        }
+
+        if ((pcols <= 0 && ncols <= pcols) || (pcols >= 0 && ncols >= pcols)) {
+            // no columns to delete
+            if (
+                (prows <= 0 && nrows <= prows) ||
+                (prows >= 0 && nrows >= prows)
+            ) {
+                // nothing to delete
+                return { pcols: pcols, prows: prows };
+            }
+
+            // have to be rows to delete
+            this.sprayDeleteRows(prows, nrows);
+            return { pcols: pcols, prows: nrows };
+        }
+
+        // there are colums to delete
+        this.sprayDeleteCols(pcols, ncols);
+
+        if ((prows <= 0 && nrows <= prows) || (prows >= 0 && nrows >= prows)) {
+            // no rows to delete
+            return { pcols: ncols, prows: prows };
+        }
+
+        // rows too
+        this.sprayDeleteRows(prows, nrows);
+        return { pcols: ncols, prows: nrows };
+    }
+
+    addToSprayRegistry(col, row, obj) {
+        this.#sprayRegistry.push({ row: row, col: col, obj: obj });
+    }
+
+    inSprayRegistry(col, row) {
+        for (let i = 0; i < this.#sprayRegistry.length; i++) {
+            var reg = this.#sprayRegistry[i];
+            if (reg && reg.col === col && reg.row === row) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    updateSpray(x, y) {
+        var prevcols = this.#sprayExtent.col;
+        var prevrows = this.#sprayExtent.row;
+        var dims = getDimensions(this.#sprayObject.getCanvasObj());
+        var { ncols, nrows } = this.calcSprayAdditions(x, y, dims);
+        if (ncols === prevcols && nrows === prevrows) return;
+        var { pcols, prows } = this.sprayDeleteUpdate(
+            prevcols,
+            prevrows,
+            ncols,
+            nrows
+        );
+
         for (let ccnt = 0; ccnt <= Math.abs(ncols); ccnt++) {
             for (let rcnt = 0; rcnt <= Math.abs(nrows); rcnt++) {
                 if (rcnt !== 0 || ccnt !== 0) {
-                    var offx = Math.sign(ncols) * ccnt * (width + sprayXOffset);
-                    var offy =
-                        Math.sign(nrows) * rcnt * (height + sprayYOffset);
-                    var scrObj = this.#canvasObjToScreen(
-                        this.#currentPage,
-                        this.#sprayObject
-                    );
-                    if (scrObj) {
-                        var newObj = this.cloneObject(scrObj);
-                        moveBy(this.#canvas, newObj.getCanvasObj(), offx, offy);
+                    var col = Math.sign(ncols) * ccnt;
+                    var row = Math.sign(nrows) * rcnt;
+                    if (!this.inSprayRegistry(col, row)) {
+                        this.createSprayObject(dims, col, row);
                     }
                 }
             }
         }
+        this.#sprayExtent = { col: ncols, row: nrows };
+    }
+
+    createSprayObject({ x, y, width, height }, col, row) {
+        var offx = col * (width + sprayXOffset);
+        var offy = row * (height + sprayYOffset);
+        var newObj = this.cloneObject(this.#sprayObject);
+        moveBy(this.#canvas, newObj.getCanvasObj(), offx, offy);
+        this.addToSprayRegistry(col, row, newObj);
     }
 
     async setSelectionProperties(propType, value) {

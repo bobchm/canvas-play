@@ -101,6 +101,11 @@ function objectAtXY(cnv, x, y) {
             return objects[i];
         }
     }
+    for (let i = 0; i < objects.length; i++) {
+        if (objects[i].containsPoint(pt, null, true)) {
+            return objects[i];
+        }
+    }
     return null;
 }
 
