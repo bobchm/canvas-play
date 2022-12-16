@@ -5,7 +5,6 @@ import {
     ttsSetRate,
     ttsSetVolume,
 } from "../../utils/textToSpeech";
-import { delay } from "../../utils/app-utils";
 
 function initSystemBehaviors() {
     BehaviorManager.addBuiltInFunction({

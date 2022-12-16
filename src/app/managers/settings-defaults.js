@@ -10,4 +10,6 @@ export const settingsDefaults = {
     touchExitHighlightType: "shrink",
     mousePauseDwellTime: 500,
     mousePauseHighlightType: "shrink",
+    sprayXSpacing: 10,
+    sprayYSpacing: 10,
 };

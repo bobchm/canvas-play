@@ -11,9 +11,12 @@ import ApplicationManager from "../../app/managers/application-manager";
 import ActivityCard from "../../components/activity-card/activity-card.component";
 import CanvasAppBar from "../../components/canvas-appbar/canvas-appbar.component";
 import SettingsModal from "../../components/settings-modal/settings-modal.component";
+import SimplePopMenu from "../../components/simple-pop-menu/simple-pop-menu.component";
+import ScriptEditor from "../../components/script-editor/script-editor.component";
 
 import "./dashboard.styles.scss";
-import { updateActivity } from "../../utils/dbaccess";
+import { blankBehavior } from "../../app/behaviors/behavior-behaviors";
+import { getActivity, updateActivity } from "../../utils/dbaccess";
 
 const initUserName = "bobchm@gmail.com";
 const heightOffset = 64;
@@ -30,21 +33,32 @@ const Dashboard = () => {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [width, setWidth] = useState(window.innerWidth);
     const [height, setHeight] = useState(window.innerHeight - heightOffset);
+    const [otherActivityAnchor, setOtherActivityAnchor] = useState(null);
+    const [otherActionActivity, setOtherActionActivity] = useState(null);
+    const [isScriptEditorOpen, setIsScriptEditorOpen] = useState(false);
+    const [activityBehavior, setActivityBehavior] = useState(blankBehavior);
 
     const navigate = useNavigate();
 
     const appBarMenuItems = [
         { label: "Add Activity", callback: handleAddActivity },
+        { label: "Import Activity", callback: handleImportActivity },
     ];
 
     const accountMenuItems = [
         { label: "Settings", callback: handleOpenSettings },
     ];
 
+    const otherActionMenuItems = [
+        { label: "Edit Behavior", callback: handleEditBehavior },
+        { label: "Export", callback: handleExport },
+    ];
+
     const activityActions = [
         { label: "Play", action: playActivity },
         { label: "Edit", action: editActivity },
         { label: "Delete", action: deleteAnActivity },
+        { label: "...", action: otherActivityActions },
     ];
 
     useEffect(() => {
@@ -101,13 +115,13 @@ const Dashboard = () => {
         }
     }
 
-    function playActivity(activity) {
+    function playActivity(activity, e) {
         navigate(
             `/play?userName=${userName}&activityName=${activity}&caller=dashboard`
         );
     }
 
-    function editActivity(activity) {
+    function editActivity(activity, e) {
         navigate(`/edit?userName=${userName}&activityName=${activity}`);
     }
 
@@ -118,7 +132,7 @@ const Dashboard = () => {
         return null;
     }
 
-    async function deleteAnActivity(activity) {
+    async function deleteAnActivity(activity, e) {
         if (await confirmationBox()) {
             var uaManager = applicationManager.getUserActivityManager();
             var user = await uaManager.getCurrentUserInfo();
@@ -133,9 +147,43 @@ const Dashboard = () => {
         }
     }
 
+    function otherActivityActions(activity, e) {
+        setOtherActivityAnchor(e.currentTarget);
+        setOtherActionActivity(activity);
+    }
+
+    function closeActivityActions() {
+        setOtherActivityAnchor(null);
+    }
+
     function handleOpenSettings() {
         applicationManager.getUserActivityManager().openSettingsChange();
         setIsSettingsOpen(true);
+    }
+
+    async function handleEditBehavior() {
+        var id = activityIdFromName(otherActionActivity);
+        if (!id) return;
+        var activity = await getActivity(id);
+        if (activity) {
+            setActivityBehavior(activity.behavior || blankBehavior);
+            setIsScriptEditorOpen(true);
+        }
+    }
+
+    async function handleCloseScriptEditor(newBehavior) {
+        setIsScriptEditorOpen(false);
+        if (newBehavior) {
+            var id = activityIdFromName(otherActionActivity);
+            if (!id) return;
+            var activity = await getActivity(id);
+            activity.behavior = newBehavior;
+            updateActivity(activity);
+        }
+    }
+
+    function handleExport() {
+        alert("export");
     }
 
     function settingsCloseCallback() {
@@ -145,6 +193,10 @@ const Dashboard = () => {
 
     function handleAddActivity() {
         setIsActivityCreateOpen(true);
+    }
+
+    function handleImportActivity() {
+        alert("import activity");
     }
 
     async function handleCreateActivity(name) {
@@ -239,6 +291,19 @@ const Dashboard = () => {
                     closeCallback={settingsCloseCallback}
                     appManager={applicationManager}
                 />
+                <SimplePopMenu
+                    menuActions={otherActionMenuItems}
+                    menuAnchor={otherActivityAnchor}
+                    closeCallback={closeActivityActions}
+                />
+                {isScriptEditorOpen && (
+                    <ScriptEditor
+                        behavior={activityBehavior}
+                        onClose={handleCloseScriptEditor}
+                        open={isScriptEditorOpen}
+                        appManager={applicationManager}
+                    />
+                )}
             </Container>
         </div>
     );

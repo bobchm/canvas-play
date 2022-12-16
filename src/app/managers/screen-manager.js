@@ -53,8 +53,8 @@ import { ScreenObjectType } from "../constants/screen-object-types";
 import { SymBtnShape } from "../../utils/symbol-button";
 import { EditMode } from "../../routes/editor/edit-modes";
 
-const sprayXOffset = 20;
-const sprayYOffset = 20;
+const sprayXSpacingDefault = 20;
+const sprayYSpacingDefault = 20;
 
 class ScreenManager {
     #canvas = null;
@@ -72,13 +72,15 @@ class ScreenManager {
     #sprayObject = null;
     #sprayRegistry = [];
     #sprayExtent = { col: 0, row: 0 };
+    #settingsCallback;
 
-    constructor() {
+    constructor(settingsCallback) {
         this.addObjectOnMousedown = this.addObjectOnMousedown.bind(this);
         this.scrMgrSelectionCallback = this.scrMgrSelectionCallback.bind(this);
         this.setModified = this.setModified.bind(this);
         this.inputCallback = this.inputCallback.bind(this);
         this.sprayTrackMouse = this.sprayTrackMouse.bind(this);
+        this.#settingsCallback = settingsCallback;
     }
 
     getCanvas() {
@@ -552,8 +554,22 @@ class ScreenManager {
         }
     }
 
+    getSpraySpacing() {
+        var xSpace, ySpace;
+        if (this.#settingsCallback) {
+            xSpace = this.#settingsCallback("sprayXSpacing");
+            ySpace = this.#settingsCallback("sprayYSpacing");
+        } else {
+            xSpace = sprayXSpacingDefault;
+            ySpace = sprayYSpacingDefault;
+        }
+        return { xSpace: xSpace, ySpace: ySpace };
+    }
+
     calcSprayAdditions(mx, my, { x, y, width, height }) {
         var vsSz = this.getVScreenSize();
+        var { xSpace, ySpace } = this.getSpraySpacing();
+
         mx = Math.max(0, mx);
         mx = Math.min(mx, vsSz.width - 1);
         my = Math.max(0, my);
@@ -561,17 +577,17 @@ class ScreenManager {
 
         var ncols, nrows;
         if (mx < x) {
-            ncols = Math.trunc((mx - x) / (width + sprayXOffset));
+            ncols = Math.trunc((mx - x) / (width + xSpace));
         } else if (mx > x + width) {
-            ncols = Math.trunc((mx - (x + width)) / (width + sprayXOffset));
+            ncols = Math.trunc((mx - (x + width)) / (width + xSpace));
         } else {
             ncols = 0;
         }
 
         if (my < y) {
-            nrows = Math.trunc((my - y) / (height + sprayYOffset));
+            nrows = Math.trunc((my - y) / (height + ySpace));
         } else if (my > y + height) {
-            nrows = Math.trunc((my - (y + height)) / (height + sprayYOffset));
+            nrows = Math.trunc((my - (y + height)) / (height + ySpace));
         } else {
             nrows = 0;
         }
@@ -676,12 +692,7 @@ class ScreenManager {
         var dims = getDimensions(this.#sprayObject.getCanvasObj());
         var { ncols, nrows } = this.calcSprayAdditions(x, y, dims);
         if (ncols === prevcols && nrows === prevrows) return;
-        var { pcols, prows } = this.sprayDeleteUpdate(
-            prevcols,
-            prevrows,
-            ncols,
-            nrows
-        );
+        this.sprayDeleteUpdate(prevcols, prevrows, ncols, nrows);
 
         for (let ccnt = 0; ccnt <= Math.abs(ncols); ccnt++) {
             for (let rcnt = 0; rcnt <= Math.abs(nrows); rcnt++) {
@@ -698,8 +709,9 @@ class ScreenManager {
     }
 
     createSprayObject({ x, y, width, height }, col, row) {
-        var offx = col * (width + sprayXOffset);
-        var offy = row * (height + sprayYOffset);
+        var { xSpace, ySpace } = this.getSpraySpacing();
+        var offx = col * (width + xSpace);
+        var offy = row * (height + ySpace);
         var newObj = this.cloneObject(this.#sprayObject);
         moveBy(this.#canvas, newObj.getCanvasObj(), offx, offy);
         this.addToSprayRegistry(col, row, newObj);
