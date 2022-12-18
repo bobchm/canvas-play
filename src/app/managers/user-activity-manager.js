@@ -292,7 +292,7 @@ class UserActivityManager {
         delete newSpec._id;
         newSpec.name = destName;
         newSpec.content.name = destName;
-        newSpec.id = "#" + destName;
+        newSpec.content.id = "#" + destName;
         await this.addUserPage(newSpec);
     }
 

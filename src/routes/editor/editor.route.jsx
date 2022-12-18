@@ -22,6 +22,7 @@ import confirmationBox from "../../utils/confirm-box";
 import { defaultPageSpec } from "../../utils/app-utils";
 import { EditMode } from "./edit-modes";
 import { combineProperties } from "../../app/constants/property-types";
+import { blankBehavior } from "../../app/behaviors/behavior-behaviors";
 
 import { ReactComponent as DuplicateIcon } from "./duplicate.svg";
 
@@ -48,6 +49,8 @@ const Editor = () => {
     const [pageList, setPageList] = useState([]);
     const [pagePickerCallback, setPagePickerCallback] = useState(null);
     const [isAddPageOpen, setIsAddPageOpen] = useState(false);
+    const [copyPageSource, setCopyPageSource] = useState(null);
+    const [isCopyPageOpen, setIsCopyPageOpen] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
     const [searchParams] = useSearchParams();
     const [paletteHeight, setPaletteHeight] = useState(
@@ -271,6 +274,58 @@ const Editor = () => {
         setIsAddPageOpen(false);
     }
 
+    function handleCopyPage() {
+        let pageNames = getAllPages();
+
+        setPageList(pageNames);
+        setPagePickerCallback(() => handleSelectingCopyPage);
+        setIsPagePickerOpen(true);
+    }
+
+    async function handleSelectingCopyPage(pageName) {
+        setIsPagePickerOpen(false);
+        if (!pageName) return;
+        if (
+            isModified &&
+            (await confirmationBox(
+                "You made changes. Would you like to save them?"
+            ))
+        ) {
+            handleSavePage();
+        }
+        setCopyPageSource(pageName);
+        setIsCopyPageOpen(true);
+    }
+
+    function handleDoCopyPageName(name) {
+        setIsCopyPageOpen(false);
+        if (!name || name.length === 0) return;
+
+        var uam = appManager.getUserActivityManager();
+        if (uam.hasUserPage(name)) {
+            alert("That page name is already in use.");
+            return;
+        }
+
+        // add the page
+        uam.copyUserPage(copyPageSource, name);
+    }
+
+    function handleCancelCopyPageName(name) {
+        setIsCopyPageOpen(false);
+    }
+
+    function getAllPages() {
+        let uam = appManager.getUserActivityManager();
+        let pageNameList = [];
+        let nPages = uam.getNumPages();
+        for (let n = 0; n < nPages; n++) {
+            let page = uam.getNthPage(n);
+            pageNameList.push(page.name);
+        }
+        return pageNameList;
+    }
+
     function getAllPagesButCurrent() {
         let curPage = appManager.getScreenManager().getCurrentPage();
         let uam = appManager.getUserActivityManager();
@@ -323,10 +378,6 @@ const Editor = () => {
         setPageList(pageNames);
         setPagePickerCallback(() => handleSelectingDeletePage);
         setIsPagePickerOpen(true);
-    }
-
-    function handleCopyPage() {
-        alert("copy page");
     }
 
     async function handleSelectingDeletePage(pageName) {
@@ -489,6 +540,16 @@ const Editor = () => {
                     onClose={pagePickerCallback}
                     open={isPagePickerOpen}
                 />
+                <TextInputModal
+                    open={isCopyPageOpen}
+                    question="Copy Page"
+                    contentText="Enter the name of your new page."
+                    textLabel="Page Name"
+                    yesLabel="Copy"
+                    yesCallback={handleDoCopyPageName}
+                    noLabel="Cancel"
+                    noCallback={handleCancelCopyPageName}
+                />{" "}
                 <TextInputModal
                     open={isAddPageOpen}
                     question="Add New Page?"
