@@ -62,7 +62,7 @@ export default function ActivityCard({
 
     return (
         <>
-            <Card sx={{ margin: "20px", width: 250 }}>
+            <Card sx={{ margin: "20px", width: 300 }}>
                 <CardMedia
                     component="img"
                     height="140"
@@ -104,7 +104,7 @@ export default function ActivityCard({
                     {actions.map((action, idx) => (
                         <Button
                             key={idx}
-                            onClick={() => action.action(name)}
+                            onClick={(e) => action.action(name, e)}
                             size="small"
                         >
                             {action.label}

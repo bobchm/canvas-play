@@ -6,9 +6,10 @@ class ApplicationManager {
     #userActivityManager;
     #screenManager;
 
-    constructor(userName, screenSpec) {
+    constructor() {
+        this.getSetting = this.getSetting.bind(this);
         this.#userActivityManager = new UserActivityManager();
-        this.#screenManager = new ScreenManager(screenSpec);
+        this.#screenManager = new ScreenManager(this.getSetting);
         BehaviorManager.initialize(this);
     }
 

@@ -119,10 +119,6 @@ class ScreenObject {
     select() {
         return;
     }
-
-    async setProperty(screenMgr, property, value) {
-        return;
-    }
 }
 
 export default ScreenObject;

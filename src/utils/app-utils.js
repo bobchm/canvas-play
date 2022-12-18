@@ -1,10 +1,10 @@
 import PageScreenObject from "../app/screen-objects/page-screen-object";
 import { CurrentActivityVersion, CurrentPageVersion } from "./dbaccess";
 import { blankBehavior } from "../app/behaviors/behavior-behaviors";
-import {
-    compressToEncodedURIComponent,
-    decompressFromEncodedURIComponent,
-} from "lz-string";
+// import {
+//     compressToEncodedURIComponent,
+//     decompressFromEncodedURIComponent,
+// } from "lz-string";
 
 export function defaultPageSpec(name) {
     var page = new PageScreenObject(null, null, {
@@ -24,31 +24,31 @@ export function defaultPageSpec(name) {
     };
 }
 
-function inflatePage(cPage) {
-    var iString = decompressFromEncodedURIComponent(cPage.content);
-    return {
-        name: cPage.name,
-        content: JSON.parse(iString),
-        version: cPage.version,
-    };
-}
+// function inflatePage(cPage) {
+//     var iString = decompressFromEncodedURIComponent(cPage.content);
+//     return {
+//         name: cPage.name,
+//         content: JSON.parse(iString),
+//         version: cPage.version,
+//     };
+// }
 
-function deflatePage(iPage) {
-    var stringified = JSON.stringify(iPage.content);
-    var cContent = compressToEncodedURIComponent(stringified);
-    var iLength = stringified.length;
-    var cLength = cContent.length;
-    // console.log(
-    //     `page compression: ${
-    //         (cLength / iLength) * 100
-    //     }% - (${iLength} vs. ${cLength})`
-    // );
-    return {
-        name: iPage.name,
-        content: cContent,
-        version: CurrentPageVersion,
-    };
-}
+// function deflatePage(iPage) {
+//     var stringified = JSON.stringify(iPage.content);
+//     var cContent = compressToEncodedURIComponent(stringified);
+//     var iLength = stringified.length;
+//     var cLength = cContent.length;
+//     console.log(
+//         `page compression: ${
+//             (cLength / iLength) * 100
+//         }% - (${iLength} vs. ${cLength})`
+//     );
+//     return {
+//         name: iPage.name,
+//         content: cContent,
+//         version: CurrentPageVersion,
+//     };
+// }
 
 export function postLoadPage(page) {
     var version = pageVersion(page);
