@@ -11,7 +11,7 @@ import {
     deletePage,
 } from "../../utils/dbaccess";
 
-import { delay } from "../../utils/app-utils";
+import { delay, jsonDeepCopy } from "../../utils/app-utils";
 
 import { settingsDefaults } from "./settings-defaults";
 
@@ -263,6 +263,9 @@ class UserActivityManager {
     }
 
     async addUserPage(spec) {
+        if (this.hasUserPage(spec.name)) {
+            throw new Error(`Duplicate page name: ${spec.name}`);
+        }
         var id = await addPage(this.#currentActivityId, spec);
         if (id) {
             var page = await getPage(id);
@@ -281,6 +284,16 @@ class UserActivityManager {
             await updatePage(spec);
             this.#pageHash.set(spec.name, spec);
         }
+    }
+
+    async copyUserPage(srcName, destName) {
+        var srcSpec = this.#pageHash.get(srcName);
+        var newSpec = jsonDeepCopy(srcSpec);
+        delete newSpec._id;
+        newSpec.name = destName;
+        newSpec.content.name = destName;
+        newSpec.id = "#" + destName;
+        await this.addUserPage(newSpec);
     }
 
     async removeUserPage(name) {

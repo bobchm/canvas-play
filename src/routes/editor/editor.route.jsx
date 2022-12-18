@@ -15,7 +15,6 @@ import CanvasAppBar from "../../components/canvas-appbar/canvas-appbar.component
 import ButtonBar from "../../components/button-bar/button-bar.component";
 import ListModal from "../../components/list-modal/list-modal.component";
 import TextInputModal from "../../components/text-input-modal/text-input-modal.component";
-import ScriptEditor from "../../components/script-editor/script-editor.component";
 import ScriptRepl from "../../components/repl/repl.component";
 
 import ApplicationManager from "../../app/managers/application-manager";
@@ -23,7 +22,6 @@ import confirmationBox from "../../utils/confirm-box";
 import { defaultPageSpec } from "../../utils/app-utils";
 import { EditMode } from "./edit-modes";
 import { combineProperties } from "../../app/constants/property-types";
-import { blankBehavior } from "../../app/behaviors/behavior-behaviors";
 
 import { ReactComponent as DuplicateIcon } from "./duplicate.svg";
 
@@ -50,8 +48,6 @@ const Editor = () => {
     const [pageList, setPageList] = useState([]);
     const [pagePickerCallback, setPagePickerCallback] = useState(null);
     const [isAddPageOpen, setIsAddPageOpen] = useState(false);
-    const [isScriptEditorOpen, setIsScriptEditorOpen] = useState(false);
-    const [activityBehavior, setActivityBehavior] = useState(blankBehavior);
     const [isLoaded, setIsLoaded] = useState(false);
     const [searchParams] = useSearchParams();
     const [paletteHeight, setPaletteHeight] = useState(
@@ -75,11 +71,8 @@ const Editor = () => {
     const appBarMenuItems = [
         { label: "Add Page", callback: handleAddPage },
         { label: "Open Page", callback: handleOpenPage },
+        { label: "Copy Page", callback: handleCopyPage },
         { label: "Delete Page", callback: handleDeletePage },
-        {
-            label: "Edit Activity Behavior",
-            callback: handleEditActivityBehavior,
-        },
         {
             label: "REPL",
             callback: handleOpenRepl,
@@ -332,6 +325,10 @@ const Editor = () => {
         setIsPagePickerOpen(true);
     }
 
+    function handleCopyPage() {
+        alert("copy page");
+    }
+
     async function handleSelectingDeletePage(pageName) {
         setIsPagePickerOpen(false);
         if (!pageName) return;
@@ -343,24 +340,6 @@ const Editor = () => {
         ) {
             // delete the page
             appManager.getUserActivityManager().removeUserPage(pageName);
-        }
-    }
-
-    async function handleEditActivityBehavior() {
-        var uam = appManager.getUserActivityManager();
-        var activity = await uam.getCurrentActivity();
-        if (activity) {
-            setActivityBehavior(activity.behavior || blankBehavior);
-            setIsScriptEditorOpen(true);
-        }
-    }
-
-    async function handleCloseScriptEditor(newBehavior) {
-        setIsScriptEditorOpen(false);
-        if (newBehavior) {
-            var uam = appManager.getUserActivityManager();
-            await uam.updateCurrentActivityBehavior(newBehavior);
-            appManager.getScreenManager().rerunPageBehavior();
         }
     }
 
@@ -520,14 +499,6 @@ const Editor = () => {
                     noLabel="Cancel"
                     noCallback={handleCancelDoAddPage}
                 />
-                {isScriptEditorOpen && (
-                    <ScriptEditor
-                        behavior={activityBehavior}
-                        onClose={handleCloseScriptEditor}
-                        open={isScriptEditorOpen}
-                        appManager={appManager}
-                    />
-                )}
                 {isReplOpen && (
                     <ScriptRepl onClose={handleCloseRepl} open={isReplOpen} />
                 )}
