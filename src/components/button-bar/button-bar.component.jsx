@@ -7,6 +7,7 @@ export default function ButtonBar({
     height,
     leftButtons = [],
     rightButtons = [],
+    message = "",
 }) {
     return (
         <Box
@@ -42,6 +43,7 @@ export default function ButtonBar({
                     </IconButton>
                 ))}
             </div>
+            <p>{message}</p>
             <div>
                 {rightButtons.map((button, idx) => (
                     <IconButton

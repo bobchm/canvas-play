@@ -17,8 +17,12 @@ import ScriptEditor from "../../components/script-editor/script-editor.component
 import FileNamer from "../../components/file-namer/file-namer.component";
 import FilePicker from "../../components/file-picker/file-picker.component";
 import "./dashboard.styles.scss";
-import { blankBehavior } from "../../app/behaviors/behavior-behaviors";
+import {
+    BehaviorManager,
+    blankBehavior,
+} from "../../app/behaviors/behavior-behaviors";
 import { getActivity, getPage, updateActivity } from "../../utils/dbaccess";
+import { ExecutionMode } from "../../app/scripting/canvas-exec";
 
 const initUserName = "bobchm@gmail.com";
 const heightOffset = 64;
@@ -67,6 +71,7 @@ const Dashboard = () => {
     ];
 
     useEffect(() => {
+        BehaviorManager.setExecutionMode(ExecutionMode.Edit);
         setupForUser(userName);
 
         function handleResize() {

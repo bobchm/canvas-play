@@ -26,6 +26,7 @@ import {
 } from "../scripting/canvas-exec";
 import { PropertyValueType } from "../constants/property-types";
 import { SymBtnShape } from "../../utils/symbol-button";
+import { ExecutionMode } from "../scripting/canvas-exec";
 
 export const blankBehavior = { source: "", compiled: [] };
 
@@ -43,8 +44,10 @@ function stringCompare(a, b) {
 
 export class BehaviorManager {
     static appManager;
-    static initialize(appManager) {
+    static executionMode;
+    static initialize(appManager, mode) {
         this.appManager = appManager;
+        this.executionMode = ExecutionMode.Play;
 
         // set up the execution environment
         initializeExecution();
@@ -58,6 +61,10 @@ export class BehaviorManager {
         initScreenObjectBehaviors();
         initSpeechBehaviors();
         initNavigationBehaviors();
+    }
+
+    static setExecutionMode(mode) {
+        this.executionMode = mode;
     }
 
     static functionsForCategory(category) {
@@ -111,7 +118,7 @@ export class BehaviorManager {
 
         if (ast) {
             try {
-                value = execute(ast);
+                value = execute(ast, this.executionMode);
             } catch (err) {
                 alert(`Execution error in runSource: ${err}`);
             }
@@ -126,7 +133,7 @@ export class BehaviorManager {
     static execute(behavior) {
         if (behavior && behavior.compiled) {
             try {
-                execute(behavior.compiled);
+                execute(behavior.compiled, this.executionMode);
             } catch (err) {
                 alert(`Execution error in execute: ${err}`);
             }
@@ -137,7 +144,7 @@ export class BehaviorManager {
         this.pushStackFrame(frameName);
         if (behavior && behavior.compiled) {
             try {
-                execute(behavior.compiled);
+                execute(behavior.compiled, this.executionMode);
             } catch (err) {
                 alert(`Execution error in executeWithStackFrame: ${err}`);
             }
@@ -149,7 +156,7 @@ export class BehaviorManager {
             setVariable("self", obj);
 
             try {
-                execute(behavior.compiled);
+                execute(behavior.compiled, this.executionMode);
             } catch (err) {
                 alert(`Execution error in executeFromObject: ${err}`);
             }

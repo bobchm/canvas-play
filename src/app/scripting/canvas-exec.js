@@ -2,6 +2,11 @@ import nearley from "nearley";
 import grammar from "./canvas-lang";
 import { isObject } from "../../utils/app-utils";
 
+export const ExecutionMode = {
+    Edit: "editmode",
+    Play: "play",
+};
+
 var globalStack = [];
 
 function initializeExecution() {
@@ -31,12 +36,12 @@ function simplify(ast) {
     return ast;
 }
 
-function execute(ast) {
+function execute(ast, mode) {
     // ast should be a list of executable records
     var value = null;
     for (let i = 0; i < ast.length; i++) {
         try {
-            value = executeTopLevel(ast[i]);
+            value = executeTopLevel(ast[i], mode);
         } catch (err) {
             throw err;
         }
@@ -52,7 +57,7 @@ function executionError(err, node) {
     return new Error(msg);
 }
 
-function executeTopLevel(node) {
+function executeTopLevel(node, mode) {
     var value = null;
     switch (node.type) {
         case "comment":
@@ -64,10 +69,12 @@ function executeTopLevel(node) {
         case "return_statement":
             throw executionError("Return statement at top level", node);
         default:
-            if (isExpressionNode(node)) {
-                value = evaluateExpression(node);
-            } else {
-                value = executeStatement(node);
+            if (mode === ExecutionMode.Play) {
+                if (isExpressionNode(node)) {
+                    value = evaluateExpression(node);
+                } else {
+                    value = executeStatement(node);
+                }
             }
     }
     return value;

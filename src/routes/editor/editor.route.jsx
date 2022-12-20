@@ -29,6 +29,8 @@ import { combineProperties } from "../../app/constants/property-types";
 import { ReactComponent as DuplicateIcon } from "./duplicate.svg";
 
 import SvgIcon from "@mui/material/SvgIcon";
+import { BehaviorManager } from "../../app/behaviors/behavior-behaviors";
+import { ExecutionMode } from "../../app/scripting/canvas-exec";
 
 const drawerWidth = 100;
 const propsWidth = 300;
@@ -62,6 +64,7 @@ const Editor = () => {
     const [isReplOpen, setIsReplOpen] = useState(false);
     const [isExportOpen, setIsExportOpen] = useState(false);
     const [isImportOpen, setIsImportOpen] = useState(false);
+    const [editMessage, setEditMessage] = useState("");
 
     const navigate = useNavigate();
 
@@ -177,6 +180,8 @@ const Editor = () => {
     }
 
     function initAppForNow(appMgr, userName, activityName, startPage) {
+        BehaviorManager.setExecutionMode(ExecutionMode.Edit);
+        appMgr.getScreenManager().setMessageCallback(setEditMessage);
         var userMgr = appManager.getUserActivityManager();
         appMgr.setUser(userName).then((response) => {
             appMgr.setActivity(activityName).then((resp) => {
@@ -600,6 +605,7 @@ const Editor = () => {
                 height={buttonBarHeight}
                 leftButtons={leftButtonBarSpec}
                 rightButtons={rightButtonBarSpec}
+                message={editMessage}
             />
             <Box
                 sx={{

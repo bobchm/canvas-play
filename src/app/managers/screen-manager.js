@@ -73,6 +73,7 @@ class ScreenManager {
     #sprayRegistry = [];
     #sprayExtent = { col: 0, row: 0 };
     #settingsCallback;
+    #messageCallback = null;
 
     constructor(settingsCallback) {
         this.addObjectOnMousedown = this.addObjectOnMousedown.bind(this);
@@ -184,6 +185,10 @@ class ScreenManager {
         clearSelectionCallback(this.#canvas);
         this.#selectionCallback = null;
         this.#selectedObjects = null;
+    }
+
+    setMessageCallback(callback) {
+        this.#messageCallback = callback;
     }
 
     getSelectedObjects() {
@@ -368,6 +373,7 @@ class ScreenManager {
 
     addObjectOnMousedown(options) {
         var newObj = null;
+        this.showMessage("");
         switch (this.#appMode.submode) {
             case "Rectangle":
                 if (this.#currentPage) {
@@ -475,6 +481,12 @@ class ScreenManager {
         }
     }
 
+    showMessage(msg) {
+        if (this.#messageCallback) {
+            this.#messageCallback(msg);
+        }
+    }
+
     setMode(mode) {
         if (this.#appMode === mode) return;
         switch (this.#appMode.mode) {
@@ -502,6 +514,7 @@ class ScreenManager {
                 break;
 
             case "Add":
+                this.showMessage("Select where you'd like to place the object");
                 disableSelection(this.#canvas);
                 setMousedownCallback(this.#canvas, this.addObjectOnMousedown);
                 break;
@@ -510,6 +523,7 @@ class ScreenManager {
                 disableSelection(this.#canvas);
                 this.#sprayMouseDown = false;
                 enableMouseTracking(this.#canvas, this.sprayTrackMouse);
+                this.showMessage("Select the object you want to copy");
                 break;
 
             default:
@@ -520,6 +534,7 @@ class ScreenManager {
     sprayTrackMouse(eventType, x, y) {
         switch (eventType) {
             case InputEvent.MouseDown:
+                this.showMessage("");
                 var cnvObj = objectAtXY(this.#canvas, x, y);
                 if (cnvObj) {
                     this.#sprayObject = this.#canvasObjToScreen(
@@ -532,6 +547,7 @@ class ScreenManager {
                         this.#modeChangeCallback(EditMode.Select);
                     }
                 } else {
+                    this.showMessage("Sweep the area you want to spray into");
                     this.#sprayMouseDown = true;
                     this.#sprayRegistry = [];
                     this.#sprayExtent = { col: 0, row: 0 };
@@ -543,6 +559,7 @@ class ScreenManager {
                 }
                 break;
             case InputEvent.MouseUp:
+                this.showMessage("");
                 if (this.#modeChangeCallback) {
                     this.#modeChangeCallback(EditMode.Select);
                 }
