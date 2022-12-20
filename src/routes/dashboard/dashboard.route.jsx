@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Container from "@mui/material/Container";
 import List from "@mui/material/List";
 import Typography from "@mui/material/Typography";
+import FileSaver from "file-saver";
 import TextInputModal from "../../components/text-input-modal/text-input-modal.component";
 import confirmationBox from "../../utils/confirm-box";
 import { defaultActivitySpec, defaultPageSpec } from "../../utils/app-utils";
@@ -13,15 +14,17 @@ import CanvasAppBar from "../../components/canvas-appbar/canvas-appbar.component
 import SettingsModal from "../../components/settings-modal/settings-modal.component";
 import SimplePopMenu from "../../components/simple-pop-menu/simple-pop-menu.component";
 import ScriptEditor from "../../components/script-editor/script-editor.component";
-
+import FileNamer from "../../components/file-namer/file-namer.component";
+import FilePicker from "../../components/file-picker/file-picker.component";
 import "./dashboard.styles.scss";
 import { blankBehavior } from "../../app/behaviors/behavior-behaviors";
-import { getActivity, updateActivity } from "../../utils/dbaccess";
+import { getActivity, getPage, updateActivity } from "../../utils/dbaccess";
 
 const initUserName = "bobchm@gmail.com";
 const heightOffset = 64;
 const appName = "Canvas Play";
 const defaultVSize = { width: 2000, height: 1500 };
+const activityExtension = ".act.json";
 
 const Dashboard = () => {
     const [userName, setUserName] = useState(initUserName);
@@ -37,6 +40,8 @@ const Dashboard = () => {
     const [otherActionActivity, setOtherActionActivity] = useState(null);
     const [isScriptEditorOpen, setIsScriptEditorOpen] = useState(false);
     const [activityBehavior, setActivityBehavior] = useState(blankBehavior);
+    const [isExportOpen, setIsExportOpen] = useState(false);
+    const [isImportOpen, setIsImportOpen] = useState(false);
 
     const navigate = useNavigate();
 
@@ -51,7 +56,7 @@ const Dashboard = () => {
 
     const otherActionMenuItems = [
         { label: "Edit Behavior", callback: handleEditBehavior },
-        { label: "Export", callback: handleExport },
+        { label: "Export Activity", callback: handleExport },
     ];
 
     const activityActions = [
@@ -91,6 +96,13 @@ const Dashboard = () => {
 
     function addToActivities(activity) {
         setActivities((current) => [...current, activity]);
+    }
+
+    function activityExists(actName) {
+        for (let i = 0; i < activities.length; i++) {
+            if (activities[i].name === actName) return true;
+        }
+        return false;
     }
 
     async function initializeCurrentUser() {
@@ -182,10 +194,6 @@ const Dashboard = () => {
         }
     }
 
-    function handleExport() {
-        alert("export");
-    }
-
     function settingsCloseCallback() {
         setIsSettingsOpen(false);
         applicationManager.getUserActivityManager().closeSettingsChange();
@@ -193,10 +201,6 @@ const Dashboard = () => {
 
     function handleAddActivity() {
         setIsActivityCreateOpen(true);
-    }
-
-    function handleImportActivity() {
-        alert("import activity");
     }
 
     async function handleCreateActivity(name) {
@@ -223,6 +227,110 @@ const Dashboard = () => {
 
     function handleCancelCreateActivity(name) {
         setIsActivityCreateOpen(false);
+    }
+
+    function handleExport() {
+        setIsExportOpen(true);
+    }
+
+    async function getActivityJSON(activityId) {
+        var activity = await getActivity(activityId);
+        if (!activity) return null;
+
+        delete activity._id;
+
+        var pages = [];
+        var homePage = null;
+        for (let i = 0; i < activity.pages.length; i++) {
+            var pageId = activity.pages[i];
+            var page = await getPage(pageId);
+            if (pageId === activity.home) {
+                homePage = page.name;
+            }
+            delete page._id;
+            pages.push(page);
+        }
+        activity.pages = [];
+        activity.home = null;
+        return { activity: activity, homePage: homePage, pages: pages };
+    }
+
+    async function handleExportConfirm(fileName) {
+        setIsExportOpen(false);
+
+        // get the activity
+        var id = activityIdFromName(otherActionActivity);
+        if (!id) return;
+        var json = await getActivityJSON(id);
+        if (json) {
+            fileName += ".act.json";
+            let blob = new Blob([JSON.stringify(json, null, 4)], {
+                type: "application/json",
+                name: fileName,
+            });
+            FileSaver.saveAs(blob, fileName);
+        }
+    }
+
+    async function handleExportCancel(fileName) {
+        setIsExportOpen(false);
+    }
+
+    function handleImportActivity() {
+        setIsImportOpen(true);
+    }
+
+    function handleCompleteImport(fileName) {
+        setIsImportOpen(false);
+        const fileReader = new FileReader();
+        fileReader.readAsText(fileName, "UTF-8");
+        fileReader.onload = (e) => {
+            var activityJSON = JSON.parse(e.target.result);
+            importActivity(activityJSON);
+        };
+    }
+
+    async function importActivity(spec) {
+        var actSpec = spec.activity;
+        ensureUniqueActName(actSpec);
+
+        var uam = applicationManager.getUserActivityManager();
+        var actId = await uam.addUserActivity(actSpec);
+        if (!actId) return;
+
+        // add the pages
+        var homePgId = null;
+        for (let i = 0; i < spec.pages.length; i++) {
+            var page = spec.pages[i];
+            var isHome = false;
+            if (page.name === spec.homePage) isHome = true;
+            var pgId = await uam.addUserPageToActivity(actId, page);
+            if (!pgId) return;
+            if (isHome) homePgId = pgId;
+        }
+        var activity = await uam.getActivityFromId(actId);
+        activity.home = homePgId;
+        await uam.updateActivity(activity);
+        initializeCurrentUser();
+    }
+
+    function handleCancelImport() {
+        setIsImportOpen(false);
+    }
+
+    function ensureUniqueActName(spec) {
+        if (!activityExists(spec.name)) return;
+
+        var ctr = 0;
+        while (ctr < 100) {
+            var name = `${spec.name}${ctr}`;
+            if (!activityExists(name)) {
+                spec.name = name;
+                return;
+            }
+            ctr += 1;
+        }
+        throw new Error("Failure to create activity");
     }
 
     async function handleActivityChange(
@@ -296,6 +404,28 @@ const Dashboard = () => {
                     menuAnchor={otherActivityAnchor}
                     closeCallback={closeActivityActions}
                 />
+                {isImportOpen && (
+                    <FilePicker
+                        open={isImportOpen}
+                        question="Import Activity?"
+                        contentText="Select file"
+                        confirmLabel="Confirm"
+                        confirmCallback={handleCompleteImport}
+                        cancelLabel="Cancel"
+                        cancelCallback={handleCancelImport}
+                    />
+                )}
+                {isExportOpen && (
+                    <FileNamer
+                        open={isExportOpen}
+                        question="Export Activity?"
+                        extension={activityExtension}
+                        confirmLabel="Confirm"
+                        confirmCallback={handleExportConfirm}
+                        cancelLabel="Cancel"
+                        cancelCallback={handleExportCancel}
+                    />
+                )}
                 {isScriptEditorOpen && (
                     <ScriptEditor
                         behavior={activityBehavior}

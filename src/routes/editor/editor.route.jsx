@@ -16,13 +16,15 @@ import ButtonBar from "../../components/button-bar/button-bar.component";
 import ListModal from "../../components/list-modal/list-modal.component";
 import TextInputModal from "../../components/text-input-modal/text-input-modal.component";
 import ScriptRepl from "../../components/repl/repl.component";
+import FileSaver from "file-saver";
+import FileNamer from "../../components/file-namer/file-namer.component";
+import FilePicker from "../../components/file-picker/file-picker.component";
 
 import ApplicationManager from "../../app/managers/application-manager";
 import confirmationBox from "../../utils/confirm-box";
-import { defaultPageSpec } from "../../utils/app-utils";
+import { defaultPageSpec, jsonDeepCopy } from "../../utils/app-utils";
 import { EditMode } from "./edit-modes";
 import { combineProperties } from "../../app/constants/property-types";
-import { blankBehavior } from "../../app/behaviors/behavior-behaviors";
 
 import { ReactComponent as DuplicateIcon } from "./duplicate.svg";
 
@@ -33,6 +35,7 @@ const propsWidth = 300;
 const appBarHeight = 64;
 const buttonBarHeight = 30;
 const aboveCanvasHeight = appBarHeight + buttonBarHeight;
+const pageExtension = ".page.json";
 
 const appName = "Canvas Play";
 var suspendSelectionCallback = false;
@@ -57,6 +60,8 @@ const Editor = () => {
         canvasHeight(window.innerHeight)
     );
     const [isReplOpen, setIsReplOpen] = useState(false);
+    const [isExportOpen, setIsExportOpen] = useState(false);
+    const [isImportOpen, setIsImportOpen] = useState(false);
 
     const navigate = useNavigate();
 
@@ -76,6 +81,8 @@ const Editor = () => {
         { label: "Open Page", callback: handleOpenPage },
         { label: "Copy Page", callback: handleCopyPage },
         { label: "Delete Page", callback: handleDeletePage },
+        { label: "Import Page", callback: handleImportPage },
+        { label: "Export Page", callback: handleExportPage },
         {
             label: "REPL",
             callback: handleOpenRepl,
@@ -394,6 +401,91 @@ const Editor = () => {
         }
     }
 
+    function handleImportPage() {
+        setIsImportOpen(true);
+    }
+    function handleCompleteImport(fileName) {
+        setIsImportOpen(false);
+        const fileReader = new FileReader();
+        fileReader.readAsText(fileName, "UTF-8");
+        fileReader.onload = (e) => {
+            var pageJSON = JSON.parse(e.target.result);
+            importPage(pageJSON);
+        };
+    }
+
+    async function importPage(spec) {
+        ensureUniquePageName(spec);
+
+        var uam = appManager.getUserActivityManager();
+        var actId = uam.getCurrentActivityId();
+
+        await uam.addUserPageToActivity(actId, spec);
+    }
+
+    function handleCancelImport() {
+        setIsImportOpen(false);
+    }
+
+    function handleExportPage() {
+        setIsExportOpen(true);
+    }
+
+    function ensureUniquePageName(spec) {
+        var uam = appManager.getUserActivityManager();
+        if (!uam.hasUserPage(spec.name)) return;
+
+        var ctr = 0;
+        while (ctr < 100) {
+            var name = `${spec.name}${ctr}`;
+            if (!uam.hasUserPage(name)) {
+                spec.name = name;
+                spec.content.name = name;
+                spec.content.id = "#" + name;
+                return;
+            }
+            ctr += 1;
+        }
+        throw new Error("Failure to create page");
+    }
+
+    function getPageJSON(spec) {
+        var newSpec = jsonDeepCopy(spec);
+        delete newSpec._id;
+        return newSpec;
+    }
+
+    async function handleExportConfirm(fileName) {
+        setIsExportOpen(false);
+
+        if (
+            isModified &&
+            (await confirmationBox(
+                "You made changes. Would you like to save them?"
+            ))
+        ) {
+            handleSavePage();
+        }
+
+        // get the page
+        var pgName = appManager.getScreenManager().getCurrentPageName();
+        var json = await getPageJSON(
+            appManager.getUserActivityManager().getUserPage(pgName)
+        );
+        if (json) {
+            fileName += ".page.json";
+            let blob = new Blob([JSON.stringify(json, null, 4)], {
+                type: "application/json",
+                name: fileName,
+            });
+            FileSaver.saveAs(blob, fileName);
+        }
+    }
+
+    async function handleExportCancel(fileName) {
+        setIsExportOpen(false);
+    }
+
     async function handleOpenRepl() {
         setIsReplOpen(true);
     }
@@ -562,6 +654,28 @@ const Editor = () => {
                 />
                 {isReplOpen && (
                     <ScriptRepl onClose={handleCloseRepl} open={isReplOpen} />
+                )}
+                {isImportOpen && (
+                    <FilePicker
+                        open={isImportOpen}
+                        question="Import Page?"
+                        contentText="Select file"
+                        confirmLabel="Confirm"
+                        confirmCallback={handleCompleteImport}
+                        cancelLabel="Cancel"
+                        cancelCallback={handleCancelImport}
+                    />
+                )}
+                {isExportOpen && (
+                    <FileNamer
+                        open={isExportOpen}
+                        question="Export Page?"
+                        extension={pageExtension}
+                        confirmLabel="Confirm"
+                        confirmCallback={handleExportConfirm}
+                        cancelLabel="Cancel"
+                        cancelCallback={handleExportCancel}
+                    />
                 )}
             </Box>
         </div>

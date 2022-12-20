@@ -94,6 +94,10 @@ class UserActivityManager {
         return;
     }
 
+    getCurrentActivityId() {
+        return this.#currentActivityId;
+    }
+
     async getCurrentActivity() {
         return await this.getActivityFromId(this.#currentActivityId);
     }
@@ -273,10 +277,15 @@ class UserActivityManager {
                 this.#pageHash.set(spec.name, page);
             }
         }
+        return id;
     }
 
     async addUserPageToActivity(actId, spec) {
-        return await addPage(actId, spec);
+        if (actId === this.getCurrentActivityId()) {
+            return await this.addUserPage(spec);
+        } else {
+            return await addPage(actId, spec);
+        }
     }
 
     async modifyUserPage(spec) {
