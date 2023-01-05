@@ -616,6 +616,11 @@ function moveBy(cnv, obj, dx, dy) {
     moveTo(cnv, obj, obj.left + dx, obj.top + dy);
 }
 
+function moveSelectionBy(cnv, dx, dy) {
+    var activeObj = cnv.getActiveObject();
+    moveBy(cnv, activeObj, dx, dy);
+}
+
 function xlateOptions(cnv, dur, animType) {
     var options = {
         duration: dur,
@@ -705,6 +710,7 @@ export {
     setDimensions,
     moveTo,
     moveBy,
+    moveSelectionBy,
     animatePosition,
     animateDimensions,
     animateAngle,

@@ -171,6 +171,61 @@ const Editor = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    useEffect(() => {
+        function handleKeydown(ev) {
+            ev.preventDefault();
+            let charCode = String.fromCharCode(ev.which).toLowerCase();
+            if (ev.key === "Delete") {
+                setEditMessage("Delete");
+                handleDeleteSelection();
+            } else if (ev.key === "ArrowLeft") {
+                setEditMessage("Move Left");
+                appManager.getScreenManager().moveSelectionBy(-5, 0);
+                markChanged(true);
+            } else if (ev.key === "ArrowRight") {
+                setEditMessage("Move Right");
+                appManager.getScreenManager().moveSelectionBy(5, 0);
+                markChanged(true);
+            } else if (ev.key === "ArrowUp") {
+                setEditMessage("Move Up");
+                appManager.getScreenManager().moveSelectionBy(0, -5);
+                markChanged(true);
+            } else if (ev.key === "ArrowDown") {
+                setEditMessage("Move Down");
+                appManager.getScreenManager().moveSelectionBy(0, 5);
+                markChanged(true);
+            } else if ((ev.ctrlKey || ev.metaKey) && charCode === "c") {
+                setEditMessage("Copy");
+                appManager.getScreenManager().copySelection();
+            } else if ((ev.ctrlKey || ev.metaKey) && charCode === "s") {
+                setEditMessage("Save");
+                handleSavePage();
+            } else if ((ev.ctrlKey || ev.metaKey) && charCode === "v") {
+                setEditMessage("Paste");
+                appManager.getScreenManager().pasteBuffer();
+                markChanged(true);
+            } else if ((ev.ctrlKey || ev.metaKey) && charCode === "x") {
+                setEditMessage("Cut");
+                appManager.getScreenManager().cutSelection();
+                markChanged(true);
+            } else if ((ev.ctrlKey || ev.metaKey) && charCode === "a") {
+                setEditMessage("Select All");
+            } else if ((ev.ctrlKey || ev.metaKey) && charCode === "p") {
+                setEditMessage("Print");
+            } else if ((ev.ctrlKey || ev.metaKey) && charCode === "y") {
+                setEditMessage("Redo");
+            } else if ((ev.ctrlKey || ev.metaKey) && charCode === "z") {
+                setEditMessage("Undo");
+            }
+        }
+
+        window.addEventListener("keydown", handleKeydown, true);
+        return (_) => {
+            window.removeEventListener("keydown", handleKeydown, true);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isModified]);
+
     function canvasWidth(winWidth) {
         return winWidth - (drawerWidth + propsWidth);
     }

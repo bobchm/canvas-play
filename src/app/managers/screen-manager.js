@@ -34,6 +34,7 @@ import {
     bringToFront,
     sendToBack,
     moveBy,
+    moveSelectionBy,
     removeObject,
     refresh,
     resizeCanvas,
@@ -74,6 +75,7 @@ class ScreenManager {
     #sprayExtent = { col: 0, row: 0 };
     #settingsCallback;
     #messageCallback = null;
+    #copyBuffer = [];
 
     constructor(settingsCallback) {
         this.addObjectOnMousedown = this.addObjectOnMousedown.bind(this);
@@ -216,6 +218,58 @@ class ScreenManager {
         removeObject(this.#canvas, obj.getCanvasObj());
     }
 
+    moveSelectionBy(dx, dy) {
+        if (this.#currentPage && this.#selectedObjects) {
+            moveSelectionBy(this.#canvas, dx, dy);
+        }
+    }
+
+    copySelection() {
+        if (this.#currentPage && this.#selectedObjects) {
+            this.#copyBuffer = [];
+            var selObjs = this.#selectedObjects;
+            for (let i = 0; i < selObjs.length; i++) {
+                this.#copyBuffer.push(selObjs[i].toJSON());
+            }
+        }
+    }
+
+    cutSelection() {
+        this.copySelection();
+        this.deleteSelectedObjects();
+    }
+
+    pasteBuffer(offx = 0, offy = 0) {
+        if (
+            this.#currentPage &&
+            this.#copyBuffer &&
+            this.#copyBuffer.length > 0
+        ) {
+            var parent = this.#currentPage;
+            for (let i = 0; i < this.#copyBuffer.length; i++) {
+                var newObj = this.createFromSpec(parent, this.#copyBuffer[i]);
+                if (offx != 0 || offy != 0) {
+                    moveBy(this.#canvas, newObj.getCanvasObj(), offx, offy);
+                }
+            }
+        }
+    }
+
+    duplicateSelection(offx, offy) {
+        if (this.#currentPage && this.#selectedObjects) {
+            var clones = [];
+            var selObjs = this.#selectedObjects;
+            setSelectedObjects(this.#canvas, null);
+            for (let i = 0; i < selObjs.length; i++) {
+                var obj = selObjs[i];
+                var newObj = this.cloneObject(obj);
+                moveBy(this.#canvas, newObj.getCanvasObj(), offx, offy);
+                clones.push(newObj);
+            }
+            this.setSelection(clones);
+        }
+    }
+
     bringSelectionToFront() {
         if (this.#currentPage && this.#selectedObjects) {
             for (let i = 0; i < this.#selectedObjects.length; i++) {
@@ -240,21 +294,6 @@ class ScreenManager {
 
     sendObjectToBack(obj) {
         sendToBack(this.#canvas, obj.getCanvasObj());
-    }
-
-    duplicateSelection(offx, offy) {
-        if (this.#currentPage && this.#selectedObjects) {
-            var clones = [];
-            var selObjs = this.#selectedObjects;
-            setSelectedObjects(this.#canvas, null);
-            for (let i = 0; i < selObjs.length; i++) {
-                var obj = selObjs[i];
-                var newObj = this.cloneObject(obj);
-                moveBy(this.#canvas, newObj.getCanvasObj(), offx, offy);
-                clones.push(newObj);
-            }
-            this.setSelection(clones);
-        }
     }
 
     setSelectionCallback(callbk) {
