@@ -30,6 +30,7 @@ import {
     disableMouseTracking,
     setSelectedObject,
     setSelectedObjects,
+    selectAllObjects,
     deleteSelectedObjects,
     bringToFront,
     sendToBack,
@@ -268,6 +269,10 @@ class ScreenManager {
             }
             this.setSelection(clones);
         }
+    }
+
+    selectAll() {
+        selectAllObjects(this.#canvas);
     }
 
     bringSelectionToFront() {

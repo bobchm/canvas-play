@@ -247,6 +247,10 @@ function setSelectedObjects(cnv, objs) {
     cnv.requestRenderAll();
 }
 
+function selectAllObjects(cnv) {
+    setSelectedObjects(cnv, cnv.getObjects());
+}
+
 function getObjectId() {
     return `#object-${objIdCtr++}`;
 }
@@ -690,6 +694,7 @@ export {
     setBackgroundImageStyle,
     setSelectedObject,
     setSelectedObjects,
+    selectAllObjects,
     removeObject,
     deleteSelectedObjects,
     bringToFront,

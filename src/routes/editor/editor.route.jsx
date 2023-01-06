@@ -210,6 +210,7 @@ const Editor = () => {
                 markChanged(true);
             } else if ((ev.ctrlKey || ev.metaKey) && charCode === "a") {
                 setEditMessage("Select All");
+                appManager.getScreenManager().selectAll();
             } else if ((ev.ctrlKey || ev.metaKey) && charCode === "p") {
                 setEditMessage("Print");
             } else if ((ev.ctrlKey || ev.metaKey) && charCode === "y") {
