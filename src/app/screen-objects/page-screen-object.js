@@ -90,7 +90,7 @@ class PageScreenObject extends ContainerScreenObject {
                 current: this.#closeBehavior,
             });
         }
-        return superProps.concat(thisProps);
+        return thisProps.concat(superProps);
     }
 
     async setEditProperty(screenMgr, type, value) {
@@ -190,7 +190,7 @@ class PageScreenObject extends ContainerScreenObject {
     getName() {
         return this.#name;
     }
-    
+
     isPage() {
         return true;
     }

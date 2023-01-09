@@ -34,7 +34,7 @@ class RectScreenObject extends ScreenObject {
                 current: this.getCanvasObj().opacity * 100,
             },
         ];
-        return superProps.concat(thisProps);
+        return thisProps.concat(superProps);
     }
 
     async setEditProperty(screenMgr, type, value) {

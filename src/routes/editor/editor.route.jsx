@@ -7,6 +7,11 @@ import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import FlipToFrontRoundedIcon from "@mui/icons-material/FlipToFrontRounded";
 import FlipToBackRoundedIcon from "@mui/icons-material/FlipToBackRounded";
+import ContentCutRoundedIcon from "@mui/icons-material/ContentCutRounded";
+import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
+import ContentPasteRoundedIcon from "@mui/icons-material/ContentPasteRounded";
+import UndoRoundedIcon from "@mui/icons-material/UndoRounded";
+import RedoRoundedIcon from "@mui/icons-material/RedoRounded";
 
 import PlayCanvas from "../../components/play-canvas/play-canvas.component";
 import ObjectPalette from "../../components/object-palette/object-palette.component";
@@ -42,6 +47,9 @@ const pageExtension = ".page.json";
 const appName = "Canvas Play";
 var suspendSelectionCallback = false;
 
+const ArrowXMove = 5;
+const ArrowYMove = 5;
+
 const Editor = () => {
     const [title, setTitle] = useState(appName);
     const [appManager] = useState(() => new ApplicationManager());
@@ -65,6 +73,7 @@ const Editor = () => {
     const [isExportOpen, setIsExportOpen] = useState(false);
     const [isImportOpen, setIsImportOpen] = useState(false);
     const [editMessage, setEditMessage] = useState("");
+    const [hasCopyBuffer, setHasCopyBuffer] = useState(false);
 
     const navigate = useNavigate();
 
@@ -96,12 +105,12 @@ const Editor = () => {
         {
             icon: <ArrowBackRoundedIcon />,
             callback: handleBackToActivities,
-            tooltip: "Back to Activity Center",
+            text: "Back to Activity Center",
         },
         {
             icon: <PlayArrowRoundedIcon />,
             callback: handlePlay,
-            tooltip: "Play Page",
+            text: "Play Page",
         },
     ];
 
@@ -109,12 +118,48 @@ const Editor = () => {
         {
             icon: <FlipToFrontRoundedIcon />,
             callback: handleBringToFront,
-            tooltip: "Bring to Front",
+            text: "Bring to Front",
+            isEnabled: hasSelection,
         },
         {
             icon: <FlipToBackRoundedIcon />,
             callback: handleSendToBack,
-            tooltip: "Send To Back",
+            text: "Send To Back",
+            isEnabled: hasSelection,
+        },
+        {
+            text: "--divider--",
+        },
+        {
+            icon: <UndoRoundedIcon />,
+            callback: handleUndo,
+            text: "Undo",
+        },
+        {
+            icon: <RedoRoundedIcon />,
+            callback: handleRedo,
+            text: "Redo",
+        },
+        {
+            text: "--divider--",
+        },
+        {
+            icon: <ContentCutRoundedIcon />,
+            callback: handleCutSelection,
+            text: "Cut Selection",
+            isEnabled: hasSelection,
+        },
+        {
+            icon: <ContentCopyRoundedIcon />,
+            callback: handleCopySelection,
+            text: "Copy Selection",
+            isEnabled: hasSelection,
+        },
+        {
+            icon: <ContentPasteRoundedIcon />,
+            callback: handlePasteBuffer,
+            text: "Paste",
+            isEnabled: () => hasCopyBuffer,
         },
         {
             icon: (
@@ -123,17 +168,117 @@ const Editor = () => {
                 </SvgIcon>
             ),
             callback: handleDuplicate,
-            tooltip: "Duplicate Selection",
-        },
-        {
-            icon: <SaveRoundedIcon />,
-            callback: handleSavePage,
-            tooltip: "Save Page",
+            text: "Duplicate Selection",
+            isEnabled: hasSelection,
         },
         {
             icon: <DeleteRoundedIcon />,
             callback: handleDeleteSelection,
-            tooltip: "Delete Selection",
+            text: "Delete Selection",
+            isEnabled: hasSelection,
+        },
+        {
+            text: "--divider--",
+        },
+        {
+            icon: <SaveRoundedIcon />,
+            callback: handleSavePage,
+            text: "Save Page",
+            isEnabled: () => isModified,
+        },
+    ];
+
+    const hotKeys = [
+        {
+            // Delete selection
+            shift: false,
+            ctrlCmd: false,
+            key: "Delete",
+            fn: handleDeleteSelection,
+        },
+        {
+            // move selection left
+            shift: false,
+            ctrlCmd: false,
+            key: "ArrowLeft",
+            fn: () => handleMoveSelection(-1, 0),
+        },
+        {
+            // move selection right
+            shift: false,
+            ctrlCmd: false,
+            key: "ArrowRight",
+            fn: () => handleMoveSelection(1, 0),
+        },
+        {
+            // move selection up
+            shift: false,
+            ctrlCmd: false,
+            key: "ArrowUp",
+            fn: () => handleMoveSelection(0, -1),
+        },
+        {
+            // move selection down
+            shift: false,
+            ctrlCmd: false,
+            key: "ArrowDown",
+            fn: () => handleMoveSelection(0, 1),
+        },
+        {
+            // Select all
+            shift: false,
+            ctrlCmd: true,
+            key: "a",
+            fn: () => appManager.getScreenManager().selectAll(),
+        },
+        {
+            // copy selection
+            shift: false,
+            ctrlCmd: true,
+            key: "c",
+            fn: handleCopySelection,
+        },
+        {
+            // print
+            shift: false,
+            ctrlCmd: true,
+            key: "p",
+            fn: () => setEditMessage("Print not implemented yet"),
+        },
+        {
+            // save
+            shift: false,
+            ctrlCmd: true,
+            key: "s",
+            fn: handleSavePage,
+        },
+        {
+            // paste
+            shift: false,
+            ctrlCmd: true,
+            key: "v",
+            fn: handlePasteBuffer,
+        },
+        {
+            // cut selection
+            shift: false,
+            ctrlCmd: true,
+            key: "x",
+            fn: handleCutSelection,
+        },
+        {
+            // redo
+            shift: false,
+            ctrlCmd: true,
+            key: "y",
+            fn: handleRedo,
+        },
+        {
+            // undo
+            shift: false,
+            ctrlCmd: true,
+            key: "z",
+            fn: handleUndo,
         },
     ];
 
@@ -174,49 +319,22 @@ const Editor = () => {
     useEffect(() => {
         function handleKeydown(ev) {
             ev.preventDefault();
-            let charCode = String.fromCharCode(ev.which).toLowerCase();
-            if (ev.key === "Delete") {
-                setEditMessage("Delete");
-                handleDeleteSelection();
-            } else if (ev.key === "ArrowLeft") {
-                setEditMessage("Move Left");
-                appManager.getScreenManager().moveSelectionBy(-5, 0);
-                markChanged(true);
-            } else if (ev.key === "ArrowRight") {
-                setEditMessage("Move Right");
-                appManager.getScreenManager().moveSelectionBy(5, 0);
-                markChanged(true);
-            } else if (ev.key === "ArrowUp") {
-                setEditMessage("Move Up");
-                appManager.getScreenManager().moveSelectionBy(0, -5);
-                markChanged(true);
-            } else if (ev.key === "ArrowDown") {
-                setEditMessage("Move Down");
-                appManager.getScreenManager().moveSelectionBy(0, 5);
-                markChanged(true);
-            } else if ((ev.ctrlKey || ev.metaKey) && charCode === "c") {
-                setEditMessage("Copy");
-                appManager.getScreenManager().copySelection();
-            } else if ((ev.ctrlKey || ev.metaKey) && charCode === "s") {
-                setEditMessage("Save");
-                handleSavePage();
-            } else if ((ev.ctrlKey || ev.metaKey) && charCode === "v") {
-                setEditMessage("Paste");
-                appManager.getScreenManager().pasteBuffer();
-                markChanged(true);
-            } else if ((ev.ctrlKey || ev.metaKey) && charCode === "x") {
-                setEditMessage("Cut");
-                appManager.getScreenManager().cutSelection();
-                markChanged(true);
-            } else if ((ev.ctrlKey || ev.metaKey) && charCode === "a") {
-                setEditMessage("Select All");
-                appManager.getScreenManager().selectAll();
-            } else if ((ev.ctrlKey || ev.metaKey) && charCode === "p") {
-                setEditMessage("Print");
-            } else if ((ev.ctrlKey || ev.metaKey) && charCode === "y") {
-                setEditMessage("Redo");
-            } else if ((ev.ctrlKey || ev.metaKey) && charCode === "z") {
-                setEditMessage("Undo");
+            let key;
+            if (!ev.shift && !ev.ctrlKey & !ev.metaKey) {
+                key = ev.key;
+            } else {
+                key = String.fromCharCode(ev.which).toLowerCase();
+            }
+            for (let i = 0; i < hotKeys.length; i++) {
+                var hotKey = hotKeys[i];
+                if (
+                    hotKey.shift === ev.shiftKey &&
+                    hotKey.ctrlCmd === (ev.ctrlKey || ev.metaKey) &&
+                    hotKey.key === key
+                ) {
+                    hotKey.fn();
+                    return;
+                }
             }
         }
 
@@ -626,9 +744,58 @@ const Editor = () => {
         }
     }
 
+    function hasSelection() {
+        return appManager.getScreenManager().hasSelectedObjects();
+    }
+
     function handleDeleteSelection() {
-        appManager.getScreenManager().deleteSelectedObjects();
-        markChanged(true);
+        if (hasSelection) {
+            appManager.getScreenManager().deleteSelectedObjects();
+            markChanged(true);
+        }
+    }
+
+    function handleCutSelection() {
+        if (hasSelection()) {
+            appManager.getScreenManager().cutSelection();
+            markChanged(true);
+            setHasCopyBuffer(true);
+        }
+    }
+
+    function handleCopySelection() {
+        if (hasSelection()) {
+            appManager.getScreenManager().copySelection();
+            setHasCopyBuffer(true);
+        }
+    }
+
+    function handlePasteBuffer() {
+        if (hasCopyBuffer) {
+            appManager.getScreenManager().pasteBuffer();
+            markChanged(true);
+        }
+    }
+
+    function handleRedo() {
+        setEditMessage("Redo not implemented yet");
+    }
+
+    function handleUndo() {
+        setEditMessage("Undo not implemented yet");
+    }
+
+    function handleMoveSelection(xDir, yDir) {
+        if (hasSelection) {
+            appManager
+                .getScreenManager()
+                .moveSelectionBy(xDir * ArrowXMove, yDir * ArrowYMove);
+            markChanged(true);
+        }
+    }
+
+    function handleButtonBarEnabled(text) {
+        return true;
     }
 
     function markChanged(isChanged) {

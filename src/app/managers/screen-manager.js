@@ -54,6 +54,7 @@ import { defaultImageData } from "../../utils/image-defaults";
 import { ScreenObjectType } from "../constants/screen-object-types";
 import { SymBtnShape } from "../../utils/symbol-button";
 import { EditMode } from "../../routes/editor/edit-modes";
+import { ThirtyFpsSelect } from "@mui/icons-material";
 
 const sprayXSpacingDefault = 20;
 const sprayYSpacingDefault = 20;
@@ -198,6 +199,10 @@ class ScreenManager {
         return this.#selectedObjects;
     }
 
+    hasSelectedObjects() {
+        return this.#selectedObjects && this.#selectedObjects.length > 0;
+    }
+
     deleteSelectedObjects() {
         if (this.#currentPage && this.#selectedObjects) {
             for (let i = 0; i < this.#selectedObjects.length; i++) {
@@ -241,11 +246,7 @@ class ScreenManager {
     }
 
     pasteBuffer(offx = 0, offy = 0) {
-        if (
-            this.#currentPage &&
-            this.#copyBuffer &&
-            this.#copyBuffer.length > 0
-        ) {
+        if (this.#currentPage && this.hasCopyBuffer()) {
             var parent = this.#currentPage;
             for (let i = 0; i < this.#copyBuffer.length; i++) {
                 var newObj = this.createFromSpec(parent, this.#copyBuffer[i]);
@@ -254,6 +255,10 @@ class ScreenManager {
                 }
             }
         }
+    }
+
+    hasCopyBuffer() {
+        return this.#copyBuffer && this.#copyBuffer.length > 0;
     }
 
     duplicateSelection(offx, offy) {

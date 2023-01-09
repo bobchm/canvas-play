@@ -110,7 +110,7 @@ class SymbolButtonScreenObject extends ScreenObject {
                 current: this.#behavior,
             });
         }
-        return superProps.concat(thisProps);
+        return thisProps.concat(superProps);
     }
 
     async setEditProperty(screenMgr, type, value) {
