@@ -4,5 +4,6 @@ export const ScreenObjectType = {
     Text: "Text",
     Image: "Image",
     SymbolButton: "SymbolButton",
+    HotSpot: "HotSpot",
     Page: "Page",
 };

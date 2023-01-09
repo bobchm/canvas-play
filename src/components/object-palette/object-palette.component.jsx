@@ -10,6 +10,7 @@ import TextFieldsRoundedIcon from "@mui/icons-material/TextFieldsRounded";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
 import { ReactComponent as SymButton } from "./button.svg";
 import { ReactComponent as SprayIcon } from "./spray.svg";
+import { ReactComponent as IrregularIcon } from "./irregular.svg";
 import SvgIcon from "@mui/material/SvgIcon";
 
 import { EditMode } from "../../routes/editor/edit-modes";
@@ -57,6 +58,15 @@ const options = [
         ),
         label: "",
         mode: EditMode.Spray,
+    },
+    {
+        icon: (
+            <SvgIcon fontSize="large">
+                <IrregularIcon />
+            </SvgIcon>
+        ),
+        label: "",
+        mode: EditMode.AddHotSpot,
     },
 ];
 
