@@ -424,6 +424,7 @@ const addSymbolButton = (cnv, label, shape, spec, scrObj, inputCallback) => {
 
 const addHotSpot = (cnv, spec, scrObj, inputCallback) => {
     const newPath = new fabric.Path(spec.path);
+    newPath.set({ fill: "rgba(0,0,0,0)", stroke: "black", strokeWidth: 3 });
     finishObjectAdd(cnv, newPath, scrObj, inputCallback);
     return newPath;
 };
