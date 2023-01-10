@@ -4,6 +4,7 @@ import CircleScreenObject from "../screen-objects/circle-screen-object";
 import TextScreenObject from "../screen-objects/text-screen-object";
 import ImageScreenObject from "../screen-objects/image-screen-object";
 import SymbolButtonScreenObject from "../screen-objects/symbol-button-screen-object";
+import HotSpotScreenObject from "../screen-objects/hotspot-screen-object";
 import AccessManager from "./access-manager";
 import { InputEvent } from "../../utils/input-events";
 import {
@@ -46,15 +47,17 @@ import {
     addCircle,
     addImage,
     addSymbolButton,
+    addHotSpot,
     addText,
     getDimensions,
+    beginFreeform,
+    endFreeform,
 } from "../../utils/canvas";
 
 import { defaultImageData } from "../../utils/image-defaults";
 import { ScreenObjectType } from "../constants/screen-object-types";
 import { SymBtnShape } from "../../utils/symbol-button";
 import { EditMode } from "../../routes/editor/edit-modes";
-import { ThirtyFpsSelect } from "@mui/icons-material";
 
 const sprayXSpacingDefault = 20;
 const sprayYSpacingDefault = 20;
@@ -85,6 +88,7 @@ class ScreenManager {
         this.setModified = this.setModified.bind(this);
         this.inputCallback = this.inputCallback.bind(this);
         this.sprayTrackMouse = this.sprayTrackMouse.bind(this);
+        this.hotSpotCallback = this.hotSpotCallback.bind(this);
         this.#settingsCallback = settingsCallback;
     }
 
@@ -250,7 +254,7 @@ class ScreenManager {
             var parent = this.#currentPage;
             for (let i = 0; i < this.#copyBuffer.length; i++) {
                 var newObj = this.createFromSpec(parent, this.#copyBuffer[i]);
-                if (offx != 0 || offy != 0) {
+                if (offx !== 0 || offy !== 0) {
                     moveBy(this.#canvas, newObj.getCanvasObj(), offx, offy);
                 }
             }
@@ -530,6 +534,22 @@ class ScreenManager {
         }
     }
 
+    hotSpotCallback(spec) {
+        endFreeform(this.#canvas);
+        var newObj = new HotSpotScreenObject(
+            this,
+            this.#currentPage,
+            blankBehavior,
+            { type: ScreenObjectType.HotSpot, shapeSpec: spec }
+        );
+
+        this.setModified();
+        if (this.#modeChangeCallback) {
+            this.#modeChangeCallback(EditMode.Select);
+        }
+        setSelectedObject(this.#canvas, newObj.getCanvasObj());
+    }
+
     showMessage(msg) {
         if (this.#messageCallback) {
             this.#messageCallback(msg);
@@ -563,9 +583,19 @@ class ScreenManager {
                 break;
 
             case "Add":
-                this.showMessage("Select where you'd like to place the object");
-                disableSelection(this.#canvas);
-                setMousedownCallback(this.#canvas, this.addObjectOnMousedown);
+                if (mode.submode === "HotSpot") {
+                    this.showMessage("Draw your hotspot");
+                    beginFreeform(this.#canvas, this.hotSpotCallback);
+                } else {
+                    this.showMessage(
+                        "Select where you'd like to place the object"
+                    );
+                    disableSelection(this.#canvas);
+                    setMousedownCallback(
+                        this.#canvas,
+                        this.addObjectOnMousedown
+                    );
+                }
                 break;
             case "Spray":
                 this.setSelection([]);
@@ -829,6 +859,13 @@ class ScreenManager {
                     spec.behavior || blankBehavior,
                     spec
                 );
+            case ScreenObjectType.HotSpot:
+                return new HotSpotScreenObject(
+                    this,
+                    parent,
+                    spec.behavior || blankBehavior,
+                    spec
+                );
             default:
                 return null;
         }
@@ -891,6 +928,16 @@ class ScreenManager {
             this.#handleInputEvents ? this.inputCallback : null
         );
     }
+
+    addHotSpot(scrObj, spec) {
+        return addHotSpot(
+            this.#canvas,
+            spec,
+            scrObj,
+            this.#handleInputEvents ? this.inputCallback : null
+        );
+    }
+
     addText(scrObj, text, spec) {
         return addText(
             this.#canvas,

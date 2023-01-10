@@ -422,6 +422,12 @@ const addSymbolButton = (cnv, label, shape, spec, scrObj, inputCallback) => {
     return symBtn;
 };
 
+const addHotSpot = (cnv, spec, scrObj, inputCallback) => {
+    const newPath = new fabric.Path(spec.path);
+    finishObjectAdd(cnv, newPath, scrObj, inputCallback);
+    return newPath;
+};
+
 const getImageSource = (image) => {
     return image.getSrc();
 };
@@ -664,6 +670,26 @@ function animateOpacity(cnv, obj, opacity, dur, animType) {
     obj.animate("opacity", opacity, xlateOptions(cnv, dur, animType));
 }
 
+function freeFormCreated(cnv, opt, callback) {
+    var json = opt.path.toJSON();
+    cnv.remove(opt.path);
+    callback(json);
+}
+
+function beginFreeform(cnv, doneCallback) {
+    cnv.isDrawingMode = true;
+    cnv.discardActiveObject(); //select none
+    cnv.requestRenderAll();
+    cnv.on("path:created", (opt) => freeFormCreated(cnv, opt, doneCallback));
+}
+
+function endFreeform(cnv, doneCallback) {
+    cnv.isDrawingMode = false;
+    cnv.discardActiveObject(); //select none
+    cnv.requestRenderAll();
+    cnv.off("path:created", (opt) => freeFormCreated(cnv, opt, doneCallback));
+}
+
 export {
     initCanvas,
     addRect,
@@ -672,6 +698,7 @@ export {
     addText,
     addImage,
     addSymbolButton,
+    addHotSpot,
     getImageSource,
     setImageSource,
     setImageSourceA,
@@ -720,4 +747,6 @@ export {
     animateDimensions,
     animateAngle,
     animateOpacity,
+    beginFreeform,
+    endFreeform,
 };

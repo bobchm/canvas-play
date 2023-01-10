@@ -318,7 +318,7 @@ const Editor = () => {
 
     useEffect(() => {
         function handleKeydown(ev) {
-            ev.preventDefault();
+            //ev.preventDefault();
             let key;
             if (!ev.shift && !ev.ctrlKey & !ev.metaKey) {
                 key = ev.key;
@@ -792,10 +792,6 @@ const Editor = () => {
                 .moveSelectionBy(xDir * ArrowXMove, yDir * ArrowYMove);
             markChanged(true);
         }
-    }
-
-    function handleButtonBarEnabled(text) {
-        return true;
     }
 
     function markChanged(isChanged) {

@@ -8,7 +8,7 @@ export const EditMode = {
     AddImage: { mode: "Add", submode: ScreenObjectType.Image },
     AddSymbolButton: { mode: "Add", submode: ScreenObjectType.SymbolButton },
     Spray: { mode: "Spray", submode: null },
-    AddAddHotSpot: {
+    AddHotSpot: {
         mode: "Add",
         submode: ScreenObjectType.HotSpot,
     },
