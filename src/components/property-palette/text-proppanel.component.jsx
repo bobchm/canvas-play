@@ -3,7 +3,11 @@ import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 
-const TextPropertyPanel = ({ propOption, propUpdateCallback }) => {
+const TextPropertyPanel = ({
+    propOption,
+    propUpdateCallback,
+    focusHandler,
+}) => {
     const [value, setValue] = React.useState(propOption.current || "");
 
     return (
@@ -26,6 +30,8 @@ const TextPropertyPanel = ({ propOption, propUpdateCallback }) => {
                     }}
                     value={value}
                     label={propOption.type.name}
+                    onFocus={() => focusHandler(true)}
+                    onBlur={() => focusHandler(false)}
                     onChange={(e) => {
                         propUpdateCallback(propOption.type, e.target.value);
                         setValue(e.target.value);

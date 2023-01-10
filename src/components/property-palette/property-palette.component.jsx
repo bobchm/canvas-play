@@ -19,13 +19,19 @@ import { SymbolButtonShapes } from "../../utils/symbol-button";
 
 var ctr = 0;
 
-export const selectPropertyPanel = (option, propUpdateCallback, appManager) => {
+export const selectPropertyPanel = (
+    option,
+    propUpdateCallback,
+    appManager,
+    focusHandler
+) => {
     switch (option.type.valueType) {
         case PropertyValueType.Text:
             return (
                 <TextPropertyPanel
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
+                    focusHandler={focusHandler}
                 />
             );
         case PropertyValueType.Color:
@@ -54,6 +60,7 @@ export const selectPropertyPanel = (option, propUpdateCallback, appManager) => {
                 <ImageSourcePropertyPanel
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
+                    focusHandler={focusHandler}
                 />
             );
         case PropertyValueType.SymBtnImageSource:
@@ -61,6 +68,7 @@ export const selectPropertyPanel = (option, propUpdateCallback, appManager) => {
                 <SymbolSourcePropertyPanel
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
+                    focusHandler={focusHandler}
                 />
             );
         case PropertyValueType.BackgroundImageSource:
@@ -68,6 +76,7 @@ export const selectPropertyPanel = (option, propUpdateCallback, appManager) => {
                 <BackgroundSourcePropertyPanel
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
+                    focusHandler={focusHandler}
                 />
             );
         case PropertyValueType.EmbedImage:
@@ -100,6 +109,7 @@ export const selectPropertyPanel = (option, propUpdateCallback, appManager) => {
                     propUpdateCallback={propUpdateCallback}
                     appManager={appManager}
                     title={option.type.name}
+                    focusHandler={focusHandler}
                 />
             );
         case PropertyValueType.Page:
@@ -135,6 +145,7 @@ const PropertyPalette = ({
     options,
     propUpdateCallback,
     appManager,
+    focusHandler,
 }) => {
     return (
         <Box
@@ -159,7 +170,8 @@ const PropertyPalette = ({
                     {selectPropertyPanel(
                         option,
                         propUpdateCallback,
-                        appManager
+                        appManager,
+                        focusHandler
                     )}
                 </div>
             ))}

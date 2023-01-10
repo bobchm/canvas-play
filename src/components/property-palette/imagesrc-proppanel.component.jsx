@@ -3,20 +3,27 @@ import Button from "@mui/material/Button";
 import ImageSearchModal from "../image-search-modal/image-search-modal.component";
 import { ImageServiceType } from "../../utils/image-service";
 
-const ImageSourcePropertyPanel = ({ propOption, propUpdateCallback }) => {
+const ImageSourcePropertyPanel = ({
+    propOption,
+    propUpdateCallback,
+    focusHandler,
+}) => {
     const [isSearchModalOpen, setIsSearchModalOpen] = React.useState(false);
 
     const handleSearchButtonClick = (event) => {
         setIsSearchModalOpen(true);
+        focusHandler(true);
     };
 
     const handleChangeLocationFromSearch = (newLocation) => {
         propUpdateCallback(propOption.type, newLocation);
         setIsSearchModalOpen(false);
+        focusHandler(false);
     };
 
     const handleCancelLocationFromSearch = () => {
         setIsSearchModalOpen(false);
+        focusHandler(false);
     };
 
     return (

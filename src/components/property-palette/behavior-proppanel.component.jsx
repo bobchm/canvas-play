@@ -14,6 +14,7 @@ const BehaviorPropertyPanel = ({
     propUpdateCallback,
     appManager,
     title,
+    focusHandler,
 }) => {
     const [behavior, setBehavior] = useState(propOption.current || []);
     const [isScriptEditorOpen, setIsScriptEditorOpen] = useState(false);
@@ -22,10 +23,13 @@ const BehaviorPropertyPanel = ({
 
     function handleEditBehavior() {
         setIsScriptEditorOpen(true);
+        focusHandler(true);
     }
 
     function handleCloseBhvrEditor(newBehavior) {
         setIsScriptEditorOpen(false);
+        focusHandler(false);
+
         if (newBehavior) {
             setBehavior(newBehavior);
             propUpdateCallback(propOption.type, newBehavior);
@@ -47,6 +51,7 @@ const BehaviorPropertyPanel = ({
                 inBehavior={behavior}
                 behaviorCallback={simpleBehaviorCallback}
                 appManager={appManager}
+                focusHandler={focusHandler}
             />
         );
     }

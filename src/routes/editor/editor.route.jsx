@@ -46,6 +46,7 @@ const pageExtension = ".page.json";
 
 const appName = "Canvas Play";
 var suspendSelectionCallback = false;
+var hotKeysAreSuspended = false;
 
 const ArrowXMove = 5;
 const ArrowYMove = 5;
@@ -288,6 +289,7 @@ const Editor = () => {
         initAppForNow(appManager, uName, aName, searchParams.get("startPage"));
         setUserName(uName);
         setActivityName(aName);
+        hotKeysAreSuspended = false;
 
         function handleResize() {
             // console.log(
@@ -318,7 +320,7 @@ const Editor = () => {
 
     useEffect(() => {
         function handleKeydown(ev) {
-            //ev.preventDefault();
+            if (hotKeysAreSuspended) return;
             let key;
             if (!ev.shift && !ev.ctrlKey & !ev.metaKey) {
                 key = ev.key;
@@ -446,10 +448,12 @@ const Editor = () => {
 
     function handleAddPage() {
         setIsAddPageOpen(true);
+        suspendHotKeys();
     }
 
     function handleDoAddPage(name) {
         setIsAddPageOpen(false);
+        resumeHotKeys();
         if (!name || name.length === 0) return;
 
         // add the page
@@ -458,18 +462,27 @@ const Editor = () => {
 
     function handleCancelDoAddPage(name) {
         setIsAddPageOpen(false);
+        resumeHotKeys();
+    }
+
+    function openPagePicker(pgList, callback) {
+        setPageList(pgList);
+        setPagePickerCallback(callback);
+        setIsPagePickerOpen(true);
+        suspendHotKeys();
+    }
+
+    function closePagePicker() {
+        setIsPagePickerOpen(false);
+        resumeHotKeys();
     }
 
     function handleCopyPage() {
-        let pageNames = getAllPages();
-
-        setPageList(pageNames);
-        setPagePickerCallback(() => handleSelectingCopyPage);
-        setIsPagePickerOpen(true);
+        openPagePicker(getAllPages(), () => handleSelectingCopyPage);
     }
 
     async function handleSelectingCopyPage(pageName) {
-        setIsPagePickerOpen(false);
+        closePagePicker();
         if (!pageName) return;
         if (
             isModified &&
@@ -481,10 +494,12 @@ const Editor = () => {
         }
         setCopyPageSource(pageName);
         setIsCopyPageOpen(true);
+        suspendHotKeys();
     }
 
     function handleDoCopyPageName(name) {
         setIsCopyPageOpen(false);
+        resumeHotKeys();
         if (!name || name.length === 0) return;
 
         var uam = appManager.getUserActivityManager();
@@ -499,6 +514,7 @@ const Editor = () => {
 
     function handleCancelCopyPageName(name) {
         setIsCopyPageOpen(false);
+        resumeHotKeys();
     }
 
     function getAllPages() {
@@ -533,13 +549,11 @@ const Editor = () => {
             alert("There are no other pages to open.");
             return;
         }
-        setPageList(pageNames);
-        setPagePickerCallback(() => handleSelectingOpenPage);
-        setIsPagePickerOpen(true);
+        openPagePicker(pageNames, () => handleSelectingOpenPage);
     }
 
     async function handleSelectingOpenPage(pageName) {
-        setIsPagePickerOpen(false);
+        closePagePicker();
         if (!pageName) return;
         if (
             isModified &&
@@ -561,13 +575,11 @@ const Editor = () => {
             alert("There are no other pages to delete.");
             return;
         }
-        setPageList(pageNames);
-        setPagePickerCallback(() => handleSelectingDeletePage);
-        setIsPagePickerOpen(true);
+        openPagePicker(pageNames, () => handleSelectingDeletePage);
     }
 
     async function handleSelectingDeletePage(pageName) {
-        setIsPagePickerOpen(false);
+        closePagePicker();
         if (!pageName) return;
 
         if (
@@ -582,9 +594,12 @@ const Editor = () => {
 
     function handleImportPage() {
         setIsImportOpen(true);
+        suspendHotKeys();
     }
+
     function handleCompleteImport(fileName) {
         setIsImportOpen(false);
+        resumeHotKeys();
         const fileReader = new FileReader();
         fileReader.readAsText(fileName, "UTF-8");
         fileReader.onload = (e) => {
@@ -604,10 +619,12 @@ const Editor = () => {
 
     function handleCancelImport() {
         setIsImportOpen(false);
+        resumeHotKeys();
     }
 
     function handleExportPage() {
         setIsExportOpen(true);
+        suspendHotKeys();
     }
 
     function ensureUniquePageName(spec) {
@@ -636,6 +653,7 @@ const Editor = () => {
 
     async function handleExportConfirm(fileName) {
         setIsExportOpen(false);
+        resumeHotKeys();
 
         if (
             isModified &&
@@ -663,14 +681,17 @@ const Editor = () => {
 
     async function handleExportCancel(fileName) {
         setIsExportOpen(false);
+        resumeHotKeys();
     }
 
     async function handleOpenRepl() {
         setIsReplOpen(true);
+        suspendHotKeys();
     }
 
     async function handleCloseRepl() {
         setIsReplOpen(false);
+        resumeHotKeys();
     }
 
     async function handleBackToActivities() {
@@ -812,6 +833,19 @@ const Editor = () => {
         setTitle(newTitle);
     }
 
+    function suspendHotKeys() {
+        hotKeysAreSuspended = true;
+    }
+
+    function resumeHotKeys() {
+        hotKeysAreSuspended = false;
+    }
+
+    function handleHotKeysWithFocus(focusOn) {
+        if (focusOn) suspendHotKeys();
+        else resumeHotKeys();
+    }
+
     return (
         <div>
             <CanvasAppBar
@@ -850,6 +884,7 @@ const Editor = () => {
                     options={editProperties}
                     propUpdateCallback={handlePropValueChange}
                     appManager={appManager}
+                    focusHandler={handleHotKeysWithFocus}
                 />
                 <ListModal
                     title="Select Page"

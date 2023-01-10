@@ -5,11 +5,16 @@ import ImageSearchModal, {
 } from "../image-search-modal/image-search-modal.component";
 import { ImageServiceType } from "../../utils/image-service";
 
-const BackgroundSourcePropertyPanel = ({ propOption, propUpdateCallback }) => {
+const BackgroundSourcePropertyPanel = ({
+    propOption,
+    propUpdateCallback,
+    focusHandler,
+}) => {
     const [isSearchModalOpen, setIsSearchModalOpen] = React.useState(false);
 
     const handleSearchButtonClick = (event) => {
         setIsSearchModalOpen(true);
+        focusHandler(true);
     };
 
     const handleChangeLocationFromSearch = (newSpec) => {
@@ -18,10 +23,12 @@ const BackgroundSourcePropertyPanel = ({ propOption, propUpdateCallback }) => {
         }
         propUpdateCallback(propOption.type, newSpec);
         setIsSearchModalOpen(false);
+        focusHandler(false);
     };
 
     const handleCancelLocationFromSearch = () => {
         setIsSearchModalOpen(false);
+        focusHandler(false);
     };
 
     return (
