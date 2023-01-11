@@ -12,18 +12,18 @@ const ImageSourcePropertyPanel = ({
 
     const handleSearchButtonClick = (event) => {
         setIsSearchModalOpen(true);
-        focusHandler(true);
+        if (focusHandler) focusHandler(true);
     };
 
     const handleChangeLocationFromSearch = (newLocation) => {
         propUpdateCallback(propOption.type, newLocation);
         setIsSearchModalOpen(false);
-        focusHandler(false);
+        if (focusHandler) focusHandler(false);
     };
 
     const handleCancelLocationFromSearch = () => {
         setIsSearchModalOpen(false);
-        focusHandler(false);
+        if (focusHandler) focusHandler(false);
     };
 
     return (

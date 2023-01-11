@@ -59,12 +59,12 @@ const BehaviorListPropertyPanel = ({
 
     function handleAddFunction() {
         setIsFunctionPickerOpen(true);
-        focusHandler(true);
+        if (focusHandler) focusHandler(true);
     }
 
     function handleCloseFunctionPicker(fnName) {
         setIsFunctionPickerOpen(false);
-        focusHandler(false);
+        if (focusHandler) focusHandler(false);
         if (fnName && fnName.length > 0) {
             var newBehavior = BehaviorManager.appendFunctionToBehavior(
                 behavior,
@@ -87,13 +87,13 @@ const BehaviorListPropertyPanel = ({
             setEditedFunctionIdx(idx);
             setEditedArgs(args);
             setAreArgumentsOpen(true);
-            focusHandler(true);
+            if (focusHandler) focusHandler(true);
         }
     }
 
     function handleEditCompleted(args) {
         setAreArgumentsOpen(false);
-        focusHandler(false);
+        if (focusHandler) focusHandler(false);
         if (args) {
             var newBehavior = BehaviorManager.setFunctionArguments(
                 behavior,
@@ -112,12 +112,12 @@ const BehaviorListPropertyPanel = ({
 
     function handleEditScript() {
         setIsScriptEditorOpen(true);
-        focusHandler(true);
+        if (focusHandler) focusHandler(true);
     }
 
     function handleCloseBhvrEditor(newBehavior) {
         setIsScriptEditorOpen(false);
-        focusHandler(false);
+        if (focusHandler) focusHandler(false);
         if (newBehavior) {
             setBehavior(newBehavior);
             behaviorCallback(newBehavior);

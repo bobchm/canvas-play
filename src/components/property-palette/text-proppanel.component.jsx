@@ -30,8 +30,8 @@ const TextPropertyPanel = ({
                     }}
                     value={value}
                     label={propOption.type.name}
-                    onFocus={() => focusHandler(true)}
-                    onBlur={() => focusHandler(false)}
+                    onFocus={() => (focusHandler ? focusHandler(true) : null)}
+                    onBlur={() => (focusHandler ? focusHandler(false) : null)}
                     onChange={(e) => {
                         propUpdateCallback(propOption.type, e.target.value);
                         setValue(e.target.value);

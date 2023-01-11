@@ -23,12 +23,12 @@ const BehaviorPropertyPanel = ({
 
     function handleEditBehavior() {
         setIsScriptEditorOpen(true);
-        focusHandler(true);
+        if (focusHandler) focusHandler(true);
     }
 
     function handleCloseBhvrEditor(newBehavior) {
         setIsScriptEditorOpen(false);
-        focusHandler(false);
+        if (focusHandler) focusHandler(false);
 
         if (newBehavior) {
             setBehavior(newBehavior);

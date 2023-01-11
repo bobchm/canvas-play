@@ -14,7 +14,7 @@ const SymbolSourcePropertyPanel = ({
 
     const handleSearchButtonClick = (event) => {
         setIsSearchModalOpen(true);
-        focusHandler(true);
+        if (focusHandler) focusHandler(true);
     };
 
     const handleChangeLocationFromSearch = (newLocation) => {
@@ -23,12 +23,12 @@ const SymbolSourcePropertyPanel = ({
         }
         propUpdateCallback(propOption.type, newLocation);
         setIsSearchModalOpen(false);
-        focusHandler(false);
+        if (focusHandler) focusHandler(false);
     };
 
     const handleCancelLocationFromSearch = () => {
         setIsSearchModalOpen(false);
-        focusHandler(false);
+        if (focusHandler) focusHandler(false);
     };
 
     return (

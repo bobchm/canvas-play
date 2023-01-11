@@ -14,7 +14,7 @@ const BackgroundSourcePropertyPanel = ({
 
     const handleSearchButtonClick = (event) => {
         setIsSearchModalOpen(true);
-        focusHandler(true);
+        if (focusHandler) focusHandler(true);
     };
 
     const handleChangeLocationFromSearch = (newSpec) => {
@@ -23,12 +23,12 @@ const BackgroundSourcePropertyPanel = ({
         }
         propUpdateCallback(propOption.type, newSpec);
         setIsSearchModalOpen(false);
-        focusHandler(false);
+        if (focusHandler) focusHandler(false);
     };
 
     const handleCancelLocationFromSearch = () => {
         setIsSearchModalOpen(false);
-        focusHandler(false);
+        if (focusHandler) focusHandler(false);
     };
 
     return (
