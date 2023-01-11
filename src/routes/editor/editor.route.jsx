@@ -335,6 +335,7 @@ const Editor = () => {
                     hotKey.key === key
                 ) {
                     hotKey.fn();
+                    ev.preventDefault();
                     return;
                 }
             }
