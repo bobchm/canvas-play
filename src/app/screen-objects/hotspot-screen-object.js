@@ -3,14 +3,25 @@ import ScreenObject from "./screen-object";
 import { ScreenObjectType } from "../constants/screen-object-types";
 import { AccessHighlightType } from "../constants/access-types";
 import { BehaviorManager } from "../behaviors/behavior-behaviors";
+import { ExecutionMode } from "../scripting/canvas-exec";
 
 class HotSpotScreenObject extends ScreenObject {
     #behavior;
+    #visibleInPlay;
 
-    constructor(_screenMgr, _parent, _behavior, _spec) {
+    constructor(_screenMgr, _parent, _behavior, _visible, _spec) {
         super(_screenMgr, _parent, _spec);
         this.#behavior = _behavior;
+        this.#visibleInPlay = _visible;
         this.setCanvasObj(_screenMgr.addHotSpot(this, _spec.shapeSpec));
+
+        // if we're in play mode and we don't have the visible flag set, make invisible
+        if (
+            BehaviorManager.getExecutionMode() === ExecutionMode.Play &&
+            !this.#visibleInPlay
+        ) {
+            this.getCanvasObj().set("opacity", 0);
+        }
     }
 
     toJSON() {
@@ -20,6 +31,7 @@ class HotSpotScreenObject extends ScreenObject {
             type: ScreenObjectType.HotSpot,
             shapeSpec: cobj.toJSON(),
             behavior: this.#behavior,
+            visible: this.#visibleInPlay,
         };
         return { ...superSpec, ...spec };
     }
@@ -28,8 +40,12 @@ class HotSpotScreenObject extends ScreenObject {
         var superProps = super.getEditProperties(selectedObjects);
         var thisProps = [
             {
-                type: PropertyType.Opacity,
-                current: this.getCanvasObj().opacity * 100,
+                type: PropertyType.Visible,
+                current: this.#visibleInPlay,
+            },
+            {
+                type: PropertyType.LineColor,
+                current: this.getCanvasObj().stroke,
             },
         ];
         if (selectedObjects.length === 1) {
@@ -46,9 +62,11 @@ class HotSpotScreenObject extends ScreenObject {
             case PropertyType.SelectionBehavior:
                 this.#behavior = value;
                 break;
-            case PropertyType.Opacity:
-                var newValue = value / 100;
-                this.getCanvasObj().set("opacity", newValue);
+            case PropertyType.LineColor:
+                this.getCanvasObj().set("stroke", value);
+                break;
+            case PropertyType.Visible:
+                this.#visibleInPlay = value;
                 break;
             default:
                 super.setEditProperty(screenMgr, type, value);
@@ -57,10 +75,12 @@ class HotSpotScreenObject extends ScreenObject {
 
     getProperty(type) {
         switch (type) {
-            case "opacity":
-                return this.getCanvasObj().opacity * 100;
+            case "borderColor":
+                return this.getCanvasObj().stroke;
             case "behavior":
                 return this.#behavior;
+            case "visible":
+                return this.#visibleInPlay;
             default:
                 return super.getProperty(type);
         }
@@ -68,8 +88,11 @@ class HotSpotScreenObject extends ScreenObject {
 
     async setProperty(screenMgr, type, value) {
         switch (type) {
-            case "opacity":
-                this.setEditProperty(screenMgr, PropertyType.Opacity, value);
+            case "borderColor":
+                this.setEditProperty(screenMgr, PropertyType.LineColor, value);
+                break;
+            case "visible":
+                this.setEditProperty(screenMgr, PropertyType.Visible, value);
                 break;
             case "behavior":
                 this.setEditProperty(

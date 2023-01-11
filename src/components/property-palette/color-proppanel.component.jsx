@@ -47,6 +47,8 @@ const ColorPropertyPanel = ({ propOption, propUpdateCallback }) => {
                     borderColor: "black",
                     textTransform: "none",
                     backgroundColor: "azure",
+                    fontSize: "20px",
+                    justifyContent: "flex-start",
                 }}
                 aria-describedby={id}
                 onClick={handleClick}
@@ -54,8 +56,7 @@ const ColorPropertyPanel = ({ propOption, propUpdateCallback }) => {
                 startIcon={
                     <SquareRoundedIcon
                         style={{
-                            marginRight: "80px",
-                            fontSize: "50px",
+                            fontSize: "40px",
                             color: color,
                         }}
                     />

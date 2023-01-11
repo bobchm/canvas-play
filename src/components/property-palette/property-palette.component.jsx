@@ -12,6 +12,7 @@ import EmbedImagePropertyPanel from "./embedimage-proppanel-component";
 import ItemListPropertyPanel from "./itemlist.component";
 import BackgroundImageStylePropertyPanel from "./bkgimagestyle-proppanel.component";
 import BehaviorPropertyPanel from "./behavior-proppanel.component";
+import BooleanPropertyPanel from "./boolean-proppanel.component";
 
 import "./property-palette.styles.scss";
 import { PropertyValueType } from "../../app/constants/property-types";
@@ -37,6 +38,13 @@ export const selectPropertyPanel = (
         case PropertyValueType.Color:
             return (
                 <ColorPropertyPanel
+                    propOption={option}
+                    propUpdateCallback={propUpdateCallback}
+                />
+            );
+        case PropertyValueType.Boolean:
+            return (
+                <BooleanPropertyPanel
                     propOption={option}
                     propUpdateCallback={propUpdateCallback}
                 />

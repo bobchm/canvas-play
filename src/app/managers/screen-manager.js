@@ -540,6 +540,7 @@ class ScreenManager {
             this,
             this.#currentPage,
             blankBehavior,
+            false,
             { type: ScreenObjectType.HotSpot, shapeSpec: spec }
         );
 
@@ -864,6 +865,7 @@ class ScreenManager {
                     this,
                     parent,
                     spec.behavior || blankBehavior,
+                    spec.visible,
                     spec
                 );
             default:

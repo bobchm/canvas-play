@@ -63,6 +63,10 @@ export class BehaviorManager {
         initNavigationBehaviors();
     }
 
+    static getExecutionMode() {
+        return this.executionMode;
+    }
+
     static setExecutionMode(mode) {
         this.executionMode = mode;
     }
@@ -72,7 +76,7 @@ export class BehaviorManager {
     }
 
     static allFunctionNames() {
-        return allFunctionNames();
+        return allFunctionNames().sort();
     }
 
     static functionFromName(name) {

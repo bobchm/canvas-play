@@ -2,6 +2,7 @@ export const PropertyValueType = {
     None: "none",
     Color: "color",
     Text: "text",
+    Boolean: "boolean",
     Percent: "percent",
     TextStyle: "textstyle",
     ImageSource: "imagesource",
@@ -86,6 +87,11 @@ export const PropertyType = {
     ButtonShape: {
         name: "Shape",
         valueType: PropertyValueType.ButtonShape,
+        forceReset: false,
+    },
+    Visible: {
+        name: "Visible",
+        valueType: PropertyValueType.Boolean,
         forceReset: false,
     },
     SelectionBehavior: {

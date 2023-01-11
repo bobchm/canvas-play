@@ -426,7 +426,7 @@ const addHotSpot = (cnv, spec, scrObj, inputCallback) => {
     const newPath = new fabric.Path(spec.path);
     newPath.set({
         fill: "rgba(0,0,0,0)",
-        stroke: "black",
+        stroke: spec.stroke,
         strokeWidth: 3,
         strokeDashArray: [5, 5],
     });
