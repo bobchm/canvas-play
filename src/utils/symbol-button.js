@@ -448,58 +448,6 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         this.makeDirty();
         cnv.renderAll();
     },
-
-    shrink(cnv) {
-        this.svRgn.left = this.left;
-        this.svRgn.top = this.top;
-        this.svRgn.width = this.width;
-        this.svRgn.height = this.height;
-        this.animate("left", "+=5", {
-            onChange: cnv.renderAll.bind(cnv),
-            duration: 100,
-        });
-        this.animate("width", "-=10", {
-            onChange: cnv.renderAll.bind(cnv),
-            duration: 100,
-        });
-        this.animate("top", "+=5", {
-            onChange: cnv.renderAll.bind(cnv),
-            duration: 100,
-        });
-        this.animate("height", "-=10", {
-            onChange: cnv.renderAll.bind(cnv),
-            duration: 100,
-        });
-    },
-
-    unShrink(cnv) {
-        this.animate("left", this.svRgn.left, {
-            onChange: cnv.renderAll.bind(cnv),
-            duration: 100,
-        });
-        this.animate("width", this.svRgn.width, {
-            onChange: cnv.renderAll.bind(cnv),
-            duration: 100,
-        });
-        this.animate("top", this.svRgn.top, {
-            onChange: cnv.renderAll.bind(cnv),
-            duration: 100,
-        });
-        this.animate("height", this.svRgn.height, {
-            onChange: cnv.renderAll.bind(cnv),
-            duration: 100,
-        });
-    },
-
-    overlayShrink(cnv) {
-        this.overlay(cnv);
-        this.shrink(cnv);
-    },
-
-    unOverlayUnShrink(cnv) {
-        this.unOverlay(cnv);
-        this.unShrink(cnv);
-    },
 });
 
 export { SymbolButton };

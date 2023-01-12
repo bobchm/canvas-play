@@ -1,6 +1,10 @@
 import { PropertyType } from "../constants/property-types";
 import SelectableScreenObject from "./selectable-screen-object";
-import { refresh } from "../../utils/canvas";
+import {
+    highlightShrink,
+    unhighlightShrink,
+    refresh,
+} from "../../utils/canvas";
 import { ScreenObjectType } from "../constants/screen-object-types";
 import { AccessHighlightType } from "../constants/access-types";
 
@@ -215,13 +219,14 @@ class SymbolButtonScreenObject extends SelectableScreenObject {
             case AccessHighlightType.None:
                 break;
             case AccessHighlightType.Shrink:
-                this.getCanvasObj().shrink(appManager.getCanvas());
+                highlightShrink(appManager.getCanvas(), this.getCanvasObj());
                 break;
             case AccessHighlightType.Overlay:
                 this.getCanvasObj().overlay(appManager.getCanvas());
                 break;
             case AccessHighlightType.ShrinkAndOverlay:
-                this.getCanvasObj().overlayShrink(appManager.getCanvas());
+                this.getCanvasObj().overlay(appManager.getCanvas());
+                highlightShrink(appManager.getCanvas(), this.getCanvasObj());
                 break;
             default:
         }
@@ -232,13 +237,14 @@ class SymbolButtonScreenObject extends SelectableScreenObject {
             case AccessHighlightType.None:
                 break;
             case AccessHighlightType.Shrink:
-                this.getCanvasObj().unShrink(appManager.getCanvas());
+                unhighlightShrink(appManager.getCanvas(), this.getCanvasObj());
                 break;
             case AccessHighlightType.Overlay:
                 this.getCanvasObj().unOverlay(appManager.getCanvas());
                 break;
             case AccessHighlightType.ShrinkAndOverlay:
-                this.getCanvasObj().unOverlayUnShrink(appManager.getCanvas());
+                this.getCanvasObj().unOverlay(appManager.getCanvas());
+                unhighlightShrink(appManager.getCanvas(), this.getCanvasObj());
                 break;
             default:
         }

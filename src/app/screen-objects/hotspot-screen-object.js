@@ -84,34 +84,6 @@ class HotSpotScreenObject extends SelectableScreenObject {
                 super.setProperty(screenMgr, type, value);
         }
     }
-
-    highlight(appManager, highlightType) {
-        switch (highlightType) {
-            case AccessHighlightType.None:
-                break;
-            case AccessHighlightType.Shrink:
-                break;
-            case AccessHighlightType.Overlay:
-                break;
-            case AccessHighlightType.ShrinkAndOverlay:
-                break;
-            default:
-        }
-    }
-
-    unhighlight(appManager, highlightType) {
-        switch (highlightType) {
-            case AccessHighlightType.None:
-                break;
-            case AccessHighlightType.Shrink:
-                break;
-            case AccessHighlightType.Overlay:
-                break;
-            case AccessHighlightType.ShrinkAndOverlay:
-                break;
-            default:
-        }
-    }
 }
 
 export default HotSpotScreenObject;
