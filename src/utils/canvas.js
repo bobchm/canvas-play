@@ -702,47 +702,30 @@ function endFreeform(cnv, doneCallback) {
 }
 
 function defHighlightShrink(cnv, obj) {
-    obj.highlightSvRgn = {};
-    obj.highlightSvRgn.left = obj.left;
-    obj.highlightSvRgn.top = obj.top;
-    obj.highlightSvRgn.width = obj.width;
-    obj.highlightSvRgn.height = obj.height;
-    obj.animate("left", "+=5", {
-        onChange: cnv.renderAll.bind(cnv),
-        duration: 100,
-    });
-    obj.animate("width", "-=10", {
-        onChange: cnv.renderAll.bind(cnv),
-        duration: 100,
-    });
-    obj.animate("top", "+=5", {
-        onChange: cnv.renderAll.bind(cnv),
-        duration: 100,
-    });
-    obj.animate("height", "-=10", {
-        onChange: cnv.renderAll.bind(cnv),
-        duration: 100,
-    });
+    obj.svScaleX = obj.scaleX;
+    obj.svScaleY = obj.scaleY;
+    obj.svLeft = obj.left;
+    obj.svTop = obj.top;
+    obj.set("left", obj.left + obj.width / 2);
+    obj.set("top", obj.top + obj.height / 2);
+    obj.set("originX", "center");
+    obj.set("originY", "center");
+    obj.set("scaleX", obj.scaleX * 0.9);
+    obj.set("scaleY", obj.scaleY * 0.9);
+    obj.set("dirty", true);
+    cnv.renderAll();
 }
 
 function defUnhighlightShrink(cnv, obj) {
-    if (obj.highlightSvRgn) {
-        obj.animate("left", obj.highlightSvRgn.left, {
-            onChange: cnv.renderAll.bind(cnv),
-            duration: 100,
-        });
-        obj.animate("width", obj.highlightSvRgn.width, {
-            onChange: cnv.renderAll.bind(cnv),
-            duration: 100,
-        });
-        obj.animate("top", obj.highlightSvRgn.top, {
-            onChange: cnv.renderAll.bind(cnv),
-            duration: 100,
-        });
-        obj.animate("height", obj.highlightSvRgn.height, {
-            onChange: cnv.renderAll.bind(cnv),
-            duration: 100,
-        });
+    if (obj.svLeft) {
+        obj.set("left", obj.svLeft);
+        obj.set("top", obj.svTop);
+        obj.set("originX", "left");
+        obj.set("originY", "top");
+        obj.set("scaleX", obj.svScaleX);
+        obj.set("scaleY", obj.svScaleY);
+        obj.set("dirty", true);
+        cnv.renderAll();
     }
 }
 
@@ -761,6 +744,7 @@ function defUnhighlightOverlay(cnv, obj) {
     }
 }
 
+// unfortunately, some object types in Fabric JS behave differently than others
 function overlayHotspot(cnv, obj) {
     // check if not visible and make visible if not
     if (obj.opacity === 0) {
@@ -779,39 +763,61 @@ function unoverlayHotspot(cnv, obj) {
     }
 }
 
-function shrinkHotspot(cnv, obj) {}
-
-function unshrinkHotspot(cnv, obj) {}
-
-function shrinkCircle(cnv, obj) {}
-
-function unshrinkCircle(cnv, obj) {}
-
 function overlayImage(cnv, obj) {}
 
 function unoverlayImage(cnv, obj) {}
 
-function shrinkImage(cnv, obj) {}
+function shrinkImage(cnv, obj) {
+    obj.svScaleX = obj.scaleX;
+    obj.svScaleY = obj.scaleY;
+    obj.svLeft = obj.left;
+    obj.svTop = obj.top;
+    obj.set("left", obj.left + obj.width * 0.025);
+    obj.set("top", obj.top + obj.height * 0.025);
+    obj.set("scaleX", obj.scaleX * 0.9);
+    obj.set("scaleY", obj.scaleY * 0.9);
+    obj.set("dirty", true);
+    cnv.renderAll();
+}
 
-function unshrinkImage(cnv, obj) {}
+function unshrinkImage(cnv, obj) {
+    obj.set("left", obj.svLeft);
+    obj.set("top", obj.svTop);
+    obj.set("scaleX", obj.svScaleX);
+    obj.set("scaleY", obj.svScaleY);
+    obj.set("dirty", true);
+    cnv.renderAll();
+}
 
-function shrinkText(cnv, obj) {}
+function shrinkRect(cnv, obj) {
+    obj.svLeft = obj.left;
+    obj.svTop = obj.top;
+    obj.svWidth = obj.width;
+    obj.svHeight = obj.height;
+    obj.set("left", obj.left + 5);
+    obj.set("top", obj.top + 5);
+    obj.set("width", obj.width - 10);
+    obj.set("height", obj.height - 10);
+    obj.set("dirty", true);
+    cnv.renderAll();
+}
 
-function unshrinkText(cnv, obj) {}
+function unshrinkRect(cnv, obj) {
+    obj.set("left", obj.svLeft);
+    obj.set("top", obj.svTop);
+    obj.set("width", obj.svWidth);
+    obj.set("height", obj.svHeight);
+    obj.set("dirty", true);
+    cnv.renderAll();
+}
 
 function highlightShrink(cnv, obj) {
     switch (obj.type) {
-        case "hotspot":
-            shrinkHotspot(cnv, obj);
-            break;
-        case "circle":
-            shrinkCircle(cnv, obj);
-            break;
         case "image":
             shrinkImage(cnv, obj);
             break;
-        case "i-text":
-            shrinkText(cnv, obj);
+        case "rect":
+            shrinkRect(cnv, obj);
             break;
         default:
             defHighlightShrink(cnv, obj);
@@ -820,17 +826,11 @@ function highlightShrink(cnv, obj) {
 
 function unhighlightShrink(cnv, obj) {
     switch (obj.type) {
-        case "hotspot":
-            unshrinkHotspot(cnv, obj);
-            break;
-        case "circle":
-            unshrinkCircle(cnv, obj);
-            break;
         case "image":
             unshrinkImage(cnv, obj);
             break;
-        case "i-text":
-            unshrinkText(cnv, obj);
+        case "rect":
+            unshrinkRect(cnv, obj);
             break;
         default:
             defUnhighlightShrink(cnv, obj);
