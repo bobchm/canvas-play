@@ -1,5 +1,5 @@
 import { PropertyType } from "../constants/property-types";
-import ScreenObject from "./screen-object";
+import SelectableScreenObject from "./selectable-screen-object";
 import {
     getImageSource,
     setImageSource,
@@ -9,9 +9,9 @@ import {
 } from "../../utils/canvas";
 import { ScreenObjectType } from "../constants/screen-object-types";
 
-class ImageScreenObject extends ScreenObject {
-    constructor(_screenMgr, _parent, _spec) {
-        super(_screenMgr, _parent, _spec);
+class ImageScreenObject extends SelectableScreenObject {
+    constructor(_screenMgr, _parent, _behavior, _spec) {
+        super(_screenMgr, _parent, _behavior, _spec);
         this.setCanvasObj(_screenMgr.addImage(this, _spec.shapeSpec));
     }
 

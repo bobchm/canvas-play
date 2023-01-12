@@ -17,7 +17,7 @@ function itemsFromBehavior(bhvr) {
     return bhvr.compiled.map((node) => BehaviorManager.sourceFromNode(node));
 }
 
-const maxItemSize = 12;
+const maxItemSize = 24;
 
 const BehaviorListPropertyPanel = ({
     inBehavior,
@@ -126,7 +126,7 @@ const BehaviorListPropertyPanel = ({
 
     function prepForDisplay(item) {
         if (!item || item.length < maxItemSize) return item;
-        return item.substring(0, maxItemSize);
+        return item.substring(0, maxItemSize) + "...";
     }
 
     var items = itemsFromBehavior(behavior);

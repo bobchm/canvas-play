@@ -29,6 +29,9 @@ import { SymBtnShape } from "../../utils/symbol-button";
 import { ExecutionMode } from "../scripting/canvas-exec";
 
 export const blankBehavior = { source: "", compiled: [] };
+export function isBehaviorBlank(bhvr) {
+    return !bhvr || !bhvr.compiled || bhvr.compiled.length === 0;
+}
 
 function getFnCatEntry(catList, cat) {
     for (let i = 0; i < catList.length; i++) {

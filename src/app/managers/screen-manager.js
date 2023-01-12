@@ -430,34 +430,44 @@ class ScreenManager {
         switch (this.#appMode.submode) {
             case "Rectangle":
                 if (this.#currentPage) {
-                    newObj = new RectScreenObject(this, this.#currentPage, {
-                        type: ScreenObjectType.Rectangle,
-                        shapeSpec: {
-                            left: options.pointer.x,
-                            top: options.pointer.y,
-                            width: 100,
-                            height: 100,
-                            fill: "red",
-                            stroke: "black",
-                            opacity: 1.0,
-                        },
-                    });
+                    newObj = new RectScreenObject(
+                        this,
+                        this.#currentPage,
+                        blankBehavior,
+                        {
+                            type: ScreenObjectType.Rectangle,
+                            shapeSpec: {
+                                left: options.pointer.x,
+                                top: options.pointer.y,
+                                width: 100,
+                                height: 100,
+                                fill: "red",
+                                stroke: "black",
+                                opacity: 1.0,
+                            },
+                        }
+                    );
                     this.setModified();
                 }
                 break;
             case "Circle":
                 if (this.#currentPage) {
-                    newObj = new CircleScreenObject(this, this.#currentPage, {
-                        type: ScreenObjectType.Circle,
-                        shapeSpec: {
-                            left: options.pointer.x,
-                            top: options.pointer.y,
-                            radius: 50,
-                            fill: "green",
-                            stroke: "black",
-                            opacity: 1.0,
-                        },
-                    });
+                    newObj = new CircleScreenObject(
+                        this,
+                        this.#currentPage,
+                        blankBehavior,
+                        {
+                            type: ScreenObjectType.Circle,
+                            shapeSpec: {
+                                left: options.pointer.x,
+                                top: options.pointer.y,
+                                radius: 50,
+                                fill: "green",
+                                stroke: "black",
+                                opacity: 1.0,
+                            },
+                        }
+                    );
                     this.setModified();
                 }
                 break;
@@ -467,6 +477,7 @@ class ScreenManager {
                         this,
                         this.#currentPage,
                         "Enter Text",
+                        blankBehavior,
                         {
                             type: ScreenObjectType.Text,
                             shapeSpec: {
@@ -485,6 +496,7 @@ class ScreenManager {
                 if (this.#currentPage) {
                     newObj = new ImageScreenObject(this, this.#currentPage, {
                         type: ScreenObjectType.Image,
+                        blankBehavior,
                         shapeSpec: {
                             left: options.pointer.x,
                             top: options.pointer.y,
@@ -842,13 +854,34 @@ class ScreenManager {
             case ScreenObjectType.Page:
                 return new PageScreenObject(this, parent, spec);
             case ScreenObjectType.Rectangle:
-                return new RectScreenObject(this, parent, spec);
+                return new RectScreenObject(
+                    this,
+                    parent,
+                    spec.behavior || blankBehavior,
+                    spec
+                );
             case ScreenObjectType.Circle:
-                return new CircleScreenObject(this, parent, spec);
+                return new CircleScreenObject(
+                    this,
+                    parent,
+                    spec.behavior || blankBehavior,
+                    spec
+                );
             case ScreenObjectType.Text:
-                return new TextScreenObject(this, parent, spec.text, spec);
+                return new TextScreenObject(
+                    this,
+                    parent,
+                    spec.text,
+                    spec.behavior || blankBehavior,
+                    spec
+                );
             case ScreenObjectType.Image:
-                var newImage = new ImageScreenObject(this, parent, spec);
+                var newImage = new ImageScreenObject(
+                    this,
+                    parent,
+                    spec.behavior || blankBehavior,
+                    spec
+                );
                 newImage.setSource(this, spec.shapeSpec.src);
                 return newImage;
             case ScreenObjectType.SymbolButton:

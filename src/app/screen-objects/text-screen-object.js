@@ -1,13 +1,12 @@
 import { PropertyType } from "../constants/property-types";
-import ScreenObject from "./screen-object";
+import SelectableScreenObject from "./selectable-screen-object";
 import { ScreenObjectType } from "../constants/screen-object-types";
 
-class TextScreenObject extends ScreenObject {
+class TextScreenObject extends SelectableScreenObject {
     #text;
 
-    constructor(_screenMgr, _parent, _text, _spec) {
-        super(_screenMgr, _parent, _spec);
-        this.#text = _text;
+    constructor(_screenMgr, _parent, _text, _behavior, _spec) {
+        super(_screenMgr, _parent, _behavior, _spec);
         this.setCanvasObj(_screenMgr.addText(this, _text, _spec.shapeSpec));
     }
 
@@ -16,7 +15,6 @@ class TextScreenObject extends ScreenObject {
         var cobj = this.getCanvasObj();
         var spec = {
             type: ScreenObjectType.Text,
-            text: this.#text,
             shapeSpec: cobj.toJSON(),
         };
         return { ...superSpec, ...spec };
@@ -109,7 +107,9 @@ class TextScreenObject extends ScreenObject {
     getProperty(type) {
         switch (type) {
             case "text":
-                return this.#text;
+            case "label":
+                var cnvObj = this.getCanvasObj();
+                return cnvObj.text;
             case "backgroundColor":
                 return this.getCanvasObj().textBackgroundColor;
             case "textColor":
@@ -126,6 +126,7 @@ class TextScreenObject extends ScreenObject {
     async setProperty(screenMgr, type, value) {
         switch (type) {
             case "text":
+            case "label":
                 this.setText(value);
                 break;
             case "backgroundColor":

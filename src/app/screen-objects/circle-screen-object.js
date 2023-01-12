@@ -1,10 +1,10 @@
 import { PropertyType } from "../constants/property-types";
-import ScreenObject from "./screen-object";
+import SelectableScreenObject from "./selectable-screen-object";
 import { ScreenObjectType } from "../constants/screen-object-types";
 
-class CircleScreenObject extends ScreenObject {
-    constructor(_screenMgr, _parent, _spec) {
-        super(_screenMgr, _parent, _spec);
+class CircleScreenObject extends SelectableScreenObject {
+    constructor(_screenMgr, _parent, _behavior, _spec) {
+        super(_screenMgr, _parent, _behavior, _spec);
         this.setCanvasObj(_screenMgr.addCircle(this, _spec.shapeSpec));
     }
 

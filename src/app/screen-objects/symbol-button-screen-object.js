@@ -1,20 +1,17 @@
 import { PropertyType } from "../constants/property-types";
-import ScreenObject from "./screen-object";
+import SelectableScreenObject from "./selectable-screen-object";
 import { refresh } from "../../utils/canvas";
 import { ScreenObjectType } from "../constants/screen-object-types";
 import { AccessHighlightType } from "../constants/access-types";
-import { BehaviorManager } from "../behaviors/behavior-behaviors";
 
-class SymbolButtonScreenObject extends ScreenObject {
+class SymbolButtonScreenObject extends SelectableScreenObject {
     #label;
     #shape;
-    #behavior;
 
     constructor(_screenMgr, _parent, _label, _shape, _behavior, _spec) {
-        super(_screenMgr, _parent, _spec);
+        super(_screenMgr, _parent, _behavior, _spec);
         this.#label = _label;
         this.#shape = _shape;
-        this.#behavior = _behavior;
         this.setCanvasObj(
             _screenMgr.addSymbolButton(this, _label, _shape, _spec.shapeSpec)
         );
@@ -28,7 +25,6 @@ class SymbolButtonScreenObject extends ScreenObject {
             label: this.#label,
             shape: this.#shape,
             shapeSpec: cobj.toJSON(),
-            behavior: this.#behavior,
         };
         return { ...superSpec, ...spec };
     }
@@ -104,12 +100,7 @@ class SymbolButtonScreenObject extends ScreenObject {
                 current: this.getCanvasObj().opacity * 100,
             },
         ];
-        if (selectedObjects.length === 1) {
-            thisProps.push({
-                type: PropertyType.SelectionBehavior,
-                current: this.#behavior,
-            });
-        }
+
         return thisProps.concat(superProps);
     }
 
@@ -144,9 +135,6 @@ class SymbolButtonScreenObject extends ScreenObject {
                 this.#shape = value;
                 this.getCanvasObj().setShape(value);
                 break;
-            case PropertyType.SelectionBehavior:
-                this.#behavior = value;
-                break;
             case PropertyType.Opacity:
                 var newValue = value / 100;
                 this.getCanvasObj().set("opacity", newValue);
@@ -174,8 +162,6 @@ class SymbolButtonScreenObject extends ScreenObject {
                 return this.getCanvasObj().getShape();
             case "opacity":
                 return this.getCanvasObj().opacity * 100;
-            case "behavior":
-                return this.#behavior;
             default:
                 return super.getProperty(type);
         }
@@ -219,13 +205,6 @@ class SymbolButtonScreenObject extends ScreenObject {
             case "opacity":
                 this.setEditProperty(screenMgr, PropertyType.Opacity, value);
                 break;
-            case "behavior":
-                this.setEditProperty(
-                    screenMgr,
-                    PropertyType.SelectionBehavior,
-                    value
-                );
-                break;
             default:
                 super.setProperty(screenMgr, type, value);
         }
@@ -262,16 +241,6 @@ class SymbolButtonScreenObject extends ScreenObject {
                 this.getCanvasObj().unOverlayUnShrink(appManager.getCanvas());
                 break;
             default:
-        }
-    }
-
-    isSelectable() {
-        return true;
-    }
-
-    select() {
-        if (this.#behavior) {
-            BehaviorManager.executeFromObject(this, this.#behavior);
         }
     }
 }
