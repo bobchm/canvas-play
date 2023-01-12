@@ -34,6 +34,7 @@ function initCanvas(
     cnv.containerWidth = _width;
     cnv.containerHeight = _height;
     cnv.focusChangeCallback = _focusChangeCallback;
+    cnv.highlightImageFilter = new fabric.Image.filters.Grayscale();
 
     if (_modifiedCallback) {
         cnv.on({
@@ -488,28 +489,32 @@ const setImageSource = (cnv, image, src) => {
             resolve(image);
             return;
         }
-        image.setSrc(src, function (img) {
-            // error isn't explicitly signalled - check image width and height
-            if (img.width === 0 || img.height === 0) {
-                setErrorImage(cnv, image, origWd, origHgt);
-                reject(new Error("Error setting image source"));
-                return;
-            }
-            img.set({
-                left: image.left,
-                top: image.top,
-                // scaleX: origWd / img.width,
-                // scaleY: origHgt / img.height,
-            });
-            const widthFactor = origWd / img.width;
-            const heightFactor = origHgt / img.height;
-            const minFactor = Math.min(widthFactor, heightFactor);
-            img.scale(minFactor);
-            img.src = src;
-            img.setCoords();
-            cnv.renderAll();
-            resolve(image);
-        });
+        image.setSrc(
+            src,
+            function (img) {
+                // error isn't explicitly signalled - check image width and height
+                if (img.width === 0 || img.height === 0) {
+                    setErrorImage(cnv, image, origWd, origHgt);
+                    reject(new Error("Error setting image source"));
+                    return;
+                }
+                img.set({
+                    left: image.left,
+                    top: image.top,
+                    // scaleX: origWd / img.width,
+                    // scaleY: origHgt / img.height,
+                });
+                const widthFactor = origWd / img.width;
+                const heightFactor = origHgt / img.height;
+                const minFactor = Math.min(widthFactor, heightFactor);
+                img.scale(minFactor);
+                img.src = src;
+                img.setCoords();
+                cnv.renderAll();
+                resolve(image);
+            },
+            { crossOrigin: "anonymous" }
+        );
     });
 };
 
@@ -763,9 +768,19 @@ function unoverlayHotspot(cnv, obj) {
     }
 }
 
-function overlayImage(cnv, obj) {}
+function overlayImage(cnv, obj) {
+    obj.filters.push(cnv.highlightImageFilter);
+    obj.applyFilters();
+    obj.set("dirty", true);
+    cnv.renderAll();
+}
 
-function unoverlayImage(cnv, obj) {}
+function unoverlayImage(cnv, obj) {
+    obj.filters.pop();
+    obj.applyFilters();
+    obj.set("dirty", true);
+    cnv.renderAll();
+}
 
 function shrinkImage(cnv, obj) {
     obj.svScaleX = obj.scaleX;
