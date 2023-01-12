@@ -1,5 +1,6 @@
 import { fabric } from "fabric";
 import { errorImageData } from "./image-defaults";
+import { OverlayHighlightFill } from "./canvas-constants";
 
 export const SymBtnShape = {
     Rectangle: "rectangle",
@@ -356,7 +357,7 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
 
     drawOverlay: function (ctx) {
         var svFill = this.fill;
-        this.set("fill", "rgba(211, 211, 211, 0.8)");
+        this.set("fill", OverlayHighlightFill);
         switch (this.shape) {
             case SymBtnShape.RoundedRect:
                 this.drawRoundRectShape(ctx);

@@ -376,6 +376,7 @@ const Editor = () => {
                 scrMgr.setSelectionCallback(handleSelectionChange);
                 scrMgr.setModeChangeCallback(handleUserModeChange);
                 scrMgr.setModifiedCallback(() => markChanged(true));
+                scrMgr.setFocusCallback(handleHotKeysWithFocus);
                 handleSelectionChange([]);
                 markChanged(false);
                 setIsLoaded(true);

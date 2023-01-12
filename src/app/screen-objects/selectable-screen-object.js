@@ -2,6 +2,12 @@ import { PropertyType } from "../constants/property-types";
 import ScreenObject from "./screen-object";
 import { AccessHighlightType } from "../constants/access-types";
 import {
+    highlightShrink,
+    unhighlightShrink,
+    highlightOverlay,
+    unhighlightOverlay,
+} from "../../utils/canvas";
+import {
     BehaviorManager,
     isBehaviorBlank,
 } from "../behaviors/behavior-behaviors";
@@ -69,10 +75,14 @@ class SelectableScreenObject extends ScreenObject {
             case AccessHighlightType.None:
                 break;
             case AccessHighlightType.Shrink:
+                highlightShrink(appManager.getCanvas(), this.getCanvasObj());
                 break;
             case AccessHighlightType.Overlay:
+                highlightOverlay(appManager.getCanvas(), this.getCanvasObj());
                 break;
             case AccessHighlightType.ShrinkAndOverlay:
+                highlightOverlay(appManager.getCanvas(), this.getCanvasObj());
+                highlightShrink(appManager.getCanvas(), this.getCanvasObj());
                 break;
             default:
         }
@@ -83,10 +93,14 @@ class SelectableScreenObject extends ScreenObject {
             case AccessHighlightType.None:
                 break;
             case AccessHighlightType.Shrink:
+                unhighlightShrink(appManager.getCanvas(), this.getCanvasObj());
                 break;
             case AccessHighlightType.Overlay:
+                unhighlightOverlay(appManager.getCanvas(), this.getCanvasObj());
                 break;
             case AccessHighlightType.ShrinkAndOverlay:
+                unhighlightOverlay(appManager.getCanvas(), this.getCanvasObj());
+                unhighlightShrink(appManager.getCanvas(), this.getCanvasObj());
                 break;
             default:
         }

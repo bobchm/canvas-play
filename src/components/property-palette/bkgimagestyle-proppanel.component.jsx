@@ -4,7 +4,7 @@ import Grid from "@mui/material/Grid";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
-import { BackgroundImageStyle } from "../../utils/canvas";
+import { BackgroundImageStyle } from "../../utils/canvas-constants";
 
 const backgroundStyles = [
     { name: "Center", style: BackgroundImageStyle.Center },

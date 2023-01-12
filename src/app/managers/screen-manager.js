@@ -69,6 +69,7 @@ class ScreenManager {
     #selectionCallback = null;
     #modeChangeCallback = null;
     #modifiedCallback = null;
+    #focusCallback = null;
     #selectedObjects = null;
     #screenRegion;
     #activitySize;
@@ -86,6 +87,7 @@ class ScreenManager {
         this.addObjectOnMousedown = this.addObjectOnMousedown.bind(this);
         this.scrMgrSelectionCallback = this.scrMgrSelectionCallback.bind(this);
         this.setModified = this.setModified.bind(this);
+        this.handleFocusChange = this.handleFocusChange.bind(this);
         this.inputCallback = this.inputCallback.bind(this);
         this.sprayTrackMouse = this.sprayTrackMouse.bind(this);
         this.hotSpotCallback = this.hotSpotCallback.bind(this);
@@ -320,6 +322,10 @@ class ScreenManager {
         this.#modifiedCallback = callbk;
     }
 
+    setFocusCallback(callbk) {
+        this.#focusCallback = callbk;
+    }
+
     setModeChangeCallback(callbk) {
         this.#modeChangeCallback = callbk;
     }
@@ -381,6 +387,12 @@ class ScreenManager {
         }
     }
 
+    handleFocusChange(focusOn) {
+        if (this.#focusCallback) {
+            this.#focusCallback(focusOn);
+        }
+    }
+
     inputCallback(eventType, eventData, scrObj) {
         if (this.#accessManager) {
             this.#accessManager.handleInput(eventType, eventData, scrObj);
@@ -400,7 +412,8 @@ class ScreenManager {
             backgroundColor,
             doSelection,
             false,
-            this.setModified
+            this.setModified,
+            this.handleFocusChange
         );
         this.#screenRegion = {
             left: left,

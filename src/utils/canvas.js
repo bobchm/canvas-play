@@ -4,15 +4,9 @@ import { colorCloserToBlack } from "./colors";
 import { defaultImageData, errorImageData } from "./image-defaults";
 import { InputEvent } from "./input-events";
 import FileSaver from "file-saver";
+import { BackgroundImageStyle, OverlayHighlightFill } from "./canvas-constants";
 
 var objIdCtr = 0;
-var containerWidth, containerHeight;
-
-export const BackgroundImageStyle = {
-    Center: "center",
-    Stretch: "stretch",
-    Tile: "tile", // not implemented yet - need to create the tiled image and then assign that
-};
 
 function initCanvas(
     _id,
@@ -23,7 +17,8 @@ function initCanvas(
     _bkgColor,
     _doSelection,
     _allowZoom,
-    _modifiedCallback
+    _modifiedCallback,
+    _focusChangeCallback
 ) {
     var cnv = new fabric.Canvas(_id, {
         left: _left,
@@ -34,8 +29,11 @@ function initCanvas(
         selection: _doSelection,
         renderOnAddRemove: true,
     });
-    containerWidth = _width;
-    containerHeight = _height;
+
+    // adding the following fields to canvas
+    cnv.containerWidth = _width;
+    cnv.containerHeight = _height;
+    cnv.focusChangeCallback = _focusChangeCallback;
 
     if (_modifiedCallback) {
         cnv.on({
@@ -52,8 +50,8 @@ function initCanvas(
             if (zoom > 20) zoom = 20;
             if (zoom < 0.01) zoom = 0.01;
             cnv.setDimensions({
-                width: containerWidth * zoom,
-                height: containerHeight * zoom,
+                width: cnv.containerWidth * zoom,
+                height: cnv.containerHeight * zoom,
             });
             cnv.setZoom(zoom);
             opt.e.preventDefault();
@@ -334,8 +332,8 @@ function resizeCanvas(cnv, width, height) {
         width: width,
         height: height,
     });
-    containerWidth = width;
-    containerHeight = height;
+    cnv.containerWidth = width;
+    cnv.containerHeight = height;
 }
 
 function setZoom(cnv, zoom) {
@@ -405,6 +403,12 @@ const addTriangle = (cnv, spec, scrObj, inputCallback) => {
 
 const addText = (cnv, text, spec, scrObj, inputCallback) => {
     const textObj = new fabric.IText(text, spec);
+    if (cnv.focusChangeCallback) {
+        textObj.on({
+            "editing:entered": () => cnv.focusChangeCallback(true),
+            "editing:exited": () => cnv.focusChangeCallback(false),
+        });
+    }
     finishObjectAdd(cnv, textObj, scrObj, inputCallback);
     return textObj;
 };
@@ -696,6 +700,66 @@ function endFreeform(cnv, doneCallback) {
     cnv.off("path:created", (opt) => freeFormCreated(cnv, opt, doneCallback));
 }
 
+function highlightShrink(cnv, obj) {
+    obj.highlightSvRgn = {};
+    obj.highlightSvRgn.left = obj.left;
+    obj.highlightSvRgn.top = obj.top;
+    obj.highlightSvRgn.width = obj.width;
+    obj.highlightSvRgn.height = obj.height;
+    obj.animate("left", "+=5", {
+        onChange: cnv.renderAll.bind(cnv),
+        duration: 100,
+    });
+    obj.animate("width", "-=10", {
+        onChange: cnv.renderAll.bind(cnv),
+        duration: 100,
+    });
+    obj.animate("top", "+=5", {
+        onChange: cnv.renderAll.bind(cnv),
+        duration: 100,
+    });
+    obj.animate("height", "-=10", {
+        onChange: cnv.renderAll.bind(cnv),
+        duration: 100,
+    });
+}
+
+function unhighlightShrink(cnv, obj) {
+    if (obj.highlightSvRgn) {
+        obj.animate("left", obj.highlightSvRgn.left, {
+            onChange: cnv.renderAll.bind(cnv),
+            duration: 100,
+        });
+        obj.animate("width", obj.highlightSvRgn.width, {
+            onChange: cnv.renderAll.bind(cnv),
+            duration: 100,
+        });
+        obj.animate("top", obj.highlightSvRgn.top, {
+            onChange: cnv.renderAll.bind(cnv),
+            duration: 100,
+        });
+        obj.animate("height", obj.highlightSvRgn.height, {
+            onChange: cnv.renderAll.bind(cnv),
+            duration: 100,
+        });
+    }
+}
+
+function highlightOverlay(cnv, obj) {
+    obj.highlightSvFill = obj.fill;
+    obj.set("fill", OverlayHighlightFill);
+    obj.set("dirty", true);
+    cnv.renderAll();
+}
+
+function unhighlightOverlay(cnv, obj) {
+    if (obj.highlightSvFill) {
+        obj.set("fill", obj.highlightSvFill);
+        obj.set("dirty", true);
+        cnv.renderAll();
+    }
+}
+
 export {
     initCanvas,
     addRect,
@@ -755,4 +819,8 @@ export {
     animateOpacity,
     beginFreeform,
     endFreeform,
+    highlightShrink,
+    unhighlightShrink,
+    highlightOverlay,
+    unhighlightOverlay,
 };
