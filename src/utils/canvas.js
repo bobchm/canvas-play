@@ -429,6 +429,7 @@ const addSymbolButton = (cnv, label, shape, spec, scrObj, inputCallback) => {
 const addHotSpot = (cnv, spec, scrObj, inputCallback) => {
     const newPath = new fabric.Path(spec.path);
     newPath.set({
+        type: "hotspot",
         fill: "rgba(0,0,0,0)",
         stroke: spec.stroke,
         strokeWidth: 3,
@@ -700,7 +701,7 @@ function endFreeform(cnv, doneCallback) {
     cnv.off("path:created", (opt) => freeFormCreated(cnv, opt, doneCallback));
 }
 
-function highlightShrink(cnv, obj) {
+function defHighlightShrink(cnv, obj) {
     obj.highlightSvRgn = {};
     obj.highlightSvRgn.left = obj.left;
     obj.highlightSvRgn.top = obj.top;
@@ -724,7 +725,7 @@ function highlightShrink(cnv, obj) {
     });
 }
 
-function unhighlightShrink(cnv, obj) {
+function defUnhighlightShrink(cnv, obj) {
     if (obj.highlightSvRgn) {
         obj.animate("left", obj.highlightSvRgn.left, {
             onChange: cnv.renderAll.bind(cnv),
@@ -745,18 +746,120 @@ function unhighlightShrink(cnv, obj) {
     }
 }
 
-function highlightOverlay(cnv, obj) {
+function defHighlightOverlay(cnv, obj) {
     obj.highlightSvFill = obj.fill;
     obj.set("fill", OverlayHighlightFill);
     obj.set("dirty", true);
     cnv.renderAll();
 }
 
-function unhighlightOverlay(cnv, obj) {
+function defUnhighlightOverlay(cnv, obj) {
     if (obj.highlightSvFill) {
         obj.set("fill", obj.highlightSvFill);
         obj.set("dirty", true);
         cnv.renderAll();
+    }
+}
+
+function overlayHotspot(cnv, obj) {
+    // check if not visible and make visible if not
+    if (obj.opacity === 0) {
+        obj.isInvisible = true;
+        obj.set("opacity", 1.0);
+    } else {
+        obj.isInvisible = false;
+    }
+    defHighlightOverlay(cnv, obj);
+}
+
+function unoverlayHotspot(cnv, obj) {
+    defUnhighlightOverlay(cnv, obj);
+    if (obj.isInvisible) {
+        obj.set("opacity", 0);
+    }
+}
+
+function shrinkHotspot(cnv, obj) {}
+
+function unshrinkHotspot(cnv, obj) {}
+
+function shrinkCircle(cnv, obj) {}
+
+function unshrinkCircle(cnv, obj) {}
+
+function overlayImage(cnv, obj) {}
+
+function unoverlayImage(cnv, obj) {}
+
+function shrinkImage(cnv, obj) {}
+
+function unshrinkImage(cnv, obj) {}
+
+function shrinkText(cnv, obj) {}
+
+function unshrinkText(cnv, obj) {}
+
+function highlightShrink(cnv, obj) {
+    switch (obj.type) {
+        case "hotspot":
+            shrinkHotspot(cnv, obj);
+            break;
+        case "circle":
+            shrinkCircle(cnv, obj);
+            break;
+        case "image":
+            shrinkImage(cnv, obj);
+            break;
+        case "i-text":
+            shrinkText(cnv, obj);
+            break;
+        default:
+            defHighlightShrink(cnv, obj);
+    }
+}
+
+function unhighlightShrink(cnv, obj) {
+    switch (obj.type) {
+        case "hotspot":
+            unshrinkHotspot(cnv, obj);
+            break;
+        case "circle":
+            unshrinkCircle(cnv, obj);
+            break;
+        case "image":
+            unshrinkImage(cnv, obj);
+            break;
+        case "i-text":
+            unshrinkText(cnv, obj);
+            break;
+        default:
+            defUnhighlightShrink(cnv, obj);
+    }
+}
+
+function highlightOverlay(cnv, obj) {
+    switch (obj.type) {
+        case "hotspot":
+            overlayHotspot(cnv, obj);
+            break;
+        case "image":
+            overlayImage(cnv, obj);
+            break;
+        default:
+            defHighlightOverlay(cnv, obj);
+    }
+}
+
+function unhighlightOverlay(cnv, obj) {
+    switch (obj.type) {
+        case "hotspot":
+            unoverlayHotspot(cnv, obj);
+            break;
+        case "image":
+            unoverlayImage(cnv, obj);
+            break;
+        default:
+            defUnhighlightOverlay(cnv, obj);
     }
 }
 
