@@ -34,7 +34,9 @@ function initCanvas(
     cnv.containerWidth = _width;
     cnv.containerHeight = _height;
     cnv.focusChangeCallback = _focusChangeCallback;
-    cnv.highlightImageFilter = new fabric.Image.filters.Grayscale();
+    cnv.highlightImageFilter = new fabric.Image.filters.Brightness({
+        brightness: -0.3,
+    });
 
     if (_modifiedCallback) {
         cnv.on({
