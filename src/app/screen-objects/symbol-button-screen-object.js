@@ -17,7 +17,13 @@ class SymbolButtonScreenObject extends SelectableScreenObject {
         this.#label = _label;
         this.#shape = _shape;
         this.setCanvasObj(
-            _screenMgr.addSymbolButton(this, _label, _shape, _spec.shapeSpec)
+            _screenMgr.addSymbolButton(
+                this,
+                _parent,
+                _label,
+                _shape,
+                _spec.shapeSpec
+            )
         );
     }
 

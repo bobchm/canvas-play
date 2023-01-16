@@ -5,7 +5,7 @@ import { ScreenObjectType } from "../constants/screen-object-types";
 class CircleScreenObject extends SelectableScreenObject {
     constructor(_screenMgr, _parent, _behavior, _spec) {
         super(_screenMgr, _parent, _behavior, _spec);
-        this.setCanvasObj(_screenMgr.addCircle(this, _spec.shapeSpec));
+        this.setCanvasObj(_screenMgr.addCircle(this, _parent, _spec.shapeSpec));
     }
 
     toJSON() {

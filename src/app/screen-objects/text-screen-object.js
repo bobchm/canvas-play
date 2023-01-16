@@ -7,7 +7,9 @@ class TextScreenObject extends SelectableScreenObject {
 
     constructor(_screenMgr, _parent, _text, _behavior, _spec) {
         super(_screenMgr, _parent, _behavior, _spec);
-        this.setCanvasObj(_screenMgr.addText(this, _text, _spec.shapeSpec));
+        this.setCanvasObj(
+            _screenMgr.addText(this, _parent, _text, _spec.shapeSpec)
+        );
     }
 
     toJSON() {

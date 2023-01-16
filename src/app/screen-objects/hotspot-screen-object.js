@@ -1,7 +1,6 @@
 import { PropertyType } from "../constants/property-types";
 import SelectableScreenObject from "./selectable-screen-object";
 import { ScreenObjectType } from "../constants/screen-object-types";
-import { AccessHighlightType } from "../constants/access-types";
 import { BehaviorManager } from "../behaviors/behavior-behaviors";
 import { ExecutionMode } from "../scripting/canvas-exec";
 
@@ -11,7 +10,9 @@ class HotSpotScreenObject extends SelectableScreenObject {
     constructor(_screenMgr, _parent, _behavior, _visible, _spec) {
         super(_screenMgr, _parent, _behavior, _spec);
         this.#visibleInPlay = _visible;
-        this.setCanvasObj(_screenMgr.addHotSpot(this, _spec.shapeSpec));
+        this.setCanvasObj(
+            _screenMgr.addHotSpot(this, _parent, _spec.shapeSpec)
+        );
 
         // if we're in play mode and we don't have the visible flag set, make invisible
         if (

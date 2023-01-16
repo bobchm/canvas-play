@@ -5,7 +5,7 @@ import { ScreenObjectType } from "../constants/screen-object-types";
 class RectScreenObject extends SelectableScreenObject {
     constructor(_screenMgr, _parent, _behavior, _spec) {
         super(_screenMgr, _parent, _behavior, _spec);
-        this.setCanvasObj(_screenMgr.addRect(this, _spec.shapeSpec));
+        this.setCanvasObj(_screenMgr.addRect(this, _parent, _spec.shapeSpec));
     }
 
     toJSON() {

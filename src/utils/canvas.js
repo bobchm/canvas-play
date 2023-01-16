@@ -343,8 +343,27 @@ function setZoom(cnv, zoom) {
     cnv.setZoom(zoom);
 }
 
-function finishObjectAdd(cnv, obj, scrObj, inputCallback) {
+function addChildObject(parent, child) {
+    if (!parent.hasOwnProperty("children")) {
+        throw new Error(`Bad parent object (${parent})`);
+    }
+    parent.children.push(child);
+}
+
+function removeChildObject(child) {
+    if (child.parent) {
+        child.parent.children = child.parent.children.filter(
+            (obj) => obj !== child
+        );
+    }
+}
+
+function finishObjectAdd(cnv, parent, obj, scrObj, inputCallback) {
     obj.id = getObjectId();
+    obj.parent = parent;
+    if (parent) {
+        addChildObject(parent, obj);
+    }
     obj.selectable = cnv.selection;
     obj.hoverCursor = cnv.selection ? "move" : "default";
     if (inputCallback) {
@@ -386,25 +405,25 @@ function finishObjectAdd(cnv, obj, scrObj, inputCallback) {
     cnv.add(obj);
 }
 
-const addRect = (cnv, spec, scrObj, inputCallback) => {
+const addRect = (cnv, parent, spec, scrObj, inputCallback) => {
     const rect = new fabric.Rect(spec);
-    finishObjectAdd(cnv, rect, scrObj, inputCallback);
+    finishObjectAdd(cnv, parent, rect, scrObj, inputCallback);
     return rect;
 };
 
-const addCircle = (cnv, spec, scrObj, inputCallback) => {
+const addCircle = (cnv, parent, spec, scrObj, inputCallback) => {
     const circle = new fabric.Circle(spec);
-    finishObjectAdd(cnv, circle, scrObj, inputCallback);
+    finishObjectAdd(cnv, parent, circle, scrObj, inputCallback);
     return circle;
 };
 
-const addTriangle = (cnv, spec, scrObj, inputCallback) => {
+const addTriangle = (cnv, parent, spec, scrObj, inputCallback) => {
     const triangle = new fabric.Triangle(spec);
-    finishObjectAdd(cnv, triangle, scrObj, inputCallback);
+    finishObjectAdd(cnv, parent, triangle, scrObj, inputCallback);
     return triangle;
 };
 
-const addText = (cnv, text, spec, scrObj, inputCallback) => {
+const addText = (cnv, parent, text, spec, scrObj, inputCallback) => {
     const textObj = new fabric.IText(text, spec);
     if (cnv.focusChangeCallback) {
         textObj.on({
@@ -412,24 +431,32 @@ const addText = (cnv, text, spec, scrObj, inputCallback) => {
             "editing:exited": () => cnv.focusChangeCallback(false),
         });
     }
-    finishObjectAdd(cnv, textObj, scrObj, inputCallback);
+    finishObjectAdd(cnv, parent, textObj, scrObj, inputCallback);
     return textObj;
 };
 
-const addImage = (cnv, spec, scrObj, inputCallback) => {
+const addImage = (cnv, parent, spec, scrObj, inputCallback) => {
     const imageObj = new fabric.Image("");
     imageObj.set(spec);
-    finishObjectAdd(cnv, imageObj, scrObj, inputCallback);
+    finishObjectAdd(cnv, parent, imageObj, scrObj, inputCallback);
     return imageObj;
 };
 
-const addSymbolButton = (cnv, label, shape, spec, scrObj, inputCallback) => {
+const addSymbolButton = (
+    cnv,
+    parent,
+    label,
+    shape,
+    spec,
+    scrObj,
+    inputCallback
+) => {
     const symBtn = new SymbolButton(label, shape, spec, () => refresh(cnv));
-    finishObjectAdd(cnv, symBtn, scrObj, inputCallback);
+    finishObjectAdd(cnv, parent, symBtn, scrObj, inputCallback);
     return symBtn;
 };
 
-const addHotSpot = (cnv, spec, scrObj, inputCallback) => {
+const addHotSpot = (cnv, parent, spec, scrObj, inputCallback) => {
     const newPath = new fabric.Path(spec.path);
     newPath.set({
         type: "hotspot",
@@ -525,6 +552,7 @@ async function setImageSourceA(cnv, image, src) {
 }
 
 function removeObject(cnv, obj) {
+    removeChildObject(obj);
     cnv.remove(obj);
 }
 
@@ -533,7 +561,10 @@ function deleteSelectedObjects(cnv) {
     if (active) {
         cnv.remove(active);
         if (active.type === "activeSelection") {
-            active.getObjects().forEach((x) => cnv.remove(x));
+            active.getObjects().forEach((x) => {
+                removeChildObject(x);
+                cnv.remove(x);
+            });
             cnv.discardActiveObject().renderAll();
         }
     }

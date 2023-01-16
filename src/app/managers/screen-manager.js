@@ -939,36 +939,40 @@ class ScreenManager {
         }
     }
 
-    addRect(scrObj, spec) {
+    addRect(scrObj, parent, spec) {
         return addRect(
             this.#canvas,
+            parent.getCanvasObj(),
             spec,
             scrObj,
             this.#handleInputEvents ? this.inputCallback : null
         );
     }
 
-    addCircle(scrObj, spec) {
+    addCircle(scrObj, parent, spec) {
         return addCircle(
             this.#canvas,
+            parent.getCanvasObj(),
             spec,
             scrObj,
             this.#handleInputEvents ? this.inputCallback : null
         );
     }
 
-    addImage(scrObj, spec) {
+    addImage(scrObj, parent, spec) {
         return addImage(
             this.#canvas,
+            parent.getCanvasObj(),
             spec,
             scrObj,
             this.#handleInputEvents ? this.inputCallback : null
         );
     }
 
-    addSymbolButton(scrObj, label, shape, spec) {
+    addSymbolButton(scrObj, parent, label, shape, spec) {
         return addSymbolButton(
             this.#canvas,
+            parent.getCanvasObj(),
             label,
             shape,
             spec,
@@ -977,18 +981,20 @@ class ScreenManager {
         );
     }
 
-    addHotSpot(scrObj, spec) {
+    addHotSpot(scrObj, parent, spec) {
         return addHotSpot(
             this.#canvas,
+            parent.getCanvasObj(),
             spec,
             scrObj,
             this.#handleInputEvents ? this.inputCallback : null
         );
     }
 
-    addText(scrObj, text, spec) {
+    addText(scrObj, parent, text, spec) {
         return addText(
             this.#canvas,
+            parent.getCanvasObj(),
             text,
             spec,
             scrObj,
