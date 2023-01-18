@@ -396,6 +396,7 @@ const Editor = () => {
 
     function handleSelectionChange(objs) {
         if (!suspendSelectionCallback) {
+            resumeHotKeys();
             var props = [];
             if (!objs || objs.length <= 0) {
                 var page = appManager.getScreenManager().getCurrentPage();

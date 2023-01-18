@@ -1,10 +1,11 @@
 import { fabric } from "fabric";
 import { SymbolButton } from "./symbol-button";
+import { ContainerBox } from "./container-box";
 import { colorCloserToBlack } from "./colors";
 import { defaultImageData, errorImageData } from "./image-defaults";
 import { InputEvent } from "./input-events";
 import FileSaver from "file-saver";
-import { BackgroundImageStyle, OverlayHighlightFill } from "./canvas-constants";
+import { BackgroundImageStyle, OverlayHighlightFill } from "./canvas-shared";
 
 var objIdCtr = 0;
 
@@ -456,6 +457,20 @@ const addSymbolButton = (
     return symBtn;
 };
 
+const addContainerBox = (
+    cnv,
+    parent,
+    title,
+    shape,
+    spec,
+    scrObj,
+    inputCallback
+) => {
+    const box = new ContainerBox(title, shape, spec);
+    finishObjectAdd(cnv, parent, box, scrObj, inputCallback);
+    return box;
+};
+
 const addHotSpot = (cnv, parent, spec, scrObj, inputCallback) => {
     const newPath = new fabric.Path(spec.path);
     newPath.set({
@@ -465,7 +480,7 @@ const addHotSpot = (cnv, parent, spec, scrObj, inputCallback) => {
         strokeWidth: 3,
         strokeDashArray: [5, 5],
     });
-    finishObjectAdd(cnv, newPath, scrObj, inputCallback);
+    finishObjectAdd(cnv, parent, newPath, scrObj, inputCallback);
     return newPath;
 };
 
@@ -919,6 +934,7 @@ export {
     addText,
     addImage,
     addSymbolButton,
+    addContainerBox,
     addHotSpot,
     getImageSource,
     setImageSource,

@@ -1,7 +1,7 @@
 import { PropertyType } from "../constants/property-types";
 import ContainerScreenObject from "./container-screen-object";
 import { ScreenObjectType } from "../constants/screen-object-types";
-import { BackgroundImageStyle } from "../../utils/canvas-constants";
+import { BackgroundImageStyle } from "../../utils/canvas-shared";
 import {
     BehaviorManager,
     blankBehavior,

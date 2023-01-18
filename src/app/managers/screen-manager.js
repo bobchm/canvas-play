@@ -47,6 +47,7 @@ import {
     addCircle,
     addImage,
     addSymbolButton,
+    addContainerBox,
     addHotSpot,
     addText,
     getDimensions,
@@ -974,6 +975,18 @@ class ScreenManager {
             this.#canvas,
             parent.getCanvasObj(),
             label,
+            shape,
+            spec,
+            scrObj,
+            this.#handleInputEvents ? this.inputCallback : null
+        );
+    }
+
+    addContainerBox(scrObj, parent, title, shape, spec) {
+        return addContainerBox(
+            this.#canvas,
+            parent.getCanvasObj(),
+            title,
             shape,
             spec,
             scrObj,

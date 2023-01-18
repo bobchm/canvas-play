@@ -18,7 +18,7 @@ import ArasaacImageService from "../../utils/arasaac-image-service";
 import ImageCard from "../image-card/image-card.component";
 import TextInputModal from "../text-input-modal/text-input-modal.component";
 
-import { BackgroundImageStyle } from "../../utils/canvas-constants";
+import { BackgroundImageStyle } from "../../utils/canvas-shared";
 
 import "./image-search-modal.styles.css";
 

@@ -1,6 +1,11 @@
 import { fabric } from "fabric";
 import { errorImageData } from "./image-defaults";
-import { OverlayHighlightFill } from "./canvas-constants";
+import {
+    OverlayHighlightFill,
+    drawRoundRect,
+    drawFolder,
+    folderTabHeight,
+} from "./canvas-shared";
 
 export const SymBtnShape = {
     Rectangle: "rectangle",
@@ -15,89 +20,6 @@ export const SymbolButtonShapes = [
     { name: "Rounded Rectangle", value: SymBtnShape.RoundedRect },
     { name: "Folder", value: SymBtnShape.Folder },
 ];
-
-function drawRoundRect(
-    ctx,
-    x,
-    y,
-    width,
-    height,
-    radius = 5,
-    fill = false,
-    stroke = true
-) {
-    if (typeof radius === "number") {
-        radius = { tl: radius, tr: radius, br: radius, bl: radius };
-    } else {
-        radius = { ...{ tl: 0, tr: 0, br: 0, bl: 0 }, ...radius };
-    }
-    ctx.beginPath();
-    ctx.moveTo(x + radius.tl, y);
-    ctx.lineTo(x + width - radius.tr, y);
-    ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
-    ctx.lineTo(x + width, y + height - radius.br);
-    ctx.quadraticCurveTo(
-        x + width,
-        y + height,
-        x + width - radius.br,
-        y + height
-    );
-    ctx.lineTo(x + radius.bl, y + height);
-    ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
-    ctx.lineTo(x, y + radius.tl);
-    ctx.quadraticCurveTo(x, y, x + radius.tl, y);
-    ctx.closePath();
-    if (fill) {
-        ctx.fill();
-    }
-    if (stroke) {
-        ctx.stroke();
-    }
-}
-
-function tabHeight(buttonHeight) {
-    return Math.min(buttonHeight / 10, 20);
-}
-
-function drawFolder(
-    ctx,
-    x,
-    y,
-    width,
-    height,
-    radius = 5,
-    fill = false,
-    stroke = true
-) {
-    if (typeof radius === "number") {
-        radius = { tl: radius, tr: radius, br: radius, bl: radius };
-    } else {
-        radius = { ...{ tl: 0, tr: 0, br: 0, bl: 0 }, ...radius };
-    }
-    var tabHgt = tabHeight(height);
-    ctx.beginPath();
-    ctx.moveTo(x + radius.tl, y);
-    ctx.lineTo(x + width / 3 - radius.tr, y); // 1
-    ctx.quadraticCurveTo(x + width / 3, y, x + width / 3, y + tabHgt); // 2
-    ctx.lineTo(x + width - radius.tr, y + tabHgt); // 3
-    ctx.quadraticCurveTo(
-        x + width,
-        y + tabHgt,
-        x + width,
-        y + tabHgt + radius.tr
-    ); // 4
-    ctx.lineTo(x + width, y + height); // 5
-    ctx.lineTo(x, y + height); // 6
-    ctx.lineTo(x, y + radius.tl); // 7
-    ctx.quadraticCurveTo(x, y, x + radius.tl, y); // 8
-    ctx.closePath();
-    if (fill) {
-        ctx.fill();
-    }
-    if (stroke) {
-        ctx.stroke();
-    }
-}
 
 var SymbolButton = fabric.util.createClass(fabric.Rect, {
     type: "symbolButton",
@@ -374,7 +296,7 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
     labelYOffset: function (shape, buttonHgt, hasSymbol) {
         var shapeOffset = 0;
         if (shape === SymBtnShape.Folder) {
-            shapeOffset = tabHeight(this.height);
+            shapeOffset = folderTabHeight(this.height);
         }
         if (hasSymbol) {
             return shapeOffset + LabelMargin;
