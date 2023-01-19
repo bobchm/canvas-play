@@ -5,6 +5,7 @@ import TextScreenObject from "../screen-objects/text-screen-object";
 import ImageScreenObject from "../screen-objects/image-screen-object";
 import SymbolButtonScreenObject from "../screen-objects/symbol-button-screen-object";
 import HotSpotScreenObject from "../screen-objects/hotspot-screen-object";
+import ContainerBoxScreenObject from "../screen-objects/container-box-screen-object";
 import AccessManager from "./access-manager";
 import { InputEvent } from "../../utils/input-events";
 import {
@@ -59,6 +60,7 @@ import { defaultImageData } from "../../utils/image-defaults";
 import { ScreenObjectType } from "../constants/screen-object-types";
 import { SymBtnShape } from "../../utils/symbol-button";
 import { EditMode } from "../../routes/editor/edit-modes";
+import { CtnBoxShape } from "../../utils/container-box";
 
 const sprayXSpacingDefault = 20;
 const sprayYSpacingDefault = 20;
@@ -548,6 +550,29 @@ class ScreenManager {
                     this.setModified();
                 }
                 break;
+            case "ContainerBox":
+                if (this.#currentPage) {
+                    newObj = new ContainerBoxScreenObject(
+                        this,
+                        this.#currentPage,
+                        "Title",
+                        CtnBoxShape.RoundedRect,
+                        {
+                            type: ScreenObjectType.ContainerBox,
+                            shapeSpec: {
+                                left: options.pointer.x,
+                                top: options.pointer.y,
+                                width: 300,
+                                height: 300,
+                                fill: "white",
+                                stroke: "black",
+                                opacity: 1.0,
+                            },
+                        }
+                    );
+                    this.setModified();
+                }
+                break;
 
             default:
                 return;
@@ -913,6 +938,14 @@ class ScreenManager {
                     parent,
                     spec.behavior || blankBehavior,
                     spec.visible,
+                    spec
+                );
+            case ScreenObjectType.ContainerBox:
+                return new ContainerBoxScreenObject(
+                    this,
+                    parent,
+                    spec.title,
+                    spec.shape || CtnBoxShape.RoundedRect,
                     spec
                 );
             default:

@@ -926,6 +926,35 @@ function unhighlightOverlay(cnv, obj) {
     }
 }
 
+function getTextStyle(cobj) {
+    var styles = [];
+    if (cobj.fontWeight === "bold") styles.push("bold");
+    if (cobj.fontStyle === "italic") styles.push("italic");
+    if (cobj.underline) styles.push("underline");
+    if (cobj.linethrough) styles.push("strikethrough");
+    return {
+        styles: styles, // array of one or more of 'bold', 'italic', 'underline', 'strikethrough' - bold=fontWeight === 'bold', italic = fontStyle === 'italic'
+        // underline = underline === true, strikethrough = linethrough === true
+        alignment: ["left", "center", "right"].includes(cobj.textAlign)
+            ? cobj.textAlign
+            : "center", // left, center, right - value of textAlign field,
+        fontSize: cobj.fontSize,
+        fontFamily: cobj.fontFamily,
+    };
+}
+
+function setTextStyle(cobj, style) {
+    cobj.setFont({
+        fontFamily: style.fontFamily,
+        fontSize: style.fontSize,
+        fontWeight: style.styles.includes("bold") ? "bold" : "normal",
+        fontStyle: style.styles.includes("italic") ? "italic" : "normal",
+        underline: style.styles.includes("underline"),
+        linethrough: style.styles.includes("strikethrough"),
+        textAlign: style.alignment,
+    });
+}
+
 export {
     initCanvas,
     addRect,
@@ -990,4 +1019,6 @@ export {
     unhighlightShrink,
     highlightOverlay,
     unhighlightOverlay,
+    getTextStyle,
+    setTextStyle,
 };

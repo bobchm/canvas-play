@@ -1,6 +1,7 @@
 import { PropertyType } from "../constants/property-types";
 import SelectableScreenObject from "./selectable-screen-object";
 import { ScreenObjectType } from "../constants/screen-object-types";
+import { getTextStyle, setTextStyle } from "../../utils/canvas";
 
 class TextScreenObject extends SelectableScreenObject {
     #text;
@@ -22,41 +23,6 @@ class TextScreenObject extends SelectableScreenObject {
         return { ...superSpec, ...spec };
     }
 
-    getTextStyle() {
-        var styles = [];
-        var cobj = this.getCanvasObj();
-        if (cobj.fontWeight === "bold") styles.push("bold");
-        if (cobj.fontStyle === "italic") styles.push("italic");
-        if (cobj.underline) styles.push("underline");
-        if (cobj.linethrough) styles.push("strikethrough");
-        return {
-            styles: styles, // array of one or more of 'bold', 'italic', 'underline', 'strikethrough' - bold=fontWeight === 'bold', italic = fontStyle === 'italic'
-            // underline = underline === true, strikethrough = linethrough === true
-            alignment: ["left", "center", "right"].includes(cobj.textAlign)
-                ? cobj.textAlign
-                : "left", // left, center, right - value of textAlign field,
-            fontSize: cobj.fontSize,
-            fontFamily: cobj.fontFamily,
-        };
-    }
-
-    setTextStyle(style) {
-        var cobj = this.getCanvasObj();
-        cobj.set(
-            "fontWeight",
-            style.styles.includes("bold") ? "bold" : "normal"
-        );
-        cobj.set(
-            "fontStyle",
-            style.styles.includes("italic") ? "italic" : "normal"
-        );
-        cobj.set("underline", style.styles.includes("underline"));
-        cobj.set("linethrough", style.styles.includes("strikethrough"));
-        cobj.set("textAlign", style.alignment);
-        cobj.set("fontSize", style.fontSize);
-        cobj.set("fontFamily", style.fontFamily);
-    }
-
     setText(text) {
         var cobj = this.getCanvasObj();
         cobj.set("text", text);
@@ -75,7 +41,7 @@ class TextScreenObject extends SelectableScreenObject {
             },
             {
                 type: PropertyType.TextStyle,
-                current: this.getTextStyle(),
+                current: getTextStyle(this.getCanvasObj()),
             },
             {
                 type: PropertyType.Opacity,
@@ -99,7 +65,7 @@ class TextScreenObject extends SelectableScreenObject {
                 this.getCanvasObj().set("opacity", newValue);
                 break;
             case PropertyType.TextStyle:
-                this.setTextStyle(value);
+                setTextStyle(this.getCanvasObj(), value);
                 break;
             default:
                 super.setEditProperty(screenMgr, type, value);
@@ -117,7 +83,7 @@ class TextScreenObject extends SelectableScreenObject {
             case "textColor":
                 return this.getCanvasObj().fill;
             case "textStyle":
-                return this.getTextStyle();
+                return getTextStyle(this.getCanvasObj());
             case "opacity":
                 return this.getCanvasObj().opacity * 100;
             default:

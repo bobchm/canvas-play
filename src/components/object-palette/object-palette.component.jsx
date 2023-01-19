@@ -8,6 +8,7 @@ import CropSquareIcon from "@mui/icons-material/CropSquare";
 import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
 import TextFieldsRoundedIcon from "@mui/icons-material/TextFieldsRounded";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
+import WysiwygRoundedIcon from "@mui/icons-material/WysiwygRounded";
 import { ReactComponent as SymButton } from "./button.svg";
 import { ReactComponent as SprayIcon } from "./spray.svg";
 import { ReactComponent as IrregularIcon } from "./irregular.svg";
@@ -67,6 +68,11 @@ const options = [
         ),
         label: "",
         mode: EditMode.AddHotSpot,
+    },
+    {
+        icon: <WysiwygRoundedIcon fontSize="large" />,
+        label: "",
+        mode: EditMode.AddContainerBox,
     },
 ];
 

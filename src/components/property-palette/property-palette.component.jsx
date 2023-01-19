@@ -17,6 +17,7 @@ import BooleanPropertyPanel from "./boolean-proppanel.component";
 import "./property-palette.styles.scss";
 import { PropertyValueType } from "../../app/constants/property-types";
 import { SymbolButtonShapes } from "../../utils/symbol-button";
+import { ContainerBoxShapes } from "../../utils/container-box";
 
 var ctr = 0;
 
@@ -127,6 +128,15 @@ export const selectPropertyPanel = (
                     propUpdateCallback={propUpdateCallback}
                     items={makePageItems(appManager)}
                     title={"Page"}
+                />
+            );
+        case PropertyValueType.BoxShape:
+            return (
+                <ItemListPropertyPanel
+                    propOption={option}
+                    propUpdateCallback={propUpdateCallback}
+                    items={ContainerBoxShapes}
+                    title={"Shape"}
                 />
             );
         default:

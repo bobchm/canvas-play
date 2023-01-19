@@ -3,10 +3,10 @@ import { drawRoundRect } from "./canvas-shared";
 
 export const CtnBoxShape = {
     Rectangle: "rectangle",
-    RoundedRect: "rounded ",
+    RoundedRect: "rounded",
 };
 
-export const ContainerBoxShape = [
+export const ContainerBoxShapes = [
     { name: "Rectangle", value: CtnBoxShape.Rectangle },
     { name: "Rounded Rectangle", value: CtnBoxShape.RoundedRect },
 ];
@@ -19,7 +19,6 @@ var ContainerBox = fabric.util.createClass(fabric.Rect, {
         spec || (spec = {});
 
         this.children = [];
-        this.embedImage = this.embedImage.bind(this);
         this.shape = shape || CtnBoxShape.RoundedRect;
         this.callSuper("initialize", spec);
         this.set("title", title || "");
@@ -166,13 +165,13 @@ var ContainerBox = fabric.util.createClass(fabric.Rect, {
         ctx.fillStyle = this.textColor;
 
         // in this coordinate system, 0.0 is in the center of the rectangle - we want to center the text
-        var metrics = ctx.measureText(this.label);
+        var metrics = ctx.measureText(this.title);
         var x = -this.width / 2 + this.justifiedTextX(ctx, metrics);
         var y = -this.height / 2 + textYOffset;
         if (this.image) {
             y += metrics.fontBoundingBoxAscent;
         }
-        ctx.fillText(this.label, x, y);
+        ctx.fillText(this.title, x, y);
         this.decorateText(ctx, metrics, x, y);
     },
 

@@ -1,28 +1,21 @@
 import { PropertyType } from "../constants/property-types";
-import SelectableScreenObject from "./selectable-screen-object";
-import {
-    highlightShrink,
-    unhighlightShrink,
-    refresh,
-    getTextStyle,
-    setTextStyle,
-} from "../../utils/canvas";
+import ContainerScreenObject from "./container-screen-object";
+import { getTextStyle, setTextStyle } from "../../utils/canvas";
 import { ScreenObjectType } from "../constants/screen-object-types";
-import { AccessHighlightType } from "../constants/access-types";
 
-class SymbolButtonScreenObject extends SelectableScreenObject {
-    #label;
+class ContainerBoxScreenObject extends ContainerScreenObject {
+    #title;
     #shape;
 
-    constructor(_screenMgr, _parent, _label, _shape, _behavior, _spec) {
-        super(_screenMgr, _parent, _behavior, _spec);
-        this.#label = _label;
+    constructor(_screenMgr, _parent, _title, _shape, _spec) {
+        super(_screenMgr, _parent, _spec);
+        this.#title = _title;
         this.#shape = _shape;
         this.setCanvasObj(
-            _screenMgr.addSymbolButton(
+            _screenMgr.addContainerBox(
                 this,
                 _parent,
-                _label,
+                _title,
                 _shape,
                 _spec.shapeSpec
             )
@@ -33,8 +26,8 @@ class SymbolButtonScreenObject extends SelectableScreenObject {
         var superSpec = super.toJSON();
         var cobj = this.getCanvasObj();
         var spec = {
-            type: ScreenObjectType.SymbolButton,
-            label: this.#label,
+            type: ScreenObjectType.ContainerBox,
+            title: this.#title,
             shape: this.#shape,
             shapeSpec: cobj.toJSON(),
         };
@@ -45,8 +38,8 @@ class SymbolButtonScreenObject extends SelectableScreenObject {
         var superProps = super.getEditProperties(selectedObjects);
         var thisProps = [
             {
-                type: PropertyType.ButtonLabel,
-                current: this.#label,
+                type: PropertyType.BoxTitle,
+                current: this.#title,
             },
             {
                 type: PropertyType.FillColor,
@@ -65,15 +58,7 @@ class SymbolButtonScreenObject extends SelectableScreenObject {
                 current: getTextStyle(this.getCanvasObj()),
             },
             {
-                type: PropertyType.SymbolButtonImageSource,
-                current: this.getCanvasObj().getImageSource(),
-            },
-            {
-                type: PropertyType.EmbedImage,
-                current: this.getCanvasObj().isImageEmbedded(),
-            },
-            {
-                type: PropertyType.ButtonShape,
+                type: PropertyType.BoxShape,
                 current: this.getCanvasObj().getShape(),
             },
             {
@@ -87,9 +72,9 @@ class SymbolButtonScreenObject extends SelectableScreenObject {
 
     async setEditProperty(screenMgr, type, value) {
         switch (type) {
-            case PropertyType.ButtonLabel:
-                this.#label = value;
-                this.getCanvasObj().setLabel(screenMgr.getCanvas(), value);
+            case PropertyType.BoxTitle:
+                this.#title = value;
+                this.getCanvasObj().setTitle(screenMgr.getCanvas(), value);
                 break;
             case PropertyType.FillColor:
                 this.getCanvasObj().set("fill", value);
@@ -103,16 +88,7 @@ class SymbolButtonScreenObject extends SelectableScreenObject {
             case PropertyType.TextStyle:
                 setTextStyle(this.getCanvasObj(), value);
                 break;
-            case PropertyType.SymbolButtonImageSource:
-                var cnv = screenMgr.getCanvas();
-                await this.getCanvasObj().setImageSource(value, () =>
-                    refresh(cnv)
-                );
-                break;
-            case PropertyType.EmbedImage:
-                this.getCanvasObj().embedImage(screenMgr.getCanvas());
-                break;
-            case PropertyType.ButtonShape:
+            case PropertyType.BoxShape:
                 this.#shape = value;
                 this.getCanvasObj().setShape(value);
                 break;
@@ -127,8 +103,8 @@ class SymbolButtonScreenObject extends SelectableScreenObject {
 
     getProperty(type) {
         switch (type) {
-            case "label":
-                return this.#label;
+            case "title":
+                return this.#title;
             case "fillColor":
                 return this.getCanvasObj().fill;
             case "borderColor":
@@ -136,10 +112,8 @@ class SymbolButtonScreenObject extends SelectableScreenObject {
             case "textColor":
                 return this.getCanvasObj().textColor;
             case "textStyle":
-                return getTextStyle(this.getCanvasObj());
-            case "imageSource":
-                return this.getCanvasObj().getImageSource();
-            case "buttonShape":
+                return this.getTextStyle();
+            case "boxShape":
                 return this.getCanvasObj().getShape();
             case "opacity":
                 return this.getCanvasObj().opacity * 100;
@@ -150,12 +124,8 @@ class SymbolButtonScreenObject extends SelectableScreenObject {
 
     async setProperty(screenMgr, type, value) {
         switch (type) {
-            case "label":
-                this.setEditProperty(
-                    screenMgr,
-                    PropertyType.ButtonLabel,
-                    value
-                );
+            case "title":
+                this.setEditProperty(screenMgr, PropertyType.BoxTitle, value);
                 break;
             case "fillColor":
                 this.setEditProperty(screenMgr, PropertyType.FillColor, value);
@@ -169,19 +139,8 @@ class SymbolButtonScreenObject extends SelectableScreenObject {
             case "textStyle":
                 this.setEditProperty(screenMgr, PropertyType.TextStyle, value);
                 break;
-            case "imageSource":
-                this.setEditProperty(
-                    screenMgr,
-                    PropertyType.SymbolButtonImageSource,
-                    value
-                );
-                break;
-            case "buttonShape":
-                this.setEditProperty(
-                    screenMgr,
-                    PropertyType.ButtonShape,
-                    value
-                );
+            case "boxShape":
+                this.setEditProperty(screenMgr, PropertyType.BoxShape, value);
                 break;
             case "opacity":
                 this.setEditProperty(screenMgr, PropertyType.Opacity, value);
@@ -190,42 +149,6 @@ class SymbolButtonScreenObject extends SelectableScreenObject {
                 super.setProperty(screenMgr, type, value);
         }
     }
-
-    highlight(appManager, highlightType) {
-        switch (highlightType) {
-            case AccessHighlightType.None:
-                break;
-            case AccessHighlightType.Shrink:
-                highlightShrink(appManager.getCanvas(), this.getCanvasObj());
-                break;
-            case AccessHighlightType.Overlay:
-                this.getCanvasObj().overlay(appManager.getCanvas());
-                break;
-            case AccessHighlightType.ShrinkAndOverlay:
-                this.getCanvasObj().overlay(appManager.getCanvas());
-                highlightShrink(appManager.getCanvas(), this.getCanvasObj());
-                break;
-            default:
-        }
-    }
-
-    unhighlight(appManager, highlightType) {
-        switch (highlightType) {
-            case AccessHighlightType.None:
-                break;
-            case AccessHighlightType.Shrink:
-                unhighlightShrink(appManager.getCanvas(), this.getCanvasObj());
-                break;
-            case AccessHighlightType.Overlay:
-                this.getCanvasObj().unOverlay(appManager.getCanvas());
-                break;
-            case AccessHighlightType.ShrinkAndOverlay:
-                this.getCanvasObj().unOverlay(appManager.getCanvas());
-                unhighlightShrink(appManager.getCanvas(), this.getCanvasObj());
-                break;
-            default:
-        }
-    }
 }
 
-export default SymbolButtonScreenObject;
+export default ContainerBoxScreenObject;

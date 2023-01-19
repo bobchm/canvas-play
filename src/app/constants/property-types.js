@@ -15,6 +15,7 @@ export const PropertyValueType = {
     Behavior: "behavior",
     ScreenObject: "screenobject",
     Number: "number",
+    BoxShape: "boxshape",
 };
 
 export const PropertyType = {
@@ -107,6 +108,16 @@ export const PropertyType = {
     CloseBehavior: {
         name: "Close",
         valueType: PropertyValueType.Behavior,
+        forceReset: false,
+    },
+    BoxShape: {
+        name: "Box Shape",
+        valueType: PropertyValueType.BoxShape,
+        forceReset: false,
+    },
+    BoxTitle: {
+        name: "Title",
+        valueType: PropertyValueType.Text,
         forceReset: false,
     },
 };

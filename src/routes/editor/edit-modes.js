@@ -12,4 +12,5 @@ export const EditMode = {
         mode: "Add",
         submode: ScreenObjectType.HotSpot,
     },
+    AddContainerBox: { mode: "Add", submode: ScreenObjectType.ContainerBox },
 };

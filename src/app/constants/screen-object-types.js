@@ -6,4 +6,5 @@ export const ScreenObjectType = {
     SymbolButton: "SymbolButton",
     HotSpot: "HotSpot",
     Page: "Page",
+    ContainerBox: "ContainerBox",
 };
