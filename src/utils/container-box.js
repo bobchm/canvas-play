@@ -167,10 +167,8 @@ var ContainerBox = fabric.util.createClass(fabric.Rect, {
         // in this coordinate system, 0.0 is in the center of the rectangle - we want to center the text
         var metrics = ctx.measureText(this.title);
         var x = -this.width / 2 + this.justifiedTextX(ctx, metrics);
-        var y = -this.height / 2 + textYOffset;
-        if (this.image) {
-            y += metrics.fontBoundingBoxAscent;
-        }
+        var y = -this.height / 2 + textYOffset + metrics.fontBoundingBoxAscent;
+
         ctx.fillText(this.title, x, y);
         this.decorateText(ctx, metrics, x, y);
     },

@@ -376,12 +376,19 @@ const Editor = () => {
                 scrMgr.setSelectionCallback(handleSelectionChange);
                 scrMgr.setModeChangeCallback(handleUserModeChange);
                 scrMgr.setModifiedCallback(() => markChanged(true));
+                scrMgr.setMovedCallback(handleObjectMoved);
                 scrMgr.setFocusCallback(handleHotKeysWithFocus);
                 handleSelectionChange([]);
                 markChanged(false);
                 setIsLoaded(true);
             });
         });
+    }
+
+    function handleObjectMoved(obj) {
+        setEditMessage("The object moved");
+        markChanged(true);
+        appManager.getScreenManager().findParentFor(obj);
     }
 
     function addToEditProperties(dest, src) {

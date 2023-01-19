@@ -41,7 +41,6 @@ function initCanvas(
 
     if (_modifiedCallback) {
         cnv.on({
-            "object:moved": _modifiedCallback,
             "object:modified": _modifiedCallback,
         });
     }
@@ -106,6 +105,19 @@ function objectAtXY(cnv, x, y) {
     for (let i = 0; i < objects.length; i++) {
         if (objects[i].containsPoint(pt, null, true)) {
             return objects[i];
+        }
+    }
+    return null;
+}
+
+function containerAtXY(cnv, x, y) {
+    var zoom = cnv.getZoom();
+    var pt = new fabric.Point(x * zoom, y * zoom);
+    var objects = cnv.getObjects();
+    for (let i = 0; i < objects.length; i++) {
+        var obj = objects[i];
+        if (obj.children && obj.containsPoint(pt)) {
+            return obj;
         }
     }
     return null;
@@ -345,10 +357,12 @@ function setZoom(cnv, zoom) {
 }
 
 function addChildObject(parent, child) {
-    if (!parent.hasOwnProperty("children")) {
-        throw new Error(`Bad parent object (${parent})`);
+    if (parent) {
+        if (!parent.hasOwnProperty("children")) {
+            throw new Error(`Bad parent object (${parent})`);
+        }
+        parent.children.push(child);
     }
-    parent.children.push(child);
 }
 
 function removeChildObject(child) {
@@ -357,6 +371,12 @@ function removeChildObject(child) {
             (obj) => obj !== child
         );
     }
+}
+
+function reparentObject(child, newParent) {
+    removeChildObject(child);
+    addChildObject(newParent, child);
+    child.parent = newParent;
 }
 
 function finishObjectAdd(cnv, parent, obj, scrObj, inputCallback) {
@@ -977,6 +997,7 @@ export {
     disableInputCallback,
     enableInputCallback,
     objectAtXY,
+    containerAtXY,
     enableMouseTracking,
     disableMouseTracking,
     getBackgroundColor,
@@ -996,6 +1017,7 @@ export {
     clearCanvas,
     resizeCanvas,
     setZoom,
+    reparentObject,
     createThumbnail,
     saveToFile,
     isImageEmbedded,

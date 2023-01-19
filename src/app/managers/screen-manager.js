@@ -28,6 +28,7 @@ import {
     enableSelection,
     enableInputCallback,
     objectAtXY,
+    containerAtXY,
     enableMouseTracking,
     disableMouseTracking,
     setSelectedObject,
@@ -43,6 +44,7 @@ import {
     resizeCanvas,
     setZoom,
     clearCanvas,
+    reparentObject,
     saveToFile,
     addRect,
     addCircle,
@@ -72,6 +74,7 @@ class ScreenManager {
     #selectionCallback = null;
     #modeChangeCallback = null;
     #modifiedCallback = null;
+    #movedCallback = null;
     #focusCallback = null;
     #selectedObjects = null;
     #screenRegion;
@@ -89,7 +92,8 @@ class ScreenManager {
     constructor(settingsCallback) {
         this.addObjectOnMousedown = this.addObjectOnMousedown.bind(this);
         this.scrMgrSelectionCallback = this.scrMgrSelectionCallback.bind(this);
-        this.setModified = this.setModified.bind(this);
+        this.canvasObjModifiedCallback =
+            this.canvasObjModifiedCallback.bind(this);
         this.handleFocusChange = this.handleFocusChange.bind(this);
         this.inputCallback = this.inputCallback.bind(this);
         this.sprayTrackMouse = this.sprayTrackMouse.bind(this);
@@ -325,6 +329,10 @@ class ScreenManager {
         this.#modifiedCallback = callbk;
     }
 
+    setMovedCallback(callbk) {
+        this.#movedCallback = callbk;
+    }
+
     setFocusCallback(callbk) {
         this.#focusCallback = callbk;
     }
@@ -384,9 +392,27 @@ class ScreenManager {
         setZoom(this.#canvas, newWidth / this.#activitySize.width);
     }
 
+    canvasObjModifiedCallback(event) {
+        // is this the end of move event?
+        if (event.action && event.action === "drag") {
+            this.objectMoved(event.target);
+        } else {
+            this.setModified();
+        }
+    }
+
     setModified() {
         if (this.#modifiedCallback) {
             this.#modifiedCallback();
+        }
+    }
+
+    objectMoved(obj) {
+        if (this.#movedCallback) {
+            var scrObj = this.#canvasObjToScreen(this.#currentPage, obj);
+            if (scrObj !== null) {
+                this.#movedCallback(scrObj);
+            }
         }
     }
 
@@ -415,7 +441,7 @@ class ScreenManager {
             backgroundColor,
             doSelection,
             false,
-            this.setModified,
+            this.canvasObjModifiedCallback,
             this.handleFocusChange
         );
         this.#screenRegion = {
@@ -970,6 +996,32 @@ class ScreenManager {
     setAccessMethod(method) {
         if (this.#accessManager) {
             this.#accessManager.setMethod(method);
+        }
+    }
+
+    findParentFor(obj) {
+        // get center of object
+        var rgn = obj.getRegion();
+        var x = rgn.left + rgn.width / 2;
+        var y = rgn.top + rgn.height / 2;
+        var curCnvParent = obj.getParent().getCanvasObj();
+        var newCnvParent = containerAtXY(this.#canvas, x, y);
+        if (curCnvParent !== newCnvParent) {
+            var curParent =
+                curCnvParent === null
+                    ? this.#currentPage
+                    : this.#canvasObjToScreen(this.#currentPage, curCnvParent);
+            var newParent =
+                newCnvParent === null
+                    ? this.#currentPage
+                    : this.#canvasObjToScreen(this.#currentPage, newCnvParent);
+            if (curParent !== newParent) {
+                // maybe it is weird to have this maintain the corespondence between screen object level and canvas level
+                curParent.removeChild(obj);
+                newParent.addChild(obj);
+                obj.setParent(newParent);
+                reparentObject(obj.getCanvasObj(), newCnvParent);
+            }
         }
     }
 

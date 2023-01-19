@@ -104,6 +104,16 @@ class ScreenObject {
         }
     }
 
+    getRegion() {
+        var obj = this.getCanvasObj();
+        return {
+            left: obj.left,
+            top: obj.top,
+            width: obj.width,
+            height: obj.height,
+        };
+    }
+
     highlight(appManager, highlightType) {
         return;
     }
