@@ -43,6 +43,8 @@ class PageScreenObject extends ContainerScreenObject {
                 backgroundImageStyle
             );
         }
+
+        this.constructChildren(_screenMgr, _spec);
     }
 
     toJSON() {

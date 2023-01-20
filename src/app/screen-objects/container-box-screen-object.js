@@ -20,6 +20,8 @@ class ContainerBoxScreenObject extends ContainerScreenObject {
                 _spec.shapeSpec
             )
         );
+
+        this.constructChildren(_screenMgr, _spec);
     }
 
     toJSON() {

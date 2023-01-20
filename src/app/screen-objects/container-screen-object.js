@@ -3,11 +3,9 @@ import ScreenObject from "./screen-object";
 class ContainerScreenObject extends ScreenObject {
     #children = [];
 
-    constructor(_screenMgr, _parent, _spec) {
-        const { children = [] } = _spec;
-        super(_screenMgr, _parent, _spec);
-
+    constructChildren(_screenMgr, _spec) {
         // create any children from child specs
+        const { children = [] } = _spec;
         for (let i = 0; i < children.length; i++) {
             // have the screen manager create each of the children - parent/child relationships get handled by this process
             _screenMgr.createFromSpec(this, children[i]);

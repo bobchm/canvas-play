@@ -121,6 +121,10 @@ function objectAtXY(cnv, x, y) {
     return null;
 }
 
+function isContainer(obj) {
+    obj.hasOwnProperty("children");
+}
+
 function containerForObject(cnv, childObj) {
     var x = childObj.left + childObj.width / 2;
     var y = childObj.top + childObj.height / 2;
@@ -129,7 +133,7 @@ function containerForObject(cnv, childObj) {
     var objects = cnv.getObjects();
     for (let i = 0; i < objects.length; i++) {
         var obj = objects[i];
-        if (obj !== childObj && obj.children && obj.containsPoint(pt)) {
+        if (obj !== childObj && isContainer(obj) && obj.containsPoint(pt)) {
             return obj;
         }
     }
@@ -137,7 +141,7 @@ function containerForObject(cnv, childObj) {
 }
 
 function childrenWithParents(event) {
-    if (event.target && event.target.hasOwnProperty("children")) {
+    if (event.target && isContainer(event.target)) {
         var zoom = event.target.canvas.getZoom();
         var x = event.e.movementX / zoom;
         var y = event.e.movementY / zoom;
@@ -385,7 +389,7 @@ function setZoom(cnv, zoom) {
 
 function addChildObject(parent, child) {
     if (parent) {
-        if (!parent.hasOwnProperty("children")) {
+        if (!isContainer(parent)) {
             throw new Error(`Bad parent object (${parent})`);
         }
         if (!parent.children.includes(child)) {
@@ -636,11 +640,37 @@ function deleteSelectedObjects(cnv) {
 
 function bringToFront(cnv, obj) {
     obj.bringToFront();
+    if (isContainer(obj)) {
+        // bring children to front - assumes order of children matches z-order
+        for (let i = 0; i < obj.children.length; i++) {
+            bringToFront(cnv, obj.children[i]);
+        }
+    }
     cnv.renderAll();
 }
 
+function moveInFrontOf(cnv, frontObj, backObj) {
+    // remove object
+    cnv._objects = cnv._objects.filter((obj) => obj !== frontObj);
+    var idx = cnv._objects.indexOf(backObj);
+    cnv._objects.splice(idx + 1, 0, frontObj);
+}
+
 function sendToBack(cnv, obj) {
-    obj.sendToBack();
+    if (!obj.parent) {
+        obj.sendToBack();
+    } else {
+        // move behind all siblings of parent container
+        moveInFrontOf(cnv, obj, obj.parent);
+    }
+
+    // if a container, move children directly above it
+    if (isContainer(obj)) {
+        var children = obj.children.reverse();
+        for (let i = 0; i < children.length; i++) {
+            sendToBack(cnv, children[i]);
+        }
+    }
     cnv.renderAll();
 }
 
