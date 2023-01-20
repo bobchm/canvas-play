@@ -27,8 +27,9 @@ import {
     disableSelection,
     enableSelection,
     enableInputCallback,
+    objectsFromEventTarget,
     objectAtXY,
-    containerAtXY,
+    containerForObject,
     enableMouseTracking,
     disableMouseTracking,
     setSelectedObject,
@@ -395,7 +396,12 @@ class ScreenManager {
     canvasObjModifiedCallback(event) {
         // is this the end of move event?
         if (event.action && event.action === "drag") {
-            this.objectMoved(event.target);
+            var objects = objectsFromEventTarget(event.target);
+            if (objects && objects.length === 1) {
+                for (let i = 0; i < objects.length; i++) {
+                    this.objectMoved(objects[i]);
+                }
+            }
         } else {
             this.setModified();
         }
@@ -1001,11 +1007,8 @@ class ScreenManager {
 
     findParentFor(obj) {
         // get center of object
-        var rgn = obj.getRegion();
-        var x = rgn.left + rgn.width / 2;
-        var y = rgn.top + rgn.height / 2;
         var curCnvParent = obj.getParent().getCanvasObj();
-        var newCnvParent = containerAtXY(this.#canvas, x, y);
+        var newCnvParent = containerForObject(this.#canvas, obj.getCanvasObj());
         if (curCnvParent !== newCnvParent) {
             var curParent =
                 curCnvParent === null
@@ -1017,9 +1020,11 @@ class ScreenManager {
                     : this.#canvasObjToScreen(this.#currentPage, newCnvParent);
             if (curParent !== newParent) {
                 // maybe it is weird to have this maintain the corespondence between screen object level and canvas level
-                curParent.removeChild(obj);
-                newParent.addChild(obj);
+                curParent?.removeChild(obj);
+                newParent?.addChild(obj);
                 obj.setParent(newParent);
+                if (!newCnvParent) console.log("reparent: page");
+                else console.log("reparent: box");
                 reparentObject(obj.getCanvasObj(), newCnvParent);
             }
         }

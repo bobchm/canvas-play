@@ -44,6 +44,9 @@ function initCanvas(
             "object:modified": _modifiedCallback,
         });
     }
+    cnv.on({
+        "object:moving": childrenWithParents,
+    });
 
     if (_allowZoom) {
         cnv.on("mouse:wheel", function (opt) {
@@ -69,6 +72,14 @@ function initCanvas(
     cnv.preserveObjectStacking = true;
     setSelectionColor(cnv);
     return cnv;
+}
+
+function objectsFromEventTarget(target) {
+    if (!target.type || target.type !== "activeSelection") {
+        return [target];
+    } else {
+        return target._objects;
+    }
 }
 
 function enableInputCallback(cnv, inputCallback) {
@@ -110,17 +121,33 @@ function objectAtXY(cnv, x, y) {
     return null;
 }
 
-function containerAtXY(cnv, x, y) {
+function containerForObject(cnv, childObj) {
+    var x = childObj.left + childObj.width / 2;
+    var y = childObj.top + childObj.height / 2;
     var zoom = cnv.getZoom();
     var pt = new fabric.Point(x * zoom, y * zoom);
     var objects = cnv.getObjects();
     for (let i = 0; i < objects.length; i++) {
         var obj = objects[i];
-        if (obj.children && obj.containsPoint(pt)) {
+        if (obj !== childObj && obj.children && obj.containsPoint(pt)) {
             return obj;
         }
     }
     return null;
+}
+
+function childrenWithParents(event) {
+    if (event.target && event.target.hasOwnProperty("children")) {
+        var zoom = event.target.canvas.getZoom();
+        var x = event.e.movementX / zoom;
+        var y = event.e.movementY / zoom;
+        for (let i = 0; i < event.target.children.length; i++) {
+            var child = event.target.children[i];
+            child.set("left", child.left + x);
+            child.set("top", child.top + y);
+            child.setCoords();
+        }
+    }
 }
 
 function enableMouseTracking(cnv, inputCallback) {
@@ -361,7 +388,9 @@ function addChildObject(parent, child) {
         if (!parent.hasOwnProperty("children")) {
             throw new Error(`Bad parent object (${parent})`);
         }
-        parent.children.push(child);
+        if (!parent.children.includes(child)) {
+            parent.children.push(child);
+        }
     }
 }
 
@@ -996,8 +1025,9 @@ export {
     enableSelection,
     disableInputCallback,
     enableInputCallback,
+    objectsFromEventTarget,
     objectAtXY,
-    containerAtXY,
+    containerForObject,
     enableMouseTracking,
     disableMouseTracking,
     getBackgroundColor,

@@ -25,7 +25,9 @@ class ContainerScreenObject extends ScreenObject {
     }
 
     addChild(_child) {
-        this.#children.push(_child);
+        if (!this.#children.includes(_child)) {
+            this.#children.push(_child);
+        }
     }
 
     removeChild(_child) {
