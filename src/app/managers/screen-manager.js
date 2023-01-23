@@ -723,6 +723,12 @@ class ScreenManager {
                 break;
             case InputEvent.MouseUp:
                 this.showMessage("");
+                if (
+                    this.#sprayExtent.col !== 0 ||
+                    this.#sprayExtent.row !== 0
+                ) {
+                    this.setModified();
+                }
                 if (this.#modeChangeCallback) {
                     this.#modeChangeCallback(EditMode.Select);
                 }
@@ -1023,8 +1029,6 @@ class ScreenManager {
                 curParent?.removeChild(obj);
                 newParent?.addChild(obj);
                 obj.setParent(newParent);
-                if (!newCnvParent) console.log("reparent: page");
-                else console.log("reparent: box");
                 reparentObject(obj.getCanvasObj(), newCnvParent);
             }
         }

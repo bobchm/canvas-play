@@ -39,13 +39,34 @@ function initCanvas(
         brightness: -0.3,
     });
 
+    cnv.isDragging = false;
     if (_modifiedCallback) {
         cnv.on({
-            "object:modified": _modifiedCallback,
+            "object:modified": (event) => {
+                if (
+                    event.action === "drag" &&
+                    event.target &&
+                    event.target.canvas &&
+                    event.target.canvas.isDragging
+                ) {
+                    event.target.canvas.isDragging = false;
+                }
+                _modifiedCallback(event);
+            },
         });
     }
     cnv.on({
-        "object:moving": childrenWithParents,
+        "object:moving": (event) => {
+            if (
+                event.target &&
+                event.target.canvas &&
+                !event.target.canvas.isDragging
+            ) {
+                event.target.canvas.isDragging = true;
+                bringToFront(event.target.canvas, event.target);
+            }
+            childrenWithParents(event);
+        },
     });
 
     if (_allowZoom) {
@@ -122,12 +143,13 @@ function objectAtXY(cnv, x, y) {
 }
 
 function isContainer(obj) {
-    obj.hasOwnProperty("children");
+    return "children" in obj;
 }
 
 function containerForObject(cnv, childObj) {
-    var x = childObj.left + childObj.width / 2;
-    var y = childObj.top + childObj.height / 2;
+    var dims = getDimensions(childObj);
+    var x = dims.x + dims.width / 2;
+    var y = dims.y + dims.height / 2;
     var zoom = cnv.getZoom();
     var pt = new fabric.Point(x * zoom, y * zoom);
     var objects = cnv.getObjects();
@@ -547,8 +569,6 @@ const setErrorImage = (cnv, image, wd, hgt) => {
         img.set({
             left: image.left,
             top: image.top,
-            // scaleX: origWd / img.width,
-            // scaleY: origHgt / img.height,
         });
         const widthFactor = wd / img.width;
         const heightFactor = hgt / img.height;
@@ -565,8 +585,6 @@ const setDefaultImage = (cnv, image, wd, hgt) => {
         img.set({
             left: image.left,
             top: image.top,
-            // scaleX: origWd / img.width,
-            // scaleY: origHgt / img.height,
         });
         const widthFactor = wd / img.width;
         const heightFactor = hgt / img.height;
@@ -598,8 +616,6 @@ const setImageSource = (cnv, image, src) => {
                 img.set({
                     left: image.left,
                     top: image.top,
-                    // scaleX: origWd / img.width,
-                    // scaleY: origHgt / img.height,
                 });
                 const widthFactor = origWd / img.width;
                 const heightFactor = origHgt / img.height;
@@ -746,7 +762,12 @@ function getPosition(obj) {
 }
 
 function getDimensions(obj) {
-    return { x: obj.left, y: obj.top, width: obj.width, height: obj.height };
+    return {
+        x: obj.left,
+        y: obj.top,
+        width: obj.width * obj.scaleX,
+        height: obj.height * obj.scaleY,
+    };
 }
 
 function setDimensions(cnv, obj, x, y, width, height) {
@@ -754,6 +775,8 @@ function setDimensions(cnv, obj, x, y, width, height) {
     obj.top = y;
     obj.width = width;
     obj.height = height;
+    obj.scaleX = 1.0;
+    obj.scaleY = 1.0;
     obj.setCoords(true);
     cnv.renderAll();
 }

@@ -386,7 +386,6 @@ const Editor = () => {
     }
 
     function handleObjectMoved(obj) {
-        setEditMessage("The object moved");
         markChanged(true);
         appManager.getScreenManager().findParentFor(obj);
     }
