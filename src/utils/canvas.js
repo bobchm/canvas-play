@@ -97,9 +97,17 @@ function initCanvas(
 
 function objectsFromEventTarget(target) {
     if (!target.type || target.type !== "activeSelection") {
-        return [target];
+        return {
+            objects: [target],
+            offx: 0,
+            offy: 0,
+        };
     } else {
-        return target._objects;
+        return {
+            objects: target._objects,
+            offx: target.left + target.width / 2,
+            offy: target.top + target.height / 2,
+        };
     }
 }
 
@@ -146,10 +154,10 @@ function isContainer(obj) {
     return "children" in obj;
 }
 
-function containerForObject(cnv, childObj) {
+function containerForObject(cnv, childObj, offx, offy) {
     var dims = getDimensions(childObj);
-    var x = dims.x + dims.width / 2;
-    var y = dims.y + dims.height / 2;
+    var x = offx + dims.x + dims.width / 2;
+    var y = offy + dims.y + dims.height / 2;
     var zoom = cnv.getZoom();
     var pt = new fabric.Point(x * zoom, y * zoom);
     var objects = cnv.getObjects();

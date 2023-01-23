@@ -385,9 +385,9 @@ const Editor = () => {
         });
     }
 
-    function handleObjectMoved(obj) {
+    function handleObjectMoved(obj, offx, offy) {
         markChanged(true);
-        appManager.getScreenManager().findParentFor(obj);
+        appManager.getScreenManager().findParentFor(obj, offx, offy);
     }
 
     function addToEditProperties(dest, src) {

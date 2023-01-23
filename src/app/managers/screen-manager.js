@@ -396,10 +396,14 @@ class ScreenManager {
     canvasObjModifiedCallback(event) {
         // is this the end of move event?
         if (event.action && event.action === "drag") {
-            var objects = objectsFromEventTarget(event.target);
-            if (objects && objects.length === 1) {
-                for (let i = 0; i < objects.length; i++) {
-                    this.objectMoved(objects[i]);
+            var targeted = objectsFromEventTarget(event.target);
+            if (targeted) {
+                for (let i = 0; i < targeted.objects.length; i++) {
+                    this.objectMoved(
+                        targeted.objects[i],
+                        targeted.offx,
+                        targeted.offy
+                    );
                 }
             }
         } else {
@@ -413,11 +417,11 @@ class ScreenManager {
         }
     }
 
-    objectMoved(obj) {
+    objectMoved(obj, offx, offy) {
         if (this.#movedCallback) {
             var scrObj = this.#canvasObjToScreen(this.#currentPage, obj);
             if (scrObj !== null) {
-                this.#movedCallback(scrObj);
+                this.#movedCallback(scrObj, offx, offy);
             }
         }
     }
@@ -1011,10 +1015,15 @@ class ScreenManager {
         }
     }
 
-    findParentFor(obj) {
+    findParentFor(obj, offx, offy) {
         // get center of object
         var curCnvParent = obj.getParent().getCanvasObj();
-        var newCnvParent = containerForObject(this.#canvas, obj.getCanvasObj());
+        var newCnvParent = containerForObject(
+            this.#canvas,
+            obj.getCanvasObj(),
+            offx,
+            offy
+        );
         if (curCnvParent !== newCnvParent) {
             var curParent =
                 curCnvParent === null
