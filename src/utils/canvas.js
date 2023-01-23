@@ -696,6 +696,10 @@ function sendToBack(cnv, obj) {
         }
     }
     cnv.renderAll();
+    // var svgcnv = cnv.toSVG();
+    // var blob = new Blob([svgcnv], { type: "text/plain;charset=utf-8" });
+    // FileSaver.saveAs(blob, "../canvas.svg");
+    saveToFile(cnv, "canvas.png");
 }
 
 function createThumbnail(cnv, width, height, callback) {
