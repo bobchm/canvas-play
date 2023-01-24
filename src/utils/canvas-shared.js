@@ -45,6 +45,30 @@ export function drawRoundRect(
     }
 }
 
+export function drawRect(
+    ctx,
+    x,
+    y,
+    width,
+    height,
+    fill = false,
+    stroke = true
+) {
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + width, y);
+    ctx.lineTo(x + width, y + height);
+    ctx.lineTo(x, y + height);
+    ctx.lineTo(x, y);
+    ctx.closePath();
+    if (fill) {
+        ctx.fill();
+    }
+    if (stroke) {
+        ctx.stroke();
+    }
+}
+
 export function folderTabHeight(buttonHeight) {
     return Math.min(buttonHeight / 10, 20);
 }

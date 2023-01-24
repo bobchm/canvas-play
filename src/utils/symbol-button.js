@@ -4,6 +4,7 @@ import {
     OverlayHighlightFill,
     drawRoundRect,
     drawFolder,
+    drawRect,
     folderTabHeight,
 } from "./canvas-shared";
 import { Context } from "svgcanvas";
@@ -53,8 +54,14 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
     },
 
     toSVG: function () {
-        var ctx = new Context(500, 500);
-        this._render(ctx);
+        var wd = this.left + this.width;
+        var hgt = this.top + this.height;
+        var ctx = new Context(wd, hgt);
+        this._render(
+            ctx,
+            this.left + this.width / 2,
+            this.top + this.height / 2
+        );
         const mySerializedSVG = ctx.getSerializedSvg();
         return mySerializedSVG;
     },
@@ -244,13 +251,13 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         );
     },
 
-    drawRoundRectShape: function (ctx) {
+    drawRoundRectShape: function (ctx, offx, offy) {
         ctx.fillStyle = this.fill;
         ctx.strokeStyle = this.stroke;
         drawRoundRect(
             ctx,
-            -this.width / 2,
-            -this.height / 2,
+            -this.width / 2 + offx,
+            -this.height / 2 + offy,
             this.width,
             this.height,
             10,
@@ -259,13 +266,13 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         );
     },
 
-    drawFolderShape: function (ctx) {
+    drawFolderShape: function (ctx, offx, offy) {
         ctx.fillStyle = this.fill;
         ctx.strokeStyle = this.stroke;
         drawFolder(
             ctx,
-            -this.width / 2,
-            -this.height / 2,
+            -this.width / 2 + offx,
+            -this.height / 2 + offy,
             this.width,
             this.height,
             10,
@@ -274,31 +281,46 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         );
     },
 
-    drawBackground: function (ctx) {
+    drawRectShape: function (ctx, offx, offy) {
+        ctx.fillStyle = this.fill;
+        ctx.strokeStyle = this.stroke;
+
+        drawRect(
+            ctx,
+            -this.width / 2 + offx,
+            -this.height / 2 + offy,
+            this.width,
+            this.height,
+            true,
+            true
+        );
+    },
+
+    drawBackground: function (ctx, offx = 0, offy = 0) {
         switch (this.shape) {
             case SymBtnShape.RoundedRect:
-                this.drawRoundRectShape(ctx);
+                this.drawRoundRectShape(ctx, offx, offy);
                 break;
             case SymBtnShape.Folder:
-                this.drawFolderShape(ctx);
+                this.drawFolderShape(ctx, offx, offy);
                 break;
             default:
-                this.callSuper("_render", ctx);
+                this.drawRectShape(ctx, offx, offy);
         }
     },
 
-    drawOverlay: function (ctx) {
+    drawOverlay: function (ctx, offx = 0, offy = 0) {
         var svFill = this.fill;
         this.set("fill", OverlayHighlightFill);
         switch (this.shape) {
             case SymBtnShape.RoundedRect:
-                this.drawRoundRectShape(ctx);
+                this.drawRoundRectShape(ctx, offx, offy);
                 break;
             case SymBtnShape.Folder:
-                this.drawFolderShape(ctx);
+                this.drawFolderShape(ctx, offx, offy);
                 break;
             default:
-                this.callSuper("_render", ctx);
+                this.drawRectShape(ctx, offx, offy);
         }
         this.set("fill", svFill);
     },
@@ -316,8 +338,8 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         return (buttonHgt - shapeOffset) / 2;
     },
 
-    _render: function (ctx) {
-        this.drawBackground(ctx);
+    _render: function (ctx, offx = 0, offy = 0) {
+        this.drawBackground(ctx, offx, offy);
 
         const imageMargin = 5; // margin around the image
         const textYOffset = this.labelYOffset(
@@ -331,8 +353,8 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
 
         // in this coordinate system, 0.0 is in the center of the rectangle - we want to center the text
         var metrics = ctx.measureText(this.label);
-        var x = -this.width / 2 + this.justifiedTextX(ctx, metrics);
-        var y = -this.height / 2 + textYOffset;
+        var x = -this.width / 2 + this.justifiedTextX(ctx, metrics) + offx;
+        var y = -this.height / 2 + textYOffset + offy;
         if (this.image) {
             y += metrics.fontBoundingBoxAscent;
         }
@@ -340,7 +362,7 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         this.decorateText(ctx, metrics, x, y);
 
         if (this.image) {
-            x = -this.width / 2 + imageMargin; // x is left of the button plus the margin
+            x = -this.width / 2 + imageMargin + offx; // x is left of the button plus the margin
             y += metrics.fontBoundingBoxDescent + imageMargin; // y is bottom of the text plus the margin
             var width = this.width - 2 * imageMargin; // width is button width minus margin on either side
 
@@ -355,7 +377,7 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
             this.drawImageScaled(ctx, x, y, width, height);
         }
         if (this.hasOverlay) {
-            this.drawOverlay(ctx);
+            this.drawOverlay(ctx, offx, offy);
         }
     },
 
