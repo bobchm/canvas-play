@@ -112,3 +112,31 @@ export function drawFolder(
         ctx.stroke();
     }
 }
+
+function drawHorizontalLine(ctx, x1, x2, y) {
+    ctx.beginPath();
+    ctx.strokeStyle = this.textColor;
+    ctx.lineWidth = 1;
+    ctx.moveTo(x1, y);
+    ctx.lineTo(x2, y);
+    ctx.stroke();
+}
+
+export function decorateText(ctx, metrics, doUnderline, doLinethrough, x, y) {
+    if (doUnderline) {
+        drawHorizontalLine(
+            ctx,
+            x,
+            x + metrics.width,
+            y + metrics.fontBoundingBoxDescent
+        );
+    }
+    if (doLinethrough) {
+        drawHorizontalLine(
+            ctx,
+            x,
+            x + metrics.width,
+            y - metrics.fontBoundingBoxAscent / 4
+        );
+    }
+}

@@ -1,5 +1,7 @@
 import { fabric } from "fabric";
-import { drawRoundRect } from "./canvas-shared";
+import { drawRoundRect, drawRect, decorateText } from "./canvas-shared";
+
+import { Context } from "svgcanvas";
 
 export const CtnBoxShape = {
     Rectangle: "rectangle",
@@ -30,6 +32,19 @@ var ContainerBox = fabric.util.createClass(fabric.Rect, {
             width: this.width,
             height: this.height,
         };
+    },
+
+    toSVG: function () {
+        var wd = this.left + this.width;
+        var hgt = this.top + this.height;
+        var ctx = new Context(wd, hgt);
+        this._render(
+            ctx,
+            this.left + this.width / 2,
+            this.top + this.height / 2
+        );
+        const mySerializedSVG = ctx.getSerializedSvg();
+        return mySerializedSVG;
     },
 
     setFont: function (spec) {
@@ -100,41 +115,13 @@ var ContainerBox = fabric.util.createClass(fabric.Rect, {
         }
     },
 
-    drawHorizontalLine: function (ctx, x1, x2, y) {
-        ctx.beginPath();
-        ctx.strokeStyle = this.textColor;
-        ctx.lineWidth = 1;
-        ctx.moveTo(x1, y);
-        ctx.lineTo(x2, y);
-        ctx.stroke();
-    },
-
-    decorateText: function (ctx, metrics, x, y) {
-        if (this.underline) {
-            this.drawHorizontalLine(
-                ctx,
-                x,
-                x + metrics.width,
-                y + metrics.fontBoundingBoxDescent
-            );
-        }
-        if (this.linethrough) {
-            this.drawHorizontalLine(
-                ctx,
-                x,
-                x + metrics.width,
-                y - metrics.fontBoundingBoxAscent / 4
-            );
-        }
-    },
-
-    drawRoundRectShape: function (ctx) {
+    drawRoundRectShape: function (ctx, offx = 0, offy = 0) {
         ctx.fillStyle = this.fill;
         ctx.strokeStyle = this.stroke;
         drawRoundRect(
             ctx,
-            -this.width / 2,
-            -this.height / 2,
+            -this.width / 2 + offx,
+            -this.height / 2 + offy,
             this.width,
             this.height,
             10,
@@ -143,21 +130,33 @@ var ContainerBox = fabric.util.createClass(fabric.Rect, {
         );
     },
 
-    drawBackground: function (ctx) {
+    drawRectShape: function (ctx, offx, offy) {
+        ctx.fillStyle = this.fill;
+        ctx.strokeStyle = this.stroke;
+
+        drawRect(
+            ctx,
+            -this.width / 2 + offx,
+            -this.height / 2 + offy,
+            this.width,
+            this.height,
+            true,
+            true
+        );
+    },
+
+    drawBackground: function (ctx, offx = 0, offy = 0) {
         switch (this.shape) {
             case CtnBoxShape.RoundedRect:
-                this.drawRoundRectShape(ctx);
-                break;
-            case CtnBoxShape.Folder:
-                this.drawFolderShape(ctx);
+                this.drawRoundRectShape(ctx, offx, offy);
                 break;
             default:
-                this.callSuper("_render", ctx);
+                this.drawRectShape(ctx, offx, offy);
         }
     },
 
-    _render: function (ctx) {
-        this.drawBackground(ctx);
+    _render: function (ctx, offx = 0, offy = 0) {
+        this.drawBackground(ctx, offx, offy);
 
         const textYOffset = 5;
 
@@ -166,11 +165,15 @@ var ContainerBox = fabric.util.createClass(fabric.Rect, {
 
         // in this coordinate system, 0.0 is in the center of the rectangle - we want to center the text
         var metrics = ctx.measureText(this.title);
-        var x = -this.width / 2 + this.justifiedTextX(ctx, metrics);
-        var y = -this.height / 2 + textYOffset + metrics.fontBoundingBoxAscent;
+        var x = -this.width / 2 + this.justifiedTextX(ctx, metrics) + offx;
+        var y =
+            -this.height / 2 +
+            textYOffset +
+            metrics.fontBoundingBoxAscent +
+            offy;
 
         ctx.fillText(this.title, x, y);
-        this.decorateText(ctx, metrics, x, y);
+        decorateText(ctx, metrics, this.underline, this.linethrough, x, y);
     },
 
     setTitle(cnv, title) {
