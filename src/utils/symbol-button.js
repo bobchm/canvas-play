@@ -36,6 +36,7 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         this.textColor = options.textColor || "black";
         if (options.imageSource) {
             this.image = new Image();
+            this.image.crossOrigin = "Anonymous";
             this.setImageSource(options.imageSource, callback);
         } else {
             this.image = null;
@@ -118,6 +119,7 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         }
         if (this.image === null) {
             this.image = new Image();
+            this.image.crossOrigin = "Anonymous";
         }
         if (callback) {
             this.image.onload = () => {

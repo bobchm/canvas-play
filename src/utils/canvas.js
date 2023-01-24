@@ -698,9 +698,22 @@ function sendToBack(cnv, obj) {
     cnv.renderAll();
     // var svgcnv = cnv.toSVG();
     // var blob = new Blob([svgcnv], { type: "text/plain;charset=utf-8" });
-    // FileSaver.saveAs(blob, "../canvas.svg");
+    // FileSaver.saveAs(blob, "canvas.svg");
     saveToFile(cnv, "canvas.png");
 }
+
+fabric.Image.prototype.getSvgSrc = function () {
+    return this.toDataURLforSVG();
+};
+
+fabric.Image.prototype.toDataURLforSVG = function (options) {
+    var el = fabric.util.createCanvasElement();
+    el.width = this._element.naturalWidth || this._element.width;
+    el.height = this._element.naturalHeight || this._element.height;
+    el.getContext("2d").drawImage(this._element, 0, 0);
+    var data = el.toDataURL(options);
+    return data;
+};
 
 function createThumbnail(cnv, width, height, callback) {
     cnv.getElement().toBlob(function (blob) {

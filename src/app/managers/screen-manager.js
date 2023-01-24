@@ -546,17 +546,21 @@ class ScreenManager {
                 break;
             case "Image":
                 if (this.#currentPage) {
-                    newObj = new ImageScreenObject(this, this.#currentPage, {
-                        type: ScreenObjectType.Image,
+                    newObj = new ImageScreenObject(
+                        this,
+                        this.#currentPage,
                         blankBehavior,
-                        shapeSpec: {
-                            left: options.pointer.x,
-                            top: options.pointer.y,
-                            width: 300,
-                            height: 300,
-                            opacity: 1.0,
-                        },
-                    });
+                        {
+                            type: ScreenObjectType.Image,
+                            shapeSpec: {
+                                left: options.pointer.x,
+                                top: options.pointer.y,
+                                width: 300,
+                                height: 300,
+                                opacity: 1.0,
+                            },
+                        }
+                    );
                     newObj.setSource(this, null);
                     this.setModified();
                 }
