@@ -6,6 +6,7 @@ import {
     drawFolder,
     folderTabHeight,
 } from "./canvas-shared";
+import { Context } from "svgcanvas";
 
 export const SymBtnShape = {
     Rectangle: "rectangle",
@@ -52,7 +53,10 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
     },
 
     toSVG: function () {
-        console.log("here");
+        var ctx = new Context(500, 500);
+        this._render(ctx);
+        const mySerializedSVG = ctx.getSerializedSvg();
+        return mySerializedSVG;
     },
 
     setFont: function (spec) {
