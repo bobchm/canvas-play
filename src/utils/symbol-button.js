@@ -51,6 +51,10 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         this.hasOverlay = false;
     },
 
+    toSVG: function () {
+        console.log("here");
+    },
+
     setFont: function (spec) {
         this.set("fontFamily", spec.fontFamily || "Helvetica");
         this.set("fontSize", spec.fontSize || 12);
