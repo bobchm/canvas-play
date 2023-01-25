@@ -1,42 +1,22 @@
-import PDFDocument from "@react-pdf/pdfkit";
-import FileSaver from "file-saver";
-import SVGtoPDF from "svg-to-pdfkit";
-const blobStream = require("blob-stream");
+import { jsPDF } from "jspdf";
+import "svg2pdf.js";
+import { svg2pdf } from "svg2pdf.js";
 
 function openPDF(orientation, format) {
-    var bs = blobStream();
-    var pdfdoc = new PDFDocument({
-        bufferPages: true,
-        size: format,
-        layout: orientation,
-        autoFirstPage: true,
-    });
-
-    var stream = pdfdoc.pipe(bs);
-    return {
-        pdfdoc: pdfdoc,
-        stream: stream,
-    };
+    return new jsPDF({ orientation: orientation, format: format });
 }
 
 function addPDFpage(pdfObj, orientation, format) {}
 
-function writeSVGtoPDF(pdfObj, svgstring) {
-    let svgOptions = {
-        width: 5 * 72,
-        height: 3 * 72,
-        preserveAspectRatio: "xMidYmid meet",
-    };
-
-    SVGtoPDF(pdfObj.pdfdoc, svgstring, 1 * 72, 3 * 72, svgOptions);
+async function writeSVGtoPDF(pdfObj, svgstring) {
+    // returns a promise - can take x, y, width, height options
+    var parser = new DOMParser();
+    var element = parser.parseFromString(svgstring, "image/svg+xml");
+    await pdfObj.svg(element, { xOffset: 0, yOffset: 0, scale: 1 });
 }
 
 function savePDF(pdfObj, filename) {
-    pdfObj.pdfdoc.end();
-    pdfObj.stream.on("finish", () => {
-        const blob = pdfObj.stream.toBlob("application/pdf");
-        FileSaver.saveAs(blob, filename);
-    });
+    pdfObj.save(filename);
 }
 
 export { openPDF, addPDFpage, writeSVGtoPDF, savePDF };

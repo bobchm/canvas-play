@@ -1087,8 +1087,9 @@ async function canvasToPDF(cnv, filename, orientation, format) {
     try {
         var pdfObj = openPDF(orientation, format);
         var svg = cnv.toSVG();
-        writeSVGtoPDF(pdfObj, svg);
-        savePDF(pdfObj, filename);
+        writeSVGtoPDF(pdfObj, svg).then(() => {
+            savePDF(pdfObj, filename);
+        });
     } catch (err) {
         console.log("Error generating PDF");
     }
