@@ -12,6 +12,7 @@ import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
 import ContentPasteRoundedIcon from "@mui/icons-material/ContentPasteRounded";
 import UndoRoundedIcon from "@mui/icons-material/UndoRounded";
 import RedoRoundedIcon from "@mui/icons-material/RedoRounded";
+import PrintRoundedIcon from "@mui/icons-material/PrintRounded";
 
 import PlayCanvas from "../../components/play-canvas/play-canvas.component";
 import ObjectPalette from "../../components/object-palette/object-palette.component";
@@ -177,6 +178,14 @@ const Editor = () => {
             callback: handleDeleteSelection,
             text: "Delete Selection",
             isEnabled: hasSelection,
+        },
+        {
+            text: "--divider--",
+        },
+        {
+            icon: <PrintRoundedIcon />,
+            callback: handlePrintPage,
+            text: "Print Page",
         },
         {
             text: "--divider--",
@@ -747,6 +756,21 @@ const Editor = () => {
         navigate(
             `/play?userName=${userName}&activityName=${activityName}&startPage=${currentPageName()}&caller=editor`
         );
+    }
+
+    function handlePrintPage() {
+        var screenMgr = appManager.getScreenManager();
+        var pgName = screenMgr.getCurrentPageName();
+        screenMgr.currentPageToPDF(
+            pgName + "-portrait.pdf",
+            "portrait",
+            "letter"
+        );
+        // screenMgr.currentPageToPDF(
+        //     pgName + "-landscape.pdf",
+        //     "landscape",
+        //     "letter"
+        // );
     }
 
     function handleSavePage() {

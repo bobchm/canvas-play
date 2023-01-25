@@ -57,6 +57,7 @@ import {
     getDimensions,
     beginFreeform,
     endFreeform,
+    canvasToPDF,
 } from "../../utils/canvas";
 
 import { defaultImageData } from "../../utils/image-defaults";
@@ -156,6 +157,10 @@ class ScreenManager {
         //     frame, rerun the behaviors
         BehaviorManager.popStackFrame();
         this.openCurrentPageBehavior();
+    }
+
+    currentPageToPDF(filename, orientation, format) {
+        canvasToPDF(this.#canvas, filename, orientation, format);
     }
 
     #canvasObjToScreen(scrObj, cnvObj) {

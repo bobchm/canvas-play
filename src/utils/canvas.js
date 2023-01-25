@@ -6,6 +6,7 @@ import { defaultImageData, errorImageData } from "./image-defaults";
 import { InputEvent } from "./input-events";
 import FileSaver from "file-saver";
 import { BackgroundImageStyle, OverlayHighlightFill } from "./canvas-shared";
+import { openPDF, addPDFpage, writeSVGtoPDF, savePDF } from "./pdf";
 
 var objIdCtr = 0;
 
@@ -696,9 +697,9 @@ function sendToBack(cnv, obj) {
         }
     }
     cnv.renderAll();
-    var svgcnv = cnv.toSVG();
-    var blob = new Blob([svgcnv], { type: "text/plain;charset=utf-8" });
-    FileSaver.saveAs(blob, "canvas.svg");
+    // var svgcnv = cnv.toSVG();
+    // var blob = new Blob([svgcnv], { type: "text/plain;charset=utf-8" });
+    // FileSaver.saveAs(blob, "canvas.svg");
     // saveToFile(cnv, "canvas.png");
 }
 
@@ -1082,6 +1083,21 @@ function setTextStyle(cobj, style) {
     });
 }
 
+async function canvasToPDF(cnv, filename, orientation, format) {
+    try {
+        var pdfObj = openPDF(orientation, format);
+        var svg = cnv.toSVG();
+        writeSVGtoPDF(pdfObj, svg);
+        savePDF(pdfObj, filename);
+    } catch (err) {
+        console.log("Error generating PDF");
+    }
+}
+
+function getSVG(cnv) {
+    return cnv.toSVG();
+}
+
 export {
     initCanvas,
     addRect,
@@ -1151,4 +1167,6 @@ export {
     unhighlightOverlay,
     getTextStyle,
     setTextStyle,
+    canvasToPDF,
+    getSVG,
 };
