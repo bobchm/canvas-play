@@ -697,10 +697,6 @@ function sendToBack(cnv, obj) {
         }
     }
     cnv.renderAll();
-    // var svgcnv = cnv.toSVG();
-    // var blob = new Blob([svgcnv], { type: "text/plain;charset=utf-8" });
-    // FileSaver.saveAs(blob, "canvas.svg");
-    // saveToFile(cnv, "canvas.png");
 }
 
 fabric.Image.prototype.getSvgSrc = function () {
@@ -1084,15 +1080,22 @@ function setTextStyle(cobj, style) {
 }
 
 async function canvasToPDF(cnv, filename, orientation, format) {
+    // save to SVG for comparison while debugging
+    canvasToSVGFile(cnv, filename + ".svg");
     try {
         var pdfObj = openPDF(orientation, format);
         var svg = cnv.toSVG();
-        writeSVGtoPDF(pdfObj, svg).then(() => {
-            savePDF(pdfObj, filename);
-        });
+        await writeSVGtoPDF(pdfObj, svg);
+        savePDF(pdfObj, filename);
     } catch (err) {
         console.log("Error generating PDF");
     }
+}
+
+function canvasToSVGFile(cnv, filename) {
+    var svgcnv = cnv.toSVG();
+    var blob = new Blob([svgcnv], { type: "text/plain;charset=utf-8" });
+    FileSaver.saveAs(blob, filename);
 }
 
 function getSVG(cnv) {
