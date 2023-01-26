@@ -23,6 +23,8 @@ import {
 } from "../../app/behaviors/behavior-behaviors";
 import { getActivity, getPage, updateActivity } from "../../utils/dbaccess";
 import { ExecutionMode } from "../../app/scripting/canvas-exec";
+import ScreenManager from "../../app/managers/screen-manager";
+import { openPDF, addPDFpage, writeSVGtoPDF, savePDF } from "../../utils/pdf";
 
 const initUserName = "bobchm@gmail.com";
 const heightOffset = 64;
@@ -61,6 +63,7 @@ const Dashboard = () => {
     const otherActionMenuItems = [
         { label: "Edit Behavior", callback: handleEditBehavior },
         { label: "Export Activity", callback: handleExport },
+        { label: "Print Activity", callback: handlePrint },
     ];
 
     const activityActions = [
@@ -279,6 +282,48 @@ const Dashboard = () => {
 
     async function handleExportCancel(fileName) {
         setIsExportOpen(false);
+    }
+
+    function getPrintScreenManager() {
+        var scrMgr = new ScreenManager(null);
+        scrMgr.createPrintCanvas({
+            id: "canvas",
+            left: 8,
+            top: 0,
+            width: window.innerWidth,
+            height: window.innerHeight,
+            backgroundColor: "aliceblue",
+        });
+        return scrMgr;
+    }
+
+    async function printActivity(activityId, filename, orientation, format) {
+        var json = await getActivityJSON(activityId);
+        if (json) {
+            var scrMgr = getPrintScreenManager();
+            var pdfObj = openPDF(orientation, format);
+            for (let i = 0; i < json.pages.length; i++) {
+                if (i > 0) {
+                    addPDFpage(pdfObj, orientation, format);
+                }
+                scrMgr.openPage(json.pages[i].content);
+                var svg = scrMgr.getCurrentSVG();
+                await writeSVGtoPDF(pdfObj, svg);
+            }
+            savePDF(pdfObj, filename);
+        }
+    }
+
+    async function handlePrint() {
+        // get the activity
+        var id = activityIdFromName(otherActionActivity);
+        if (!id) return;
+        printActivity(
+            id,
+            otherActionActivity + "-ls-letter",
+            "landscape",
+            "letter"
+        );
     }
 
     function handleImportActivity() {

@@ -15,6 +15,7 @@ import {
 
 import {
     initCanvas,
+    initStaticCanvas,
     clearSelectionCallback,
     setSelectionCallback,
     getBackgroundColor,
@@ -58,6 +59,7 @@ import {
     beginFreeform,
     endFreeform,
     canvasToPDF,
+    getSVG,
 } from "../../utils/canvas";
 
 import { defaultImageData } from "../../utils/image-defaults";
@@ -113,6 +115,10 @@ class ScreenManager {
 
     getCurrentPageName() {
         return this.#currentPage.getName();
+    }
+
+    getCurrentSVG() {
+        return getSVG(this.#canvas);
     }
 
     getVScreenSize() {
@@ -458,6 +464,26 @@ class ScreenManager {
             false,
             this.canvasObjModifiedCallback,
             this.handleFocusChange
+        );
+        this.#screenRegion = {
+            left: left,
+            top: top,
+            width: width,
+            height: height,
+        };
+        return this.#canvas;
+    }
+
+    createPrintCanvas(screenSpec) {
+        const { id, top, left, width, height, backgroundColor } = screenSpec;
+
+        this.#canvas = initStaticCanvas(
+            id,
+            left,
+            top,
+            width,
+            height,
+            backgroundColor
         );
         this.#screenRegion = {
             left: left,

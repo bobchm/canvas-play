@@ -96,6 +96,20 @@ function initCanvas(
     return cnv;
 }
 
+function initStaticCanvas(_id, _left, _top, _width, _height, _bkgColor) {
+    var cnv = new fabric.Canvas(_id, {
+        left: _left,
+        top: _top,
+        width: _width,
+        height: _height,
+        backgroundColor: _bkgColor,
+        renderOnAddRemove: true,
+    });
+
+    cnv.preserveObjectStacking = true;
+    return cnv;
+}
+
 function objectsFromEventTarget(target) {
     if (!target.type || target.type !== "activeSelection") {
         return {
@@ -1113,6 +1127,7 @@ function getSVG(cnv) {
 
 export {
     initCanvas,
+    initStaticCanvas,
     addRect,
     addCircle,
     addTriangle,
