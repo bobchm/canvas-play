@@ -373,15 +373,24 @@ function calcBkgImageScaling(cnv, img, bkgStyle) {
 }
 
 function setBackgroundImageURL(cnv, _imageURL, bkgStyle) {
-    fabric.Image.fromURL(_imageURL, function (img) {
-        var scaling = calcBkgImageScaling(cnv, img, bkgStyle);
-        cnv.setBackgroundImage(img, cnv.renderAll.bind(cnv), {
-            left: scaling.x,
-            top: scaling.y,
-            scaleX: scaling.widthFactor,
-            scaleY: scaling.heightFactor,
-        });
-    });
+    fabric.Image.fromURL(
+        _imageURL,
+        function (img) {
+            var scaling = calcBkgImageScaling(cnv, img, bkgStyle);
+            cnv.setBackgroundImage(
+                img,
+                cnv.renderAll.bind(cnv),
+                {
+                    left: scaling.x,
+                    top: scaling.y,
+                    scaleX: scaling.widthFactor,
+                    scaleY: scaling.heightFactor,
+                },
+                { crossOrigin: "anonymous" }
+            );
+        },
+        { crossOrigin: "anonymous" }
+    );
 }
 
 function setBackgroundImageStyle(cnv, bkgStyle) {

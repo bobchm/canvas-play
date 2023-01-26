@@ -2,11 +2,16 @@ import { jsPDF } from "jspdf";
 import { svg2pdf } from "svg2pdf.js";
 
 function openPDF(orientation, format) {
-    return new jsPDF({ orientation: orientation, format: format });
-    // return new jsPDF("p", "pt", [795, 924]);
+    return new jsPDF({
+        orientation: orientation,
+        format: format,
+        unit: "pt",
+    });
 }
 
-function addPDFpage(pdfObj, orientation, format) {}
+function addPDFpage(pdfObj, orientation, format) {
+    pdfObj.addPage(format, orientation);
+}
 
 function svgElementWidth(elem) {
     return parseInt(elem.getAttribute("width"));
@@ -38,7 +43,7 @@ function preprocessSVG(inSVG) {
         'width="100%" height="100%"',
         `width="${realWd}" height="${realHgt}"`
     );
-    return goodSVG;
+    return goodSVG.replaceAll("Helvetica", "helvetica");
 }
 
 function elementFromSVG(inSVG) {

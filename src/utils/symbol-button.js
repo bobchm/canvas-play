@@ -24,6 +24,14 @@ export const SymbolButtonShapes = [
     { name: "Folder", value: SymBtnShape.Folder },
 ];
 
+function removeWrapper(str) {
+    var idx = str.indexOf("<g>") + 3;
+    str = str.substring(idx);
+    idx = str.indexOf("</g>");
+    str = str.substring(0, idx);
+    return str;
+}
+
 var SymbolButton = fabric.util.createClass(fabric.Rect, {
     type: "symbolButton",
     // initialize can be of type function(options) or function(property, options), like for text.
@@ -63,7 +71,8 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
             this.left + this.width / 2,
             this.top + this.height / 2
         );
-        const mySerializedSVG = ctx.getSerializedSvg();
+        var mySerializedSVG = ctx.getSerializedSvg();
+        mySerializedSVG = removeWrapper(mySerializedSVG);
         return mySerializedSVG;
     },
 

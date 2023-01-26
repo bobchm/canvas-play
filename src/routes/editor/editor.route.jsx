@@ -762,15 +762,10 @@ const Editor = () => {
         var screenMgr = appManager.getScreenManager();
         var pgName = screenMgr.getCurrentPageName();
         screenMgr.currentPageToPDF(
-            pgName + "-portrait.pdf",
-            "portrait",
-            "letter"
+            pgName + "-landscape.pdf",
+            "landscape",
+            "legal"
         );
-        // screenMgr.currentPageToPDF(
-        //     pgName + "-landscape.pdf",
-        //     "landscape",
-        //     "letter"
-        // );
     }
 
     function handleSavePage() {
