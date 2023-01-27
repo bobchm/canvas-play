@@ -306,11 +306,10 @@ const Dashboard = () => {
                 if (i > 0) {
                     addPDFpage(pdfObj, orientation, format);
                 }
-                if (i === 3) {
-                    scrMgr.openPage(json.pages[i].content);
-                    var svg = scrMgr.getCurrentSVG();
-                    await writeSVGtoPDF(pdfObj, svg);
-                }
+
+                scrMgr.openPage(json.pages[i].content);
+                var svg = scrMgr.getCurrentSVG();
+                await writeSVGtoPDF(pdfObj, svg);
             }
             savePDF(pdfObj, filename);
         }
