@@ -287,7 +287,7 @@ const Dashboard = () => {
     function getPrintScreenManager() {
         var scrMgr = new ScreenManager(null);
         scrMgr.createPrintCanvas({
-            id: "canvas",
+            id: "printo",
             left: 8,
             top: 0,
             width: window.innerWidth,
@@ -306,9 +306,11 @@ const Dashboard = () => {
                 if (i > 0) {
                     addPDFpage(pdfObj, orientation, format);
                 }
-                scrMgr.openPage(json.pages[i].content);
-                var svg = scrMgr.getCurrentSVG();
-                await writeSVGtoPDF(pdfObj, svg);
+                if (i === 3) {
+                    scrMgr.openPage(json.pages[i].content);
+                    var svg = scrMgr.getCurrentSVG();
+                    await writeSVGtoPDF(pdfObj, svg);
+                }
             }
             savePDF(pdfObj, filename);
         }

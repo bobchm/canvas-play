@@ -97,6 +97,8 @@ function initCanvas(
 }
 
 function initStaticCanvas(_id, _left, _top, _width, _height, _bkgColor) {
+    var fakeCanvas = document.createElement("canvas");
+    fakeCanvas.setAttribute("id", _id);
     var cnv = new fabric.Canvas(_id, {
         left: _left,
         top: _top,
