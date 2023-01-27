@@ -10,6 +10,9 @@ import { openPDF, addPDFpage, writeSVGtoPDF, savePDF } from "./pdf";
 
 var objIdCtr = 0;
 
+const ImageStyleInfo =
+    'style="stroke: none; stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(0,0,0); fill-rule: nonzero; opacity: 1;"';
+
 function initCanvas(
     _id,
     _left,
@@ -723,6 +726,49 @@ function sendToBack(cnv, obj) {
     }
     cnv.renderAll();
 }
+
+fabric.Image.prototype.toSVG = function () {
+    var imageMarkup = [];
+    var x = -this.width / 2,
+        y = -this.height / 2;
+    var commonPieces = [ImageStyleInfo, "", this.addPaintOrder(), " ", ""].join(
+        ""
+    );
+
+    imageMarkup.push(
+        "\t<image ",
+        commonPieces,
+        'xlink:href="',
+        this.getSvgSrc(true),
+        '" x="',
+        x,
+        '" y="',
+        y,
+        // we're essentially moving origin of transformation from top/left corner to the center of the shape
+        // by wrapping it in container <g> element with actual transformation, then offsetting object to the top/left
+        // so that object's center aligns with container's left/top
+        '" width="',
+        this.width,
+        '" height="',
+        this.height,
+        '"',
+        "",
+        "",
+        "></image>\n"
+    );
+
+    var markup = [];
+    markup.push(
+        "<g ",
+        this.getSvgTransform(false),
+        this.getSvgCommons(),
+        " >\n"
+    );
+    markup.push(imageMarkup.join(""));
+    markup.push("</g>\n");
+    var svgstr = markup.join("");
+    return svgstr;
+};
 
 fabric.Image.prototype.getSvgSrc = function () {
     return this.toDataURLforSVG();
