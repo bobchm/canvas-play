@@ -60,6 +60,7 @@ import {
     endFreeform,
     canvasToPDF,
     getSVG,
+    canvasToSVGFile,
 } from "../../utils/canvas";
 
 import { defaultImageData } from "../../utils/image-defaults";
@@ -167,6 +168,10 @@ class ScreenManager {
 
     currentPageToPDF(filename, orientation, format) {
         canvasToPDF(this.#canvas, filename, orientation, format);
+    }
+
+    canvasToSVG(filename) {
+        canvasToSVGFile(this.#canvas, filename);
     }
 
     #canvasObjToScreen(scrObj, cnvObj) {

@@ -101,8 +101,9 @@ function initCanvas(
 
 function initStaticCanvas(_id, _left, _top, _width, _height, _bkgColor) {
     var fakeCanvas = document.createElement("canvas");
-    fakeCanvas.setAttribute("id", _id);
-    var cnv = new fabric.Canvas(_id, {
+    fakeCanvas.width = _width;
+    fakeCanvas.height = _height;
+    var cnv = new fabric.Canvas(fakeCanvas, {
         left: _left,
         top: _top,
         width: _width,
@@ -1201,5 +1202,6 @@ export {
     getTextStyle,
     setTextStyle,
     canvasToPDF,
+    canvasToSVGFile,
     getSVG,
 };

@@ -301,6 +301,7 @@ const Dashboard = () => {
         var json = await getActivityJSON(activityId);
         if (json) {
             var scrMgr = getPrintScreenManager();
+            scrMgr.setupForActivity(json.activity);
             var pdfObj = openPDF(orientation, format);
             for (let i = 0; i < json.pages.length; i++) {
                 if (i > 0) {
@@ -309,6 +310,9 @@ const Dashboard = () => {
 
                 scrMgr.openPage(json.pages[i].content);
                 var svg = scrMgr.getCurrentSVG();
+                scrMgr.canvasToSVG(
+                    filename + "-" + json.pages[i].name + ".svg"
+                );
                 await writeSVGtoPDF(pdfObj, svg);
             }
             savePDF(pdfObj, filename);
