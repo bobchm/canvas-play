@@ -10,9 +10,6 @@ import { openPDF, addPDFpage, writeSVGtoPDF, savePDF } from "./pdf";
 
 var objIdCtr = 0;
 
-const ImageStyleInfo =
-    'style="stroke: none; stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(0,0,0); fill-rule: nonzero; opacity: 1;"';
-
 function initCanvas(
     _id,
     _left,
@@ -42,6 +39,7 @@ function initCanvas(
     cnv.highlightImageFilter = new fabric.Image.filters.Brightness({
         brightness: -0.3,
     });
+    cnv.onScreen = true;
 
     cnv.isDragging = false;
     if (_modifiedCallback) {
@@ -113,6 +111,7 @@ function initStaticCanvas(_id, _left, _top, _width, _height, _bkgColor) {
     });
 
     cnv.preserveObjectStacking = true;
+    cnv.onScreen = false;
     return cnv;
 }
 
@@ -549,10 +548,31 @@ const addText = (cnv, parent, text, spec, scrObj, inputCallback) => {
     return textObj;
 };
 
+const getBase64FromUrl = async (url) => {
+    const data = await fetch(url);
+    const blob = await data.blob();
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = () => {
+            const base64data = reader.result;
+            resolve(base64data);
+        };
+    });
+};
+
 const addImage = (cnv, parent, spec, scrObj, inputCallback) => {
     const imageObj = new fabric.Image("");
     imageObj.set(spec);
     finishObjectAdd(cnv, parent, imageObj, scrObj, inputCallback);
+    if (!cnv.onScreen) {
+        imageObj._element = document.createElement("img");
+        imageObj._element.width = imageObj.width;
+        imageObj._element.height = imageObj.height;
+        imageObj._element.crossOrigin = "anonymous";
+        imageObj._element.src = imageObj.src;
+        getBase64FromUrl(imageObj.src);
+    }
     return imageObj;
 };
 

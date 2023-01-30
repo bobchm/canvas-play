@@ -119,6 +119,7 @@ class ScreenManager {
     }
 
     getCurrentSVG() {
+        refresh(this.#canvas);
         return getSVG(this.#canvas);
     }
 
