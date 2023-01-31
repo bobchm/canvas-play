@@ -571,7 +571,6 @@ const addImage = (cnv, parent, spec, scrObj, inputCallback) => {
         imageObj._element.height = imageObj.height;
         imageObj._element.crossOrigin = "anonymous";
         imageObj._element.src = imageObj.src;
-        getBase64FromUrl(imageObj.src);
     }
     return imageObj;
 };
@@ -585,7 +584,9 @@ const addSymbolButton = (
     scrObj,
     inputCallback
 ) => {
-    const symBtn = new SymbolButton(label, shape, spec, () => refresh(cnv));
+    const symBtn = new SymbolButton(cnv, label, shape, spec, () =>
+        refresh(cnv)
+    );
     finishObjectAdd(cnv, parent, symBtn, scrObj, inputCallback);
     return symBtn;
 };
@@ -748,9 +749,9 @@ function sendToBack(cnv, obj) {
     cnv.renderAll();
 }
 
-fabric.Image.prototype.getSvgSrc = function () {
-    return this.toDataURLforSVG();
-};
+// fabric.Image.prototype.getSvgSrc = function () {
+//     return this.toDataURLforSVG();
+// };
 
 fabric.Image.prototype.toDataURLforSVG = function (options) {
     var el = fabric.util.createCanvasElement();

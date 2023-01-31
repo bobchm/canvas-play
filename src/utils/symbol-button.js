@@ -36,7 +36,7 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
     type: "symbolButton",
     // initialize can be of type function(options) or function(property, options), like for text.
     // no other signatures allowed.
-    initialize: function (label, shape, options, callback) {
+    initialize: function (cnv, label, shape, options, callback) {
         options || (options = {});
 
         this.embedImage = this.embedImage.bind(this);
@@ -47,7 +47,11 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
         this.textColor = options.textColor || "black";
         if (options.imageSource) {
             this.image = new Image();
-            this.image.crossOrigin = "Anonymous";
+            if (!cnv.onScreen) {
+                this.image.width = options.imageWidth || 0;
+                this.image.height = options.imageHeight || 0;
+                this.image.crossOrigin = "Anonymous";
+            }
             this.setImageSource(options.imageSource, callback);
         } else {
             this.image = null;
@@ -197,6 +201,8 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
             textAlign: this.get("textAlign"),
             textColor: this.get("textColor"),
             imageSource: this.image ? this.image.src : null,
+            imageWidth: this.image ? this.image.width : 0,
+            imageHeight: this.image ? this.image.height : 0,
         });
     },
 

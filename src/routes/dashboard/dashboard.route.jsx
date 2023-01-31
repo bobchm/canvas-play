@@ -308,14 +308,12 @@ const Dashboard = () => {
                     addPDFpage(pdfObj, orientation, format);
                 }
 
-                if (json.pages[i].name === "foo") {
-                    scrMgr.openPage(json.pages[i].content);
-                    var svg = scrMgr.getCurrentSVG();
-                    scrMgr.canvasToSVG(
-                        filename + "-" + json.pages[i].name + ".svg"
-                    );
-                    await writeSVGtoPDF(pdfObj, svg);
-                }
+                scrMgr.openPage(json.pages[i].content);
+                var svg = scrMgr.getCurrentSVG();
+                scrMgr.canvasToSVG(
+                    filename + "-" + json.pages[i].name + ".svg"
+                );
+                await writeSVGtoPDF(pdfObj, svg);
             }
             savePDF(pdfObj, filename);
         }
