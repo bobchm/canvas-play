@@ -33,10 +33,8 @@ const defaultVSize = { width: 2000, height: 1500 };
 const activityExtension = ".act.json";
 
 const Dashboard = () => {
-    const [userName, setUserName] = useState(initUserName);
-    const [applicationManager, setApplicationManager] = useState(
-        () => new ApplicationManager()
-    );
+    const [userName] = useState(initUserName);
+    const [applicationManager] = useState(() => new ApplicationManager());
     const [activities, setActivities] = useState([]);
     const [isActivityCreateOpen, setIsActivityCreateOpen] = useState(false);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -309,10 +307,8 @@ const Dashboard = () => {
                 }
 
                 scrMgr.openPage(json.pages[i].content);
+                await scrMgr.finishCachingImages();
                 var svg = scrMgr.getCurrentSVG();
-                scrMgr.canvasToSVG(
-                    filename + "-" + json.pages[i].name + ".svg"
-                );
                 await writeSVGtoPDF(pdfObj, svg);
             }
             savePDF(pdfObj, filename);

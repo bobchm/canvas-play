@@ -15,7 +15,8 @@ import {
 
 import {
     initCanvas,
-    initStaticCanvas,
+    initPrintCanvas,
+    waitForCanvasPromises,
     clearSelectionCallback,
     setSelectionCallback,
     getBackgroundColor,
@@ -119,7 +120,6 @@ class ScreenManager {
     }
 
     getCurrentSVG() {
-        refresh(this.#canvas);
         return getSVG(this.#canvas);
     }
 
@@ -483,13 +483,14 @@ class ScreenManager {
     createPrintCanvas(screenSpec) {
         const { id, top, left, width, height, backgroundColor } = screenSpec;
 
-        this.#canvas = initStaticCanvas(
+        this.#canvas = initPrintCanvas(
             id,
             left,
             top,
             width,
             height,
-            backgroundColor
+            backgroundColor,
+            true
         );
         this.#screenRegion = {
             left: left,
@@ -498,6 +499,10 @@ class ScreenManager {
             height: height,
         };
         return this.#canvas;
+    }
+
+    async finishCachingImages() {
+        await waitForCanvasPromises(this.#canvas);
     }
 
     disableAccessMethod() {

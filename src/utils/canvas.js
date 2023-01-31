@@ -6,7 +6,7 @@ import { defaultImageData, errorImageData } from "./image-defaults";
 import { InputEvent } from "./input-events";
 import FileSaver from "file-saver";
 import { BackgroundImageStyle, OverlayHighlightFill } from "./canvas-shared";
-import { openPDF, addPDFpage, writeSVGtoPDF, savePDF } from "./pdf";
+import { openPDF, writeSVGtoPDF, savePDF } from "./pdf";
 
 var objIdCtr = 0;
 
@@ -97,7 +97,15 @@ function initCanvas(
     return cnv;
 }
 
-function initStaticCanvas(_id, _left, _top, _width, _height, _bkgColor) {
+function initPrintCanvas(
+    _id,
+    _left,
+    _top,
+    _width,
+    _height,
+    _bkgColor,
+    _doCacheImages
+) {
     var fakeCanvas = document.createElement("canvas");
     fakeCanvas.width = _width;
     fakeCanvas.height = _height;
@@ -112,7 +120,23 @@ function initStaticCanvas(_id, _left, _top, _width, _height, _bkgColor) {
 
     cnv.preserveObjectStacking = true;
     cnv.onScreen = false;
+    cnv.doCacheImage = _doCacheImages;
+    if (_doCacheImages) {
+        cnv.canvasPromises = [];
+    }
     return cnv;
+}
+
+function addCanvasPromise(cnv, promise) {
+    if (!cnv.canvasPromises) {
+        cnv.canvasPromises = [];
+    }
+    cnv.canvasPromises.push(promise);
+}
+
+async function waitForCanvasPromises(cnv) {
+    if (!cnv.canvasPromises || cnv.canvasPromises.length <= 0) return;
+    await Promise.all(cnv.canvasPromises);
 }
 
 function objectsFromEventTarget(target) {
@@ -548,17 +572,27 @@ const addText = (cnv, parent, text, spec, scrObj, inputCallback) => {
     return textObj;
 };
 
-const getBase64FromUrl = async (url) => {
-    const data = await fetch(url);
-    const blob = await data.blob();
+const getBase64FromUrl = async (url, callback, cbdata) => {
     return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(blob);
-        reader.onloadend = () => {
-            const base64data = reader.result;
-            resolve(base64data);
-        };
+        fetch(url).then((data) =>
+            data.blob().then((blob) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(blob);
+                reader.onloadend = () => {
+                    const base64data = reader.result;
+                    if (callback) {
+                        callback(cbdata, base64data);
+                    }
+                    resolve(base64data);
+                };
+            })
+        );
     });
+};
+
+const cacheImageData = (imageObj, data) => {
+    imageObj.src = data;
+    imageObj._element.src = data;
 };
 
 const addImage = (cnv, parent, spec, scrObj, inputCallback) => {
@@ -571,6 +605,14 @@ const addImage = (cnv, parent, spec, scrObj, inputCallback) => {
         imageObj._element.height = imageObj.height;
         imageObj._element.crossOrigin = "anonymous";
         imageObj._element.src = imageObj.src;
+        if (cnv.doCacheImage && !isImageEmbedded(imageObj)) {
+            var promise = getBase64FromUrl(
+                imageObj.src,
+                cacheImageData,
+                imageObj
+            );
+            addCanvasPromise(cnv, promise);
+        }
     }
     return imageObj;
 };
@@ -1154,7 +1196,9 @@ function getSVG(cnv) {
 
 export {
     initCanvas,
-    initStaticCanvas,
+    initPrintCanvas,
+    addCanvasPromise,
+    waitForCanvasPromises,
     addRect,
     addCircle,
     addTriangle,
@@ -1225,4 +1269,5 @@ export {
     canvasToPDF,
     canvasToSVGFile,
     getSVG,
+    getBase64FromUrl,
 };
