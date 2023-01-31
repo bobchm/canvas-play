@@ -1152,7 +1152,7 @@ function setTextStyle(cobj, style) {
 
 async function canvasToPDF(cnv, filename, orientation, format) {
     // save to SVG for comparison while debugging
-    canvasToSVGFile(cnv, filename + ".svg");
+    // canvasToSVGFile(cnv, filename + ".svg");
     try {
         var pdfObj = openPDF(orientation, format);
         var svg = cnv.toSVG();
