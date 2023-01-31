@@ -16,6 +16,7 @@ import SimplePopMenu from "../../components/simple-pop-menu/simple-pop-menu.comp
 import ScriptEditor from "../../components/script-editor/script-editor.component";
 import FileNamer from "../../components/file-namer/file-namer.component";
 import FilePicker from "../../components/file-picker/file-picker.component";
+import PrintDialog from "../../components/print-dialog/print-dialog.component";
 import "./dashboard.styles.scss";
 import {
     BehaviorManager,
@@ -46,6 +47,7 @@ const Dashboard = () => {
     const [activityBehavior, setActivityBehavior] = useState(blankBehavior);
     const [isExportOpen, setIsExportOpen] = useState(false);
     const [isImportOpen, setIsImportOpen] = useState(false);
+    const [isPrintOpen, setIsPrintOpen] = useState(false);
 
     const navigate = useNavigate();
 
@@ -315,16 +317,26 @@ const Dashboard = () => {
         }
     }
 
-    async function handlePrint() {
+    function handlePrint() {
+        setIsPrintOpen(true);
+    }
+
+    async function handlePrintConfirm(options) {
+        setIsPrintOpen(false);
+
         // get the activity
         var id = activityIdFromName(otherActionActivity);
         if (!id) return;
         printActivity(
             id,
-            otherActionActivity + "-ls-letter",
-            "landscape",
-            "letter"
+            options.filename,
+            options.orientation,
+            options.format
         );
+    }
+
+    function handlePrintCancel() {
+        setIsPrintOpen(false);
     }
 
     function handleImportActivity() {
@@ -483,6 +495,14 @@ const Dashboard = () => {
                         onClose={handleCloseScriptEditor}
                         open={isScriptEditorOpen}
                         appManager={applicationManager}
+                    />
+                )}
+                {isPrintOpen && (
+                    <PrintDialog
+                        open={isPrintOpen}
+                        question="Print Activity"
+                        confirmCallback={handlePrintConfirm}
+                        cancelCallback={handlePrintCancel}
                     />
                 )}
             </Container>
