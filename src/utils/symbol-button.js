@@ -7,6 +7,9 @@ import {
     drawRect,
     folderTabHeight,
     decorateText,
+    cachingImages,
+    addCanvasPromise,
+    getBase64FromUrl,
 } from "./canvas-shared";
 import { Context } from "svgcanvas";
 
@@ -32,6 +35,10 @@ function removeWrapper(str) {
     return str;
 }
 
+function cacheSymbolData(symButton, data) {
+    symButton.image.src = data;
+}
+
 var SymbolButton = fabric.util.createClass(fabric.Rect, {
     type: "symbolButton",
     // initialize can be of type function(options) or function(property, options), like for text.
@@ -53,6 +60,14 @@ var SymbolButton = fabric.util.createClass(fabric.Rect, {
                 this.image.crossOrigin = "Anonymous";
             }
             this.setImageSource(options.imageSource, callback);
+            if (cachingImages(cnv) && !this.isImageEmbedded()) {
+                var promise = getBase64FromUrl(
+                    this.image.src,
+                    cacheSymbolData,
+                    this
+                );
+                addCanvasPromise(cnv, promise);
+            }
         } else {
             this.image = null;
         }

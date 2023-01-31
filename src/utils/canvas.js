@@ -5,7 +5,15 @@ import { colorCloserToBlack } from "./colors";
 import { defaultImageData, errorImageData } from "./image-defaults";
 import { InputEvent } from "./input-events";
 import FileSaver from "file-saver";
-import { BackgroundImageStyle, OverlayHighlightFill } from "./canvas-shared";
+import {
+    BackgroundImageStyle,
+    OverlayHighlightFill,
+    cachingImages,
+    setCachingImages,
+    addCanvasPromise,
+    doWaitForCanvasPromises,
+    getBase64FromUrl,
+} from "./canvas-shared";
 import { openPDF, writeSVGtoPDF, savePDF } from "./pdf";
 
 var objIdCtr = 0;
@@ -120,23 +128,12 @@ function initPrintCanvas(
 
     cnv.preserveObjectStacking = true;
     cnv.onScreen = false;
-    cnv.doCacheImage = _doCacheImages;
-    if (_doCacheImages) {
-        cnv.canvasPromises = [];
-    }
+    setCachingImages(cnv, _doCacheImages);
     return cnv;
 }
 
-function addCanvasPromise(cnv, promise) {
-    if (!cnv.canvasPromises) {
-        cnv.canvasPromises = [];
-    }
-    cnv.canvasPromises.push(promise);
-}
-
 async function waitForCanvasPromises(cnv) {
-    if (!cnv.canvasPromises || cnv.canvasPromises.length <= 0) return;
-    await Promise.all(cnv.canvasPromises);
+    await doWaitForCanvasPromises(cnv);
 }
 
 function objectsFromEventTarget(target) {
@@ -572,24 +569,6 @@ const addText = (cnv, parent, text, spec, scrObj, inputCallback) => {
     return textObj;
 };
 
-const getBase64FromUrl = async (url, callback, cbdata) => {
-    return new Promise((resolve) => {
-        fetch(url).then((data) =>
-            data.blob().then((blob) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(blob);
-                reader.onloadend = () => {
-                    const base64data = reader.result;
-                    if (callback) {
-                        callback(cbdata, base64data);
-                    }
-                    resolve(base64data);
-                };
-            })
-        );
-    });
-};
-
 const cacheImageData = (imageObj, data) => {
     imageObj.src = data;
     imageObj._element.src = data;
@@ -605,7 +584,7 @@ const addImage = (cnv, parent, spec, scrObj, inputCallback) => {
         imageObj._element.height = imageObj.height;
         imageObj._element.crossOrigin = "anonymous";
         imageObj._element.src = imageObj.src;
-        if (cnv.doCacheImage && !isImageEmbedded(imageObj)) {
+        if (cachingImages(cnv) && !isImageEmbedded(imageObj)) {
             var promise = getBase64FromUrl(
                 imageObj.src,
                 cacheImageData,
@@ -1197,7 +1176,6 @@ function getSVG(cnv) {
 export {
     initCanvas,
     initPrintCanvas,
-    addCanvasPromise,
     waitForCanvasPromises,
     addRect,
     addCircle,
@@ -1269,5 +1247,4 @@ export {
     canvasToPDF,
     canvasToSVGFile,
     getSVG,
-    getBase64FromUrl,
 };

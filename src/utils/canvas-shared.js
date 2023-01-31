@@ -140,3 +140,44 @@ export function decorateText(ctx, metrics, doUnderline, doLinethrough, x, y) {
         );
     }
 }
+
+export function cachingImages(cnv) {
+    return cnv.doCacheImages;
+}
+
+export function setCachingImages(cnv, doCache) {
+    cnv.doCacheImages = doCache;
+    if (doCache) {
+        cnv.canvasPromises = [];
+    }
+}
+
+export function addCanvasPromise(cnv, promise) {
+    if (!cnv.canvasPromises) {
+        cnv.canvasPromises = [];
+    }
+    cnv.canvasPromises.push(promise);
+}
+
+export async function doWaitForCanvasPromises(cnv) {
+    if (!cnv.canvasPromises || cnv.canvasPromises.length <= 0) return;
+    await Promise.all(cnv.canvasPromises);
+}
+
+export async function getBase64FromUrl(url, callback, cbdata) {
+    return new Promise((resolve) => {
+        fetch(url).then((data) =>
+            data.blob().then((blob) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(blob);
+                reader.onloadend = () => {
+                    const base64data = reader.result;
+                    if (callback) {
+                        callback(cbdata, base64data);
+                    }
+                    resolve(base64data);
+                };
+            })
+        );
+    });
+}
