@@ -48,6 +48,8 @@ const Dashboard = () => {
     const [isExportOpen, setIsExportOpen] = useState(false);
     const [isImportOpen, setIsImportOpen] = useState(false);
     const [isPrintOpen, setIsPrintOpen] = useState(false);
+    const [printJSON, setPrintJSON] = useState({});
+    const [printPageList, setPrintPageList] = useState([]);
 
     const navigate = useNavigate();
 
@@ -297,46 +299,65 @@ const Dashboard = () => {
         return scrMgr;
     }
 
-    async function printActivity(activityId, filename, orientation, format) {
-        var json = await getActivityJSON(activityId);
-        if (json) {
-            var scrMgr = getPrintScreenManager();
-            scrMgr.setupForActivity(json.activity);
-            var pdfObj = openPDF(orientation, format);
-            for (let i = 0; i < json.pages.length; i++) {
-                if (i > 0) {
+    async function printActivity(filename, pageList, orientation, format) {
+        var scrMgr = getPrintScreenManager();
+        scrMgr.setupForActivity(printJSON.activity);
+        var pdfObj = openPDF(orientation, format);
+        var printAny = false;
+        for (let i = 0; i < printJSON.pages.length; i++) {
+            if (!pageList || pageList.includes(printJSON.pages[i])) {
+                if (printAny) {
                     addPDFpage(pdfObj, orientation, format);
                 }
 
-                scrMgr.openPage(json.pages[i].content);
+                scrMgr.openPage(printJSON.pages[i].content);
                 await scrMgr.finishCachingImages();
                 var svg = scrMgr.getCurrentSVG();
                 await writeSVGtoPDF(pdfObj, svg);
+                printAny = true;
             }
-            savePDF(pdfObj, filename);
         }
+        savePDF(pdfObj, filename);
     }
 
-    function handlePrint() {
-        setIsPrintOpen(true);
+    async function cacheActivityInfo() {
+        var id = activityIdFromName(otherActionActivity);
+        if (!id) {
+            return;
+        }
+        var json = await getActivityJSON(id);
+        if (!json || !json.pages || json.pages.length === 0) {
+            return;
+        }
+        setPrintJSON(json);
+        var pages = [];
+        for (let i = 0; i < json.pages.length; i++) {
+            pages.push(json.pages[i].name);
+        }
+        setPrintPageList(pages);
+        return pages;
+    }
+
+    async function handlePrint() {
+        var pageList = await cacheActivityInfo();
+        if (!pageList || pageList.length === 0) {
+            alert("This activity has no pages to print");
+        } else {
+            setIsPrintOpen(true);
+        }
     }
 
     async function handlePrintConfirm(options) {
         setIsPrintOpen(false);
-
-        // get the activity
-        var id = activityIdFromName(otherActionActivity);
-        if (!id) return;
-        printActivity(
-            id,
-            options.filename,
-            options.orientation,
-            options.format
-        );
+        printActivity(options.filename, options.orientation, options.format);
+        setPrintJSON({});
+        setPrintPageList([]);
     }
 
     function handlePrintCancel() {
         setIsPrintOpen(false);
+        setPrintJSON({});
+        setPrintPageList([]);
     }
 
     function handleImportActivity() {
@@ -501,6 +522,7 @@ const Dashboard = () => {
                     <PrintDialog
                         open={isPrintOpen}
                         question="Print Activity"
+                        pageOptions={printPageList}
                         confirmCallback={handlePrintConfirm}
                         cancelCallback={handlePrintCancel}
                     />

@@ -19,9 +19,6 @@ const StyledAutocomplete = styled(Autocomplete)({
         color: "#ad4e64 !important",
     },
 });
-const ERROR_TYPE = {
-    DUPLICATE: "duplicate",
-};
 
 const OPTIONS_TYPE = {
     NEW: "new",
@@ -29,19 +26,13 @@ const OPTIONS_TYPE = {
 
 const filter = createFilterOptions();
 
-export default function TaggedAutocomplete() {
-    const tagOptions = [
-        { id: 1, name: "HTML" },
-        { id: 2, name: "CSS" },
-        { id: 3, name: "JavaScript" },
-        { id: 4, name: "AWS" },
-    ];
-
-    const [tags, setTags] = React.useState([tagOptions[0], tagOptions[1]]);
-    const [defaultTags, setDefaultTags] = React.useState([
-        tagOptions[0],
-        tagOptions[1],
-    ]);
+export default function TaggedAutocomplete({
+    tagOptions,
+    tagCallback,
+    tagsName,
+}) {
+    const [tags, setTags] = React.useState([]);
+    const [defaultTags, setDefaultTags] = React.useState([]);
     const [tagName, setTagName] = React.useState("helo");
     const [selectedTag, setSelectedTag] = React.useState(null);
     const [selectedAddTag, setSelectedAddTag] = React.useState(null);
@@ -52,6 +43,13 @@ export default function TaggedAutocomplete() {
             setTagName("");
         }
     }, [selectedTag, selectedAddTag]);
+
+    function updateTags(newTags) {
+        setTags(newTags);
+        if (tagCallback) {
+            tagCallback(newTags);
+        }
+    }
 
     return (
         <div>
@@ -75,7 +73,7 @@ export default function TaggedAutocomplete() {
                         renderInput={(params) => (
                             <TextField
                                 {...params}
-                                label="Tags"
+                                label={tagsName}
                                 variant="outlined"
                             />
                         )}
@@ -90,10 +88,10 @@ export default function TaggedAutocomplete() {
                         onChange={(event, value, reason) => {
                             switch (reason) {
                                 case "clear":
-                                    setTags([]);
+                                    updateTags([]);
                                     break;
                                 case "removeOption":
-                                    setTags(value);
+                                    updateTags(value);
                                     break;
                                 case "selectOption":
                                     const lastItem = value[value.length - 1];
@@ -113,14 +111,12 @@ export default function TaggedAutocomplete() {
                                         setSelectedTag(null);
                                     } else {
                                         setSelectedTag(lastItem);
-                                        setTags(value);
+                                        updateTags(value);
                                     }
                                     break;
                                 default:
                                     break;
                             }
-                            console.log("nkc", value);
-                            console.log("nkc", reason);
                         }}
                         freeSolo
                         selectOnFocus
@@ -163,7 +159,7 @@ export default function TaggedAutocomplete() {
                                     maxId = item.id;
                                 }
                             }
-                            setTags([
+                            updateTags([
                                 ...tags,
                                 { id: maxId + 1, name: selectedAddTag.value },
                             ]);
