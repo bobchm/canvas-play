@@ -305,7 +305,7 @@ const Dashboard = () => {
         var pdfObj = openPDF(orientation, format);
         var printAny = false;
         for (let i = 0; i < printJSON.pages.length; i++) {
-            if (!pageList || pageList.includes(printJSON.pages[i])) {
+            if (!pageList || pageList.includes(printJSON.pages[i].name)) {
                 if (printAny) {
                     addPDFpage(pdfObj, orientation, format);
                 }
@@ -349,7 +349,12 @@ const Dashboard = () => {
 
     async function handlePrintConfirm(options) {
         setIsPrintOpen(false);
-        printActivity(options.filename, options.orientation, options.format);
+        printActivity(
+            options.filename,
+            options.pageList,
+            options.orientation,
+            options.format
+        );
         setPrintJSON({});
         setPrintPageList([]);
     }
@@ -522,6 +527,7 @@ const Dashboard = () => {
                     <PrintDialog
                         open={isPrintOpen}
                         question="Print Activity"
+                        defFileName={otherActionActivity}
                         pageOptions={printPageList}
                         confirmCallback={handlePrintConfirm}
                         cancelCallback={handlePrintCancel}

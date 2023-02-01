@@ -29,11 +29,12 @@ const formatOptions = [
 export default function PrintDialog({
     open,
     question,
+    defFileName = "",
     pageOptions,
     confirmCallback,
     cancelCallback,
 }) {
-    const [fileName, setFileName] = useState("");
+    const [fileName, setFileName] = useState(defFileName);
     const [printPages, setPrintPages] = useState(null);
     const [allPages, setAllPages] = useState(true);
     const [orientation, setOrientation] = useState("landscape");
@@ -71,7 +72,8 @@ export default function PrintDialog({
                             autoFocus
                             margin="dense"
                             id="name"
-                            label={fileName}
+                            value={fileName}
+                            label="File Name"
                             type="text"
                             sx={{ width: "70%" }}
                             variant="standard"

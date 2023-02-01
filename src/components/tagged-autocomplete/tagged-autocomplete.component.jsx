@@ -30,9 +30,10 @@ export default function TaggedAutocomplete({
     tagOptions,
     tagCallback,
     tagsName,
+    disabled = false,
 }) {
     const [tags, setTags] = React.useState([]);
-    const [defaultTags, setDefaultTags] = React.useState([]);
+    const [defaultTags] = React.useState([]);
     const [tagName, setTagName] = React.useState("helo");
     const [selectedTag, setSelectedTag] = React.useState(null);
     const [selectedAddTag, setSelectedAddTag] = React.useState(null);
@@ -61,15 +62,9 @@ export default function TaggedAutocomplete({
                         defaultValue={defaultTags}
                         value={tags}
                         multiple
-                        getOptionLabel={(option) => {
-                            if (typeof option === "string") {
-                                return option;
-                            }
-
-                            return option.name;
-                        }}
+                        disabled={disabled}
                         style={{ width: 300 }}
-                        inputValue={tagName}
+                        inputValue=""
                         renderInput={(params) => (
                             <TextField
                                 {...params}
@@ -94,24 +89,9 @@ export default function TaggedAutocomplete({
                                     updateTags(value);
                                     break;
                                 case "selectOption":
-                                    const lastItem = value[value.length - 1];
-                                    if (typeof lastItem === "string") {
-                                        setSelectedTag(null);
-                                        break;
-                                    }
-                                    if (!!lastItem.type) {
-                                        setSelectedAddTag(lastItem);
-                                        setOpenDialog(true);
-                                        break;
-                                    }
-                                    const isExists = tags.some(
-                                        (tagItem) => tagItem.id === lastItem.id
-                                    );
-                                    if (isExists) {
-                                        setSelectedTag(null);
-                                    } else {
-                                        setSelectedTag(lastItem);
-                                        updateTags(value);
+                                    var newValue = value[value.length - 1];
+                                    if (!tags.includes(newValue)) {
+                                        updateTags(tags.concat([newValue]));
                                     }
                                     break;
                                 default:
