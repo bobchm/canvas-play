@@ -15,6 +15,7 @@ import {
     getBase64FromUrl,
 } from "./canvas-shared";
 import { openPDF, writeSVGtoPDF, savePDF } from "./pdf";
+import { ZoomInMapSharp } from "@mui/icons-material";
 
 var objIdCtr = 0;
 
@@ -390,13 +391,14 @@ function clearBackgroundImage(cnv) {
 }
 
 function calcBkgImageScaling(cnv, img, bkgStyle) {
-    var widthFactor = cnv.width / img.width;
-    var heightFactor = cnv.height / img.height;
+    var zoom = cnv.getZoom();
+    var widthFactor = cnv.width / img.width / zoom;
+    var heightFactor = cnv.height / img.height / zoom;
     var x, y;
     if (bkgStyle === BackgroundImageStyle.Center) {
         var minFactor = Math.min(widthFactor, heightFactor);
-        x = (cnv.width - minFactor * img.width) / 2;
-        y = (cnv.height - minFactor * img.height) / 2;
+        x = (cnv.width / zoom - img.width * minFactor) / 2;
+        y = (cnv.height / zoom - img.height * minFactor) / 2;
         widthFactor = minFactor;
         heightFactor = minFactor;
     } else {
