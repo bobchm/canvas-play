@@ -10,6 +10,7 @@ import Typography from "@mui/material/Typography";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import RadioGroup from "@mui/material/RadioGroup";
+import Checkbox from "@mui/material/Checkbox";
 import Radio from "@mui/material/Radio";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
@@ -44,6 +45,7 @@ export default function PrintDialog({
     const [allPages, setAllPages] = useState(true);
     const [orientation, setOrientation] = useState("landscape");
     const [format, setFormat] = useState("letter");
+    const [openAfterSave, setOpenAfterSave] = useState(false);
 
     const handleOrientationChange = (newValue) => {
         setOrientation(newValue);
@@ -59,6 +61,10 @@ export default function PrintDialog({
 
     const handlePagesChange = (e, newValue) => {
         setAllPages(newValue === "all");
+    };
+
+    const handleOpenAfterSave = (event) => {
+        setOpenAfterSave(event.target.checked);
     };
 
     function fixFileName(fname) {
@@ -143,28 +149,41 @@ export default function PrintDialog({
                                 </MenuItem>
                             ))}
                         </Select>
-                        <RadioGroup
-                            defaultValue="all"
-                            onChange={handlePagesChange}
-                        >
-                            <FormControlLabel
-                                value="all"
-                                control={<Radio />}
-                                label="All Pages"
-                            />
-                            <FormControlLabel
-                                value="selected"
-                                control={<Radio />}
-                                label="Select Pages"
-                            />
-                        </RadioGroup>
-                        <TaggedAutocomplete
-                            tagOptions={pageOptions}
-                            tagCallback={handlePageNamesChange}
-                            tagsName="Pages"
-                            disabled={allPages}
-                        />
+                        {pageOptions.length > 1 && (
+                            <>
+                                <RadioGroup
+                                    defaultValue="all"
+                                    onChange={handlePagesChange}
+                                >
+                                    <FormControlLabel
+                                        value="all"
+                                        control={<Radio />}
+                                        label="All Pages"
+                                    />
+                                    <FormControlLabel
+                                        value="selected"
+                                        control={<Radio />}
+                                        label="Select Pages"
+                                    />
+                                </RadioGroup>
+                                <TaggedAutocomplete
+                                    tagOptions={pageOptions}
+                                    tagCallback={handlePageNamesChange}
+                                    tagsName="Pages"
+                                    disabled={allPages}
+                                />
+                            </>
+                        )}
                     </Stack>
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={openAfterSave}
+                                onChange={handleOpenAfterSave}
+                            />
+                        }
+                        label="Open after creating"
+                    />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => cancelCallback()}>Cancel</Button>
@@ -175,6 +194,7 @@ export default function PrintDialog({
                                 orientation: orientation,
                                 format: format,
                                 pageList: allPages ? null : printPages,
+                                openAfterSave: openAfterSave,
                             })
                         }
                     >

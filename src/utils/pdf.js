@@ -67,7 +67,13 @@ function scaleToFit(pdfObj, element) {
         newWd = newHgt * svgRatio;
     }
 
-    return { width: newWd, height: newHgt, ratio: newWd / svgWd };
+    return {
+        xoffset: (pdfWd - newWd) / 2,
+        yoffset: (pdfHgt - newHgt) / 2,
+        width: newWd,
+        height: newHgt,
+        ratio: newWd / svgWd,
+    };
 }
 
 function writeSVGtoPDF(pdfObj, svgstring) {
@@ -75,15 +81,18 @@ function writeSVGtoPDF(pdfObj, svgstring) {
     var dims = scaleToFit(pdfObj, element);
 
     return svg2pdf(element, pdfObj, {
-        xOffset: 0,
-        yOffset: 0,
+        x: dims.xoffset,
+        y: dims.yoffset,
         width: dims.width,
         height: dims.height,
     });
 }
 
-function savePDF(pdfObj, filename) {
+function savePDF(pdfObj, filename, openAfterSave) {
     pdfObj.save(filename);
+    if (openAfterSave) {
+        window.open(URL.createObjectURL(pdfObj.output("blob")));
+    }
 }
 
 export { openPDF, addPDFpage, writeSVGtoPDF, savePDF };

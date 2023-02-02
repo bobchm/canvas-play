@@ -1150,14 +1150,14 @@ function setTextStyle(cobj, style) {
     });
 }
 
-async function canvasToPDF(cnv, filename, orientation, format) {
+async function canvasToPDF(cnv, filename, orientation, format, openAfterSave) {
     // save to SVG for comparison while debugging
     // canvasToSVGFile(cnv, filename + ".svg");
     try {
         var pdfObj = openPDF(orientation, format);
         var svg = cnv.toSVG();
         await writeSVGtoPDF(pdfObj, svg);
-        savePDF(pdfObj, filename);
+        savePDF(pdfObj, filename, openAfterSave);
     } catch (err) {
         console.log("Error generating PDF");
     }

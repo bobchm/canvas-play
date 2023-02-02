@@ -167,8 +167,8 @@ class ScreenManager {
         this.openCurrentPageBehavior();
     }
 
-    currentPageToPDF(filename, orientation, format) {
-        canvasToPDF(this.#canvas, filename, orientation, format);
+    currentPageToPDF(filename, orientation, format, openAfterSave) {
+        canvasToPDF(this.#canvas, filename, orientation, format, openAfterSave);
     }
 
     canvasToSVG(filename) {

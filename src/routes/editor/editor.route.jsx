@@ -13,6 +13,7 @@ import ContentPasteRoundedIcon from "@mui/icons-material/ContentPasteRounded";
 import UndoRoundedIcon from "@mui/icons-material/UndoRounded";
 import RedoRoundedIcon from "@mui/icons-material/RedoRounded";
 import PrintRoundedIcon from "@mui/icons-material/PrintRounded";
+import CircularProgress from "@mui/material/CircularProgress";
 
 import PlayCanvas from "../../components/play-canvas/play-canvas.component";
 import ObjectPalette from "../../components/object-palette/object-palette.component";
@@ -25,6 +26,7 @@ import ScriptRepl from "../../components/repl/repl.component";
 import FileSaver from "file-saver";
 import FileNamer from "../../components/file-namer/file-namer.component";
 import FilePicker from "../../components/file-picker/file-picker.component";
+import PrintDialog from "../../components/print-dialog/print-dialog.component";
 
 import ApplicationManager from "../../app/managers/application-manager";
 import confirmationBox from "../../utils/confirm-box";
@@ -74,6 +76,8 @@ const Editor = () => {
     const [isReplOpen, setIsReplOpen] = useState(false);
     const [isExportOpen, setIsExportOpen] = useState(false);
     const [isImportOpen, setIsImportOpen] = useState(false);
+    const [isPrintOpen, setIsPrintOpen] = useState(false);
+    const [isPrinting, setIsPrinting] = useState(false);
     const [editMessage, setEditMessage] = useState("");
     const [hasCopyBuffer, setHasCopyBuffer] = useState(false);
 
@@ -759,13 +763,24 @@ const Editor = () => {
     }
 
     function handlePrintPage() {
+        setIsPrintOpen(true);
+    }
+
+    function handlePrintConfirm(options) {
+        setIsPrintOpen(false);
+        setIsPrinting(true);
         var screenMgr = appManager.getScreenManager();
-        var pgName = screenMgr.getCurrentPageName();
         screenMgr.currentPageToPDF(
-            pgName + "-landscape.pdf",
-            "landscape",
-            "legal"
+            options.filename,
+            options.orientation,
+            options.format,
+            options.openAfterSave
         );
+        setIsPrinting(options.openAfterSave);
+    }
+
+    function handlePrintCancel() {
+        setIsPrintOpen(false);
     }
 
     function handleSavePage() {
@@ -888,6 +903,7 @@ const Editor = () => {
                 rightButtons={rightButtonBarSpec}
                 message={editMessage}
             />
+            {isPrinting && <CircularProgress style={{ color: "white" }} />}
             <Box
                 sx={{
                     display: "flex",
@@ -963,6 +979,20 @@ const Editor = () => {
                         confirmCallback={handleExportConfirm}
                         cancelLabel="Cancel"
                         cancelCallback={handleExportCancel}
+                    />
+                )}
+                {isPrintOpen && (
+                    <PrintDialog
+                        open={isPrintOpen}
+                        question="Print Page"
+                        defFileName={appManager
+                            .getScreenManager()
+                            .getCurrentPageName()}
+                        pageOptions={[
+                            appManager.getScreenManager().getCurrentPageName(),
+                        ]}
+                        confirmCallback={handlePrintConfirm}
+                        cancelCallback={handlePrintCancel}
                     />
                 )}
             </Box>

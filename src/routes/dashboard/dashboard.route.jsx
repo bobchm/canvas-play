@@ -3,12 +3,13 @@ import { useNavigate } from "react-router-dom";
 import Container from "@mui/material/Container";
 import List from "@mui/material/List";
 import Typography from "@mui/material/Typography";
+import CircularProgress from "@mui/material/CircularProgress";
+
 import FileSaver from "file-saver";
 import TextInputModal from "../../components/text-input-modal/text-input-modal.component";
 import confirmationBox from "../../utils/confirm-box";
 import { defaultActivitySpec, defaultPageSpec } from "../../utils/app-utils";
 import ApplicationManager from "../../app/managers/application-manager";
-
 import ActivityCard from "../../components/activity-card/activity-card.component";
 import CanvasAppBar from "../../components/canvas-appbar/canvas-appbar.component";
 import SettingsModal from "../../components/settings-modal/settings-modal.component";
@@ -50,6 +51,7 @@ const Dashboard = () => {
     const [isPrintOpen, setIsPrintOpen] = useState(false);
     const [printJSON, setPrintJSON] = useState({});
     const [printPageList, setPrintPageList] = useState([]);
+    const [isPrinting, setIsPrinting] = useState(false);
 
     const navigate = useNavigate();
 
@@ -299,7 +301,14 @@ const Dashboard = () => {
         return scrMgr;
     }
 
-    async function printActivity(filename, pageList, orientation, format) {
+    async function printActivity(
+        filename,
+        pageList,
+        orientation,
+        format,
+        openAfterSave
+    ) {
+        setIsPrinting(true);
         var scrMgr = getPrintScreenManager();
         scrMgr.setupForActivity(printJSON.activity);
         var pdfObj = openPDF(orientation, format);
@@ -317,7 +326,8 @@ const Dashboard = () => {
                 printAny = true;
             }
         }
-        savePDF(pdfObj, filename);
+        savePDF(pdfObj, filename, openAfterSave);
+        setIsPrinting(false);
     }
 
     async function cacheActivityInfo() {
@@ -353,7 +363,8 @@ const Dashboard = () => {
             options.filename,
             options.pageList,
             options.orientation,
-            options.format
+            options.format,
+            options.openAfterSave
         );
         setPrintJSON({});
         setPrintPageList([]);
@@ -533,6 +544,7 @@ const Dashboard = () => {
                         cancelCallback={handlePrintCancel}
                     />
                 )}
+                {isPrinting && <CircularProgress style={{ color: "white" }} />}
             </Container>
         </div>
     );
