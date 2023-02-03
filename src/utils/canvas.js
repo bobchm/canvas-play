@@ -15,7 +15,6 @@ import {
     getBase64FromUrl,
 } from "./canvas-shared";
 import { openPDF, writeSVGtoPDF, savePDF } from "./pdf";
-import { ZoomInMapSharp } from "@mui/icons-material";
 
 var objIdCtr = 0;
 
