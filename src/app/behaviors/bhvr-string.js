@@ -32,7 +32,7 @@ function initStringBehaviors() {
         ],
         category: "string",
         description:
-            "Replace the first match of 'match' in the specified string with 'repl'.",
+            "Replace the first match of 'match' in the specified string with 'repl'",
     });
 
     BehaviorManager.addBuiltInFunction({
