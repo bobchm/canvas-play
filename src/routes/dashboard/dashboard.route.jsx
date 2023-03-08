@@ -18,6 +18,7 @@ import ScriptEditor from "../../components/script-editor/script-editor.component
 import FileNamer from "../../components/file-namer/file-namer.component";
 import FilePicker from "../../components/file-picker/file-picker.component";
 import PrintDialog from "../../components/print-dialog/print-dialog.component";
+import ListModal from "../../components/list-modal/list-modal.component";
 import "./dashboard.styles.scss";
 import {
     BehaviorManager,
@@ -49,6 +50,8 @@ const Dashboard = () => {
     const [isExportOpen, setIsExportOpen] = useState(false);
     const [isImportOpen, setIsImportOpen] = useState(false);
     const [isPrintOpen, setIsPrintOpen] = useState(false);
+    const [isHomePagePickerOpen, setIsHomePagePickerOpen] = useState(false);
+    const [homePageList, setHomePageList] = useState([]);
     const [printJSON, setPrintJSON] = useState({});
     const [printPageList, setPrintPageList] = useState([]);
     const [isPrinting, setIsPrinting] = useState(false);
@@ -68,6 +71,7 @@ const Dashboard = () => {
         { label: "Edit Behavior", callback: handleEditBehavior },
         { label: "Export Activity", callback: handleExport },
         { label: "Print Activity", callback: handlePrint },
+        { label: "Set Home", callback: handleSetHome },
     ];
 
     const activityActions = [
@@ -376,6 +380,43 @@ const Dashboard = () => {
         setPrintPageList([]);
     }
 
+    async function handleSetHome() {
+        var id = activityIdFromName(otherActionActivity);
+        if (!id) return;
+        var activity = await getActivity(id);
+        if (activity) {
+            var pages = [];
+            for (let i = 0; i < activity.pages.length; i++) {
+                var pageId = activity.pages[i];
+                var page = await getPage(pageId);
+                pages.push(page.name);
+            }
+        }
+        setHomePageList(pages);
+        setIsHomePagePickerOpen(true);
+    }
+
+    async function homePagePickerCallback(pageName) {
+        setIsHomePagePickerOpen(false);
+        setHomePageList([]);
+        if (!pageName) return;
+
+        var id = activityIdFromName(otherActionActivity);
+        if (!id) return;
+        var activity = await getActivity(id);
+        if (activity) {
+            for (let i = 0; i < activity.pages.length; i++) {
+                var pageId = activity.pages[i];
+                var page = await getPage(pageId);
+                if (page.name === pageName) {
+                    activity.home = pageId;
+                    updateActivity(activity);
+                    return;
+                }
+            }
+        }
+    }
+
     function handleImportActivity() {
         setIsImportOpen(true);
     }
@@ -542,6 +583,14 @@ const Dashboard = () => {
                         pageOptions={printPageList}
                         confirmCallback={handlePrintConfirm}
                         cancelCallback={handlePrintCancel}
+                    />
+                )}
+                {isHomePagePickerOpen && (
+                    <ListModal
+                        title="Select Page"
+                        elements={homePageList}
+                        onClose={homePagePickerCallback}
+                        open={isHomePagePickerOpen}
                     />
                 )}
                 {isPrinting && <CircularProgress style={{ color: "white" }} />}
